@@ -1,0 +1,158 @@
+@import "./custom.less";
+
+:root {
+  --primary-color: #434ae9;
+  --background-color: #f4f4f4;
+  --text-color: #828282;
+  --text-black: #0c0c0c;
+  --rs-bg-active: #434ae9;
+  --secondary-bg-color: #0b1120;
+  --active-tab: #141d33;
+  --inactive-color: #3b455e;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--secondary-bg-color);
+}
+
+body::-webkit-scrollbar {
+  width: 3px;
+}
+
+* {
+  box-sizing: border-box !important;
+  /* scroll-behavior: smooth; */
+}
+
+body::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+/* Overrides */
+
+.search-area .MuiFormControl-root {
+  background-color: #fff !important;
+  width: 100%;
+  height: 100%;
+  border: none;
+  box-shadow: none;
+}
+
+.search-area .MuiFormControl-root label {
+  top: 5px;
+}
+
+.search-area .MuiFormControl-root fieldset {
+  border: none !important;
+}
+
+.search-area .MuiFormControl-root .MuiInputBase-root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  box-shadow: none;
+}
+
+.search-area .MuiFormControl-root fieldset {
+  width: 100%;
+  height: 56px;
+  border: none;
+}
+
+.MuiSelect-select {
+  padding: 8px !important;
+  font-size: 14px;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: #e2e2e2 !important;
+}
+
+.MuiRadio-root,
+.MuiCheckbox-root {
+  padding: 0;
+}
+
+.rs-picker-toggle {
+  min-height: 44px;
+  height: 100%;
+  display: flex;
+  color: #fff;
+  min-width: 160px;
+}
+
+.rs-picker-default:not(.rs-picker-disabled) .rs-btn-active,
+.rs-picker-default:not(.rs-picker-disabled) .rs-btn:focus,
+.rs-picker-default:not(.rs-picker-disabled) .rs-btn:hover,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle-active,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:focus,
+.rs-picker-default:not(.rs-picker-disabled) .rs-picker-toggle:hover {
+  border-color: var(--primary-color);
+}
+
+.rs-picker-date .rs-picker-toggle.rs-btn .rs-picker-toggle-caret,
+.rs-picker-date .rs-picker-toggle.rs-btn .rs-picker-toggle-clean,
+.rs-picker-daterange .rs-picker-toggle.rs-btn .rs-picker-toggle-caret,
+.rs-picker-daterange .rs-picker-toggle.rs-btn .rs-picker-toggle-clean {
+  top: 11px;
+}
+
+.rs-picker-toggle input {
+  background-color: #fff;
+  opacity: 1;
+  font-size: 16px;
+  color: #000 !important;
+}
+
+.rs-picker-toggle input::placeholder {
+  color: #000 !important;
+}
+
+.rs-picker-toggle .rs-stack {
+  height: 100%;
+}
+
+.rs-picker-toggle .rs-picker-toggle-placeholder {
+  color: #000;
+}
+
+.disabled {
+  opacity: 0.5;
+}
+
+.DatePicker {
+  width: 100%;
+  z-index: 0;
+}
+
+.DatePicker input {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  font-family: "Inter", sans-serif;
+  border-radius: 8px;
+  background-color: #fff;
+  border: none;
+  outline: none;
+  color: #262626;
+}
+
+.DatePicker input::placeholder {
+  color: #262626;
+}

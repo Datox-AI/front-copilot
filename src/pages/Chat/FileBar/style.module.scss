@@ -1,0 +1,229 @@
+.filebarContainer {
+  width: 284px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  border-right: 1px solid #e2e2e2;
+  background: #fff;
+  padding: 15px;
+  position: relative;
+  z-index: 3;
+
+  header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e2e2e2;
+
+    h2 {
+      color: #242424;
+      font-size: 25px;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+  }
+
+  .searchSection {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    margin-top: 20px;
+
+    label {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 254px;
+      height: 42px;
+      flex-shrink: 0;
+      border-radius: 10px;
+      background: #f8f9fa;
+      padding: 11px 10px;
+
+      svg {
+        color: #c4c4c4;
+
+        &:last-child {
+          color: #616161;
+        }
+      }
+
+      input {
+        background-color: transparent;
+        outline: none;
+        border: none;
+
+        font-size: 16px;
+        font-weight: 500;
+
+        &::placeholder {
+          color: #c4c4c4;
+          font-size: 16px;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .contentSection {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .pins {
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+      border-bottom: 1px solid #e2e2e2;
+      gap: 20px;
+
+      h3 {
+        color: #242424;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      p {
+        color: #616161;
+        font-size: 14px;
+        font-weight: 400;
+      }
+    }
+
+    .contentList {
+    }
+  }
+}
+
+.selectIntegrationPopup {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+
+  label {
+    display: flex;
+    width: 100%;
+    align-items: center;
+
+    height: 42px;
+    padding: 11px 15px;
+    gap: 10px;
+    flex-shrink: 0;
+
+    border-radius: 10px;
+    border: 1px solid #e2e2e2;
+    // background: #fff;
+
+    input {
+      width: calc(100% - 20px);
+      background-color: transparent;
+      border: none;
+      outline: none;
+
+      font-size: 16px;
+      font-weight: 500;
+
+      svg {
+        color: #c4c4c4;
+      }
+
+      &::placeholder {
+        color: #c4c4c4;
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    border-radius: 10px;
+    border: 1px solid #e2e2e2;
+    background: #fff;
+    margin-top: 15px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 426px;
+    overflow-y: scroll;
+
+    li {
+      width: 100%;
+      height: 42px;
+      cursor: pointer;
+      background: #f6f5f8;
+      color: #616161;
+      font-size: 16px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+      transition: 0.4s ease-in-out all;
+
+      &:hover {
+        background: #e1e1f3;
+      }
+    }
+  }
+}
+
+.integrationFormContainer {
+  width: 800px;
+  margin-top: 25px;
+  padding: 20px 0 0;
+  border-top: 1px solid #e2e2e2;
+
+  .form {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-height: 550px;
+    overflow-y: scroll;
+
+    .field {
+      width: calc(50% - 12px);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+
+      span {
+        color: #616161;
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      textarea {
+        padding: 12px 20px;
+        border-radius: 10px;
+        border: 1px solid #e2e2e2;
+        background: #fff;
+
+        font-size: 16px;
+        font-weight: 500;
+
+        &::placeholder {
+          color: #c4c4c4;
+        }
+      }
+    }
+  }
+
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+
+    button {
+      width: 130px;
+      height: 42px;
+    }
+  }
+}

@@ -1,0 +1,40 @@
+.container {
+  padding: 12px;
+  position: relative;
+
+  .filter {
+    display: flex;
+
+    svg {
+      color: rgba(130, 130, 130, 1);
+    }
+  }
+
+  .table {
+    height: calc(100vh - 250px);
+    overflow-y: scroll;
+    margin-top: 12px;
+
+    td {
+      padding: 5px 10px;
+    }
+  }
+
+  .pagination {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: calc(100% - 32px);
+    height: 56px;
+    box-shadow: 0px 1px 0px 0px rgba(229, 233, 235, 1) inset;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    z-index: 1;
+
+    svg {
+      color: var(--primary-color);
+    }
+  }
+}

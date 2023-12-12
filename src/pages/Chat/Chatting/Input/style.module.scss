@@ -1,0 +1,48 @@
+.inputContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .attach {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 10px;
+    border: 1px solid #c4c4c4;
+    cursor: pointer;
+
+    svg {
+      transform: rotate(220deg);
+    }
+  }
+
+  .input {
+    width: calc(100% - 62px) !important;
+    display: flex;
+    width: 744px;
+    padding: 0 14px;
+    height: 48px;
+    align-items: center;
+    border-radius: 10px;
+    border: 1px solid #c4c4c4;
+    background: #fff;
+    outline: none;
+
+    font-size: 16px;
+    font-weight: 400;
+
+    &::placeholder {
+      color: #c4c4c4;
+    }
+  }
+
+  .sendBtn {
+    background-color: transparent;
+    outline: none;
+    border: none;
+  }
+}

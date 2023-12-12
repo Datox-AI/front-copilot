@@ -1,0 +1,47 @@
+.container {
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 4, 10, 0.75);
+  z-index: 999;
+
+  .wrapper {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    min-width: 410px;
+    // width: 985px;
+
+    .header {
+      display: flex;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+
+      h2 {
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 28px;
+        text-align: left;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .toggle {
+        cursor: pointer;
+        position: absolute;
+        right: 0;
+        font-size: 20px;
+        color: rgba(0, 0, 0, 1);
+      }
+    }
+  }
+}
