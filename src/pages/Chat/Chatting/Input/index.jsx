@@ -1,15 +1,25 @@
 import styles from "./style.module.scss";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
+import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
 import { ReactComponent as SendIcon } from "../../../../assets/icons/PaperPlaneRight.svg";
-import { useMemo, useState } from "react";
-import useMessagesAPI from "../../../../hooks/api/useMessagesAPI";
-import usePrompt from "../../../../hooks/usePrompt";
 
-const Input = ({ text, disabled, onSend, onTexting }) => {
+const Input = ({
+  text,
+  disabled,
+  onSend,
+  onTexting,
+  isStreaming,
+  onCancel
+}) => {
   return (
     <form className={styles.inputContainer} onSubmit={onSend}>
       <label htmlFor="attach_file" className={styles.attach}>
-        <input type="file" style={{ display: "none" }} id="attach_file" />
+        <input
+          type="file"
+          style={{ display: "none" }}
+          id="attach_file"
+          disabled={isStreaming}
+        />
         <AttachFileRoundedIcon />
       </label>
 
@@ -19,17 +29,18 @@ const Input = ({ text, disabled, onSend, onTexting }) => {
         placeholder="Ask anything..."
         value={text}
         onChange={onTexting}
+        disabled={isStreaming}
       />
 
       <button
         type="submit"
         className={styles.sendBtn}
-        disabled={disabled}
+        disabled={!isStreaming && disabled}
         style={{
           opacity: disabled ? 0.5 : 1
         }}
       >
-        <SendIcon />
+        {isStreaming ? <PauseCircleOutlineRoundedIcon /> : <SendIcon />}
       </button>
     </form>
   );

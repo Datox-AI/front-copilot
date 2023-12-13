@@ -1,21 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { store } from "../redux/store";
 import { queryClient } from "../config/queryClient";
 import moment from "moment";
+import { arrayUniqueByKey, makeLowerCase } from "../utils";
+import {
+  createTextGenerator,
+  destroyTextGenerator,
+  setTextToGenerator,
+  startStreaming,
+  stopStreaming
+} from "../redux/chat/chatSlice";
 
 const authorizationKey = "mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=";
 
-const usePrompt = ({ chatId, refetchMessages, listRef }) => {
+const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
+  const dispatch = useDispatch();
+  const textGenerator = useSelector(
+    (store) => store.chat.textGenerator[chatId]
+  );
   const { token } = useSelector((store) => store.auth);
 
   const [questions, setQuestions] = useState([]);
 
-  useEffect(() => {
-    setQuestions([]);
-  }, [chatId]);
-
-  const onText = (text) => {
+  const updateLastMessage = (text) => {
     const _cachedMsgs = [
       ...queryClient.getQueryData(["GET_MESSAGES", chatId])?.lists
     ];
@@ -24,7 +32,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef }) => {
 
     _cachedMsgs[lastIndex] = {
       ..._cachedMsgs[lastIndex],
-      text: _cachedMsgs[lastIndex].text + text,
+      text,
       isTyping: true
     };
 
@@ -33,7 +41,36 @@ const usePrompt = ({ chatId, refetchMessages, listRef }) => {
     });
   };
 
-  const onSearchFiles = () => {};
+  useEffect(() => {
+    setQuestions([]);
+
+    if (setRelatedFiles) setRelatedFiles([]);
+  }, [chatId]);
+
+  useEffect(() => {
+    if (!textGenerator || !textGenerator?.isStreaming) return;
+
+    updateLastMessage(textGenerator.text);
+
+    return () => {
+      // clean text generator
+      if (!textGenerator.isStreaming) dispatch(stopStreaming({ chatId }));
+    };
+  }, [chatId, textGenerator]);
+
+  const onText = (text) => {
+    dispatch(setTextToGenerator({ chatId, text }));
+    // updateLastMessage(text);
+  };
+
+  const onSearchFiles = (_files) => {
+    setRelatedFiles((prev) => {
+      const allFiles = [...prev, ..._files];
+      const lowerCasedFiles = makeLowerCase(allFiles);
+
+      return arrayUniqueByKey(lowerCasedFiles, "itemUrl");
+    });
+  };
 
   const onQuestions = (qstns) => {
     setQuestions(qstns);
@@ -48,11 +85,10 @@ const usePrompt = ({ chatId, refetchMessages, listRef }) => {
         break;
 
       case "SearchFiles":
-        onSearchFiles();
+        onSearchFiles(data.Files);
         break;
 
       case "Questions":
-        console.log(data);
         onQuestions(data.Questions);
         break;
 
@@ -66,17 +102,29 @@ const usePrompt = ({ chatId, refetchMessages, listRef }) => {
   };
 
   const onFetchSuccess = useCallback(
-    (response, message, files, chatId) => {
+    (response) => {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let dataString = "";
+
+      dispatch(startStreaming({ chatId }));
 
       function read() {
         return reader
           .read()
           .then(({ done, value }) => {
+            const { isStreaming } = store.getState().chat.textGenerator[chatId];
+
             if (done) {
+              dispatch(stopStreaming({ chatId }));
               refetchMessages();
+
+              return;
+            }
+
+            if (!isStreaming) {
+              refetchMessages();
+              reader.cancel();
 
               return;
             }
@@ -180,6 +228,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef }) => {
     }
 
     setQuestions([]);
+    dispatch(createTextGenerator({ chatId }));
     fetchStream(text);
   };
 

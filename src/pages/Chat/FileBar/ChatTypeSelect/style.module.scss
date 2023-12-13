@@ -1,0 +1,87 @@
+.typeSelect {
+  position: relative;
+
+  h3 {
+    width: 130px;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    padding: 4.5px 10px;
+    border-radius: 5px;
+    border: 1px solid #e2e2e2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.4s ease-in-out all;
+    color: #616161;
+    cursor: pointer;
+
+    &.active,
+    &:hover {
+      color: #0177fb;
+      border: 1px solid #0177fb;
+    }
+
+    svg {
+      font-size: 14px;
+    }
+  }
+
+  ul {
+    position: absolute;
+    list-style: none;
+    width: 150px;
+    margin: 7px 0 0;
+    padding: 0;
+
+    border-radius: 10px;
+    border: 1px solid #0177fb;
+    background: #fff;
+    box-shadow: 0px 7px 15px 0px rgba(0, 0, 0, 0.1),
+      0px 27px 27px 0px rgba(0, 0, 0, 0.09),
+      0px 62px 37px 0px rgba(0, 0, 0, 0.05),
+      0px 110px 44px 0px rgba(0, 0, 0, 0.01),
+      0px 171px 48px 0px rgba(0, 0, 0, 0);
+
+    li {
+      width: 100%;
+      height: 36px;
+
+      a {
+        color: #616161;
+        font-size: 12px;
+        font-weight: 500;
+        text-decoration: none;
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 15px;
+        svg {
+          font-size: 20px;
+          width: 14px;
+          height: 14px;
+        }
+
+        .selectedIcon {
+          width: 14px !important;
+          height: 14px !important;
+        }
+      }
+
+      &:first-child {
+        border-bottom: 1px solid #f6f5f8;
+
+        a {
+          svg {
+            width: 17px;
+            height: 17px;
+            margin-left: -2px;
+          }
+        }
+      }
+    }
+  }
+}

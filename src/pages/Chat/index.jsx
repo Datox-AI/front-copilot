@@ -1,54 +1,24 @@
 import FileBar from "./FileBar";
-import Chatting from "./Chatting";
-
-import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import { ReactComponent as SnowflakeIcon } from "../../assets/icons/snowflake_light.svg";
-import { ReactComponent as ChatsIcon } from "../../assets/icons/chats.svg";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import useChatsAPI from "../../hooks/api/useChatsAPI";
 
-const _integrations = [
-  {
-    id: 1,
-    name: null,
-    icon: <ChatsIcon />,
-    to: "/chat",
-    type: "messages"
-  },
-  {
-    id: 2,
-    name: "Snowflake",
-    icon: <SnowflakeIcon />,
-    to: "/integration/2",
-    type: "sql"
-  },
-  {
-    id: 3,
-    name: "SharePoint",
-    icon: <SnowflakeIcon />,
-    to: "/integration/3",
-    type: "files"
-  },
-  {
-    id: 4,
-    name: "Dropbox",
-    icon: <SnowflakeIcon />,
-    to: "/integration/4",
-    type: "files"
-  }
-];
+import { Box } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
+import { Outlet, useParams } from "react-router-dom";
+import { _integrations } from "../../consts/integrations";
 
 const Chat = () => {
-  const navigate = useNavigate();
   const { chatId } = useParams();
-  const { data, isLoading, refetch } = useChatsAPI({
+  const { data, refetch } = useChatsAPI({
     isGetUsers: true
   });
 
-  const [integrations] = useState([..._integrations]);
-  const [activeIntegration] = useState(integrations[0]);
+  const [activeIntegration] = useState(_integrations[0]);
   const [activeChat, setActiveChat] = useState(null);
+
+  const chats = useMemo(
+    () => data?.lists?.filter((chat) => chat?.type === "Analytics"),
+    [data]
+  );
 
   const handleSelectChat = (chat) => {
     setActiveChat(chat);
@@ -66,14 +36,14 @@ const Chat = () => {
     <Box width="100%" display="flex">
       <FileBar
         activeIntegration={activeIntegration}
-        chats={data?.lists}
+        chats={chats}
         activeChat={activeChat}
         refetch={refetch}
+        title="Chat"
       />
       <Outlet
         context={{
-          integrations,
-          chats: data?.lists,
+          chats: chats,
           activeChat,
           activeIntegration,
           handleSelectChat,

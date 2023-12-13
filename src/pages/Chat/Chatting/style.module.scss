@@ -8,20 +8,28 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
+
     overflow: hidden;
-    padding: 20px;
+    padding: 0 20px 20px;
 
-    &.hasIntegrations {
-      height: calc(100vh - 136px);
-    }
+    .messages {
+      height: calc(100vh - 60px);
+      max-height: calc(100vh - 60px);
 
-    &.hasChats {
-      height: calc(100vh - 141px);
-    }
+      &.hasIntegrations {
+        height: calc(100vh - 126px);
+        max-height: calc(100vh - 126px);
+      }
 
-    &.hasChats.hasIntegrations {
-      height: calc(100vh - 189px);
+      &.hasChats {
+        height: calc(100vh - 141px);
+        max-height: calc(100vh - 141px);
+      }
+
+      &.hasChats.hasIntegrations {
+        height: calc(100vh - 146px);
+        max-height: calc(100vh - 146px);
+      }
     }
 
     .emptyMessages {
@@ -112,20 +120,43 @@
 
   .chatList {
     width: 100%;
-    height: 63px;
+    height: 40px;
     border-top: 1px solid #e2e2e2;
     background: #fff;
     display: flex;
     align-items: center;
     padding: 0 10px;
     gap: 10px;
+    overflow-x: scroll;
+    position: relative;
+    padding-right: 300px;
+
+    .add {
+      display: flex;
+      width: 30px;
+      height: 30px;
+      padding: 7px 7px 8px 8px;
+      justify-content: center;
+      align-items: center;
+      border-radius: 6px;
+      background: #f6f5f8;
+      position: sticky;
+      right: 00px;
+
+      box-shadow: 0px 0px 1px 0px rgba(140, 140, 140, 0.2),
+        -2px 0px 2px 0px rgba(140, 140, 140, 0.17),
+        -4px 0px 2px 0px rgba(140, 140, 140, 0.1),
+        -7px 0px 3px 0px rgba(140, 140, 140, 0.03),
+        -11px 0px 3px 0px rgba(140, 140, 140, 0);
+    }
   }
 }
 
 .chatItem {
   display: flex;
   width: 126px;
-  height: 43px;
+  min-width: 120px;
+  height: 30px;
   padding: 0 10px;
   justify-content: space-between;
   align-items: center;
@@ -154,12 +185,12 @@
     }
 
     p {
+      width: 100%;
       overflow: hidden;
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
       text-align: left;
-      width: 100%;
     }
 
     input {

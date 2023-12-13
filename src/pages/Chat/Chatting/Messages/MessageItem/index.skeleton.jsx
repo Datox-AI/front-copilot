@@ -2,7 +2,7 @@ import { Avatar, Skeleton } from "@mui/material";
 import styles from "./style.module.scss";
 import { stringAvatar } from "../../../../../utils";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 function generateRandom(min, max) {
   // find diff
@@ -21,13 +21,20 @@ function generateRandom(min, max) {
 }
 
 const MessageItemSkeleton = ({ isBot }) => {
-  const width = !isBot ? generateRandom(250, 700) : generateRandom(250, 700);
-  const height =
-    width > 400
-      ? !isBot
-        ? generateRandom(50, 150)
-        : generateRandom(150, 350)
-      : generateRandom(30, 70);
+  const width = useMemo(() => {
+    if (!isBot) return generateRandom(250, 700);
+
+    return generateRandom(250, 700);
+  }, [isBot]);
+
+  const height = useMemo(() => {
+    if (width > 400) {
+      if (!isBot) return generateRandom(50, 100);
+      else return generateRandom(70, 200);
+    }
+
+    return generateRandom(30, 70);
+  }, [isBot, width]);
 
   return (
     <div

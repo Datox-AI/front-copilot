@@ -5,28 +5,52 @@ import { useDispatch } from "react-redux";
 import { elements } from "./elements";
 import { NavLink, useLocation } from "react-router-dom";
 import { Box, Button, Typography, Popover, Avatar } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { setToken, setUser } from "../../../redux/auth/authSlice";
 import { stringAvatar } from "../../../utils";
 import { ReactComponent as LeftArrowIcon } from "../../../assets/icons/arrow-left.svg";
 import { ReactComponent as RightArrowIcon } from "../../../assets/icons/arrow-right.svg";
 import { Search } from "@mui/icons-material";
 import { useMsal } from "@azure/msal-react";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import useOutsideClick from "../../../hooks/useOutsideClick";
+import { toggleIntegration } from "../../../redux/integrations/integrationsSlice";
 
-const MenuItem = ({ to, label, icon, list }) => {
+const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
+  const dispatch = useDispatch();
+  const ref = useRef();
   const { pathname } = useLocation();
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const onClickIntegration = (integration) => {
+    dispatch(toggleIntegration({ data: integration, isNotDelete: true }));
+  };
+
+  useOutsideClick(ref, () => setIsOpen(false));
+
   if (!to)
     return (
-      <Box width="100%" position="relative">
+      <Box width="100%" position="relative" ref={ref}>
         <button
           className={isOpen ? styles.activeNavLink : styles.navLink}
           onClick={() => setIsOpen((prev) => !prev)}
+          style={{
+            justifyContent: "space-between"
+          }}
         >
-          {icon}
-          <Typography className={styles.label}>{label}</Typography>
+          <Box display="flex" alignItems="center">
+            {icon}
+            <Typography className={styles.label}>{label}</Typography>
+          </Box>
+          {isSidebarOpen && (
+            <ArrowForwardIosRoundedIcon
+              style={{
+                fontSize: 16,
+                transform: isOpen && "rotateZ(90deg)"
+              }}
+            />
+          )}
         </button>
         {list.length > 0 && isOpen && (
           <div className={styles.context}>
@@ -42,15 +66,16 @@ const MenuItem = ({ to, label, icon, list }) => {
                   <li
                     key={i}
                     className={pathname.includes(item.to) && styles.active}
+                    onClick={() => onClickIntegration(item)}
                   >
-                    <NavLink to={item.to}>{item.label}</NavLink>
+                    <NavLink to={item.to}>{item.name}</NavLink>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className={styles.contextFooter}>
+            {/* <div className={styles.contextFooter}>
               <button>See more</button>
-            </div>
+            </div> */}
           </div>
         )}
       </Box>
@@ -70,8 +95,6 @@ const MenuItem = ({ to, label, icon, list }) => {
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { instance, accounts } = useMsal();
 
-  const dispatch = useDispatch();
-
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -80,11 +103,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const logout = () => {
-    dispatch(setUser(null));
-    dispatch(setToken(null));
   };
 
   const els = useMemo(() => {
@@ -109,6 +127,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
               label={element.label}
               icon={element.icon}
               list={element.children}
+              isSidebarOpen={isOpen}
             />
           ))}
         </div>
@@ -140,7 +159,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 </Box>
               )}
             </Box>
-            {/* <ArrowForwardIosRoundedIcon /> */}
           </Button>
         </Box>
       </main>
@@ -159,7 +177,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           style={{
             width: 120
           }}
-          // onClick={logout}
           onClick={() => {
             instance.logoutRedirect();
           }}

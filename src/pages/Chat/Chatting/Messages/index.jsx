@@ -6,6 +6,8 @@ import moment from "moment";
 import useChatsAPI from "../../../../hooks/api/useChatsAPI";
 import MessageItemSkeleton from "./MessageItem/index.skeleton";
 
+const errorEmptyMessage = "Something wrong with response prompt";
+
 const Messages = forwardRef(
   (
     {
@@ -15,12 +17,13 @@ const Messages = forwardRef(
       onSelectQuestion,
       activeChat,
       refetch,
-      isLoading
+      isLoading,
+      isStreaming
     },
     listRef
   ) => {
     const { generateChatName } = useChatsAPI({});
-    console.log(isLoading);
+
     useEffect(() => {
       if (!data || !activeChat) return;
       if (data.lists.length > 2) return;
@@ -88,7 +91,7 @@ const Messages = forwardRef(
                         : "Otabek Nosirov"
                     }
                     message={
-                      message.text || "Something wrong with response prompt"
+                      message.text || (!isStreaming ? errorEmptyMessage : "")
                     }
                     questions={
                       b === groupedMessages.length - 1 &&

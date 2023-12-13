@@ -20,10 +20,18 @@
 
     h2 {
       color: #242424;
-      font-size: 25px;
+      font-size: 22px;
       font-style: normal;
       font-weight: 600;
       line-height: normal;
+    }
+
+    button {
+      min-width: 26px;
+      max-width: 26px;
+      padding: 0;
+      height: 26px;
+      border-radius: 5px;
     }
   }
 

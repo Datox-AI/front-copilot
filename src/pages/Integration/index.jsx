@@ -1,92 +1,98 @@
+import FileBar from "../Chat/FileBar";
+import useChatsAPI from "../../hooks/api/useChatsAPI";
+
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { ReactComponent as SnowflakeIcon } from "../../assets/icons/snowflake_light.svg";
-import { ReactComponent as ChatsIcon } from "../../assets/icons/chats.svg";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
-import FileBar from "../Chat/FileBar";
-
-const _integrations = [
-  {
-    id: 1,
-    name: null,
-    icon: <ChatsIcon />,
-    to: "/chat",
-    type: "messages"
-  },
-  {
-    id: 2,
-    name: "Snowflake",
-    icon: <SnowflakeIcon />,
-    to: "/integration/2",
-    type: "sql"
-  },
-  {
-    id: 3,
-    name: "SharePoint",
-    icon: <SnowflakeIcon />,
-    to: "/integration/3",
-    type: "files"
-  },
-  {
-    id: 4,
-    name: "Dropbox",
-    icon: <SnowflakeIcon />,
-    to: "/integration/4",
-    type: "files"
-  }
-];
+import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
+import { _integrations } from "../../consts/integrations";
 
 const Integration = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { integrationId, chatId } = useParams();
+  const { openedIntegrations } = useSelector((store) => store.integrations);
 
-  const [integrations, setIntegrations] = useState([..._integrations]);
-  const [chats, setChats] = useState([]);
-  const [activeIntegration, setActiveIntegration] = useState(integrations[0]);
+  const [activeIntegration, setActiveIntegration] = useState(
+    openedIntegrations[0]
+  );
+
+  const { data, refetch } = useChatsAPI({
+    isGetUsers: true
+  });
+
   const [activeChat, setActiveChat] = useState(null);
-
-  // useEffect(() => {
-  //   if (integrationId) return;
-
-  //   navigate("/chat/1");
-  // }, [integrationId]);
+  const [relatedFiles, setRelatedFiles] = useState([]);
 
   useEffect(() => {
-    console.log("asds");
-    if (!chatId || chats?.length === 0) return;
+    if (chatId || !data) return;
+    if (!data.lists) return;
+    if (data.lists.length === 0) return;
+    if (!activeIntegration) return;
 
-    navigate("2");
-  }, [chatId, integrationId, chats]);
+    navigate(`${activeIntegration.id}/${data.lists[0].id}`);
+  }, [chatId, data, activeIntegration]);
 
   useEffect(() => {
-    if (!integrationId) return setActiveIntegration(integrations[0]);
+    if (openedIntegrations[0]) return;
+
+    dispatch(toggleIntegration({ data: _integrations[1] }));
+  }, [openedIntegrations, integrationId]);
+
+  useEffect(() => {
+    if (!openedIntegrations[0]) return;
+    if (!integrationId) return setActiveIntegration(openedIntegrations[0]);
 
     setActiveIntegration(
-      integrations.find((inte) => inte.id === Number(integrationId))
+      openedIntegrations.find((inte) => inte.id === Number(integrationId))
     );
-  }, [integrationId]);
+  }, [integrationId, openedIntegrations]);
 
-  const onCloseIntegration = (integrationId) =>
-    setIntegrations((prev) => prev.filter((inte) => inte.id !== integrationId));
+  const onCloseIntegration = (integrationId) => {
+    const foundIntegrationIndex = openedIntegrations.findIndex(
+      (integration) => integration.id === integrationId
+    );
+    const nextIntegration = openedIntegrations[foundIntegrationIndex - 1];
 
-  const handleSelectIntegration = (integration) =>
-    setActiveIntegration(integration);
+    dispatch(
+      toggleIntegration({ data: openedIntegrations[foundIntegrationIndex] })
+    );
+    navigate(nextIntegration ? String(nextIntegration.id) : "/chat");
+  };
+
   const handleSelectChat = (integration) => setActiveChat(integration);
+
+  useEffect(() => {
+    if (!chatId || !data) return;
+
+    const foundChat = data?.lists?.find((chat) => chat.id === chatId);
+
+    handleSelectChat(foundChat);
+  }, [chatId, data?.lists]);
 
   return (
     <Box width="100%" display="flex">
-      <FileBar activeIntegration={activeIntegration} activeChat={activeChat} />
+      <FileBar
+        activeIntegration={activeIntegration}
+        activeChat={activeChat}
+        relatedFiles={relatedFiles}
+        refetch={refetch}
+        hideNewChatBtn={true}
+        title="Chat"
+      />
       <Outlet
         context={{
-          integrations,
-          chats,
+          integrations: openedIntegrations,
+          chats: data?.lists,
           activeChat,
           activeIntegration,
           onCloseIntegration,
           handleSelectChat,
-          handleSelectIntegration,
-          chatId
+          chatId,
+          refetch,
+          setRelatedFiles
         }}
       />
     </Box>

@@ -30,7 +30,7 @@ const grey = {
 
 const PopupBody = styled("div")(
   ({ theme }) => `
-  width: max-content;
+  width: 150px;
   // padding: 12px 16px;
   margin: 8px;
   border-radius: 8px;
@@ -61,7 +61,7 @@ const PopupBody = styled("div")(
       width: 100%;
 
       button{
-        width: 220px;
+        width: 150px;
         padding: 11px 15px;
         text-align: left;
         border-bottom: 1px solid #F6F5F8;
@@ -89,7 +89,8 @@ const ChatItem = ({
   maxWidth,
   isPinned,
   refetchChatList,
-  onDelete
+  onDelete,
+  isVerticalMoreIcon
 }) => {
   const tooltipRef = useRef();
   const navigate = useNavigate();
@@ -182,7 +183,11 @@ const ChatItem = ({
               {updateChat.isLoading ? (
                 <CircularProgress size={10} />
               ) : (
-                <MoreHorizRoundedIcon />
+                <MoreHorizRoundedIcon
+                  style={{
+                    transform: isVerticalMoreIcon && "rotateZ(90deg)"
+                  }}
+                />
               )}
 
               <BasePopup

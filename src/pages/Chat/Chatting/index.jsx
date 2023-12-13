@@ -4,13 +4,14 @@ import styles from "./style.module.scss";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 import TopChatList from "./TopChatList";
 import classNames from "classnames";
-import { createRef, useMemo, useState } from "react";
+import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 import useMessagesAPI from "../../../hooks/api/useMessagesAPI";
 import usePrompt from "../../../hooks/usePrompt";
-import Popup from "../../../components/Popup";
-import MessageItemSkeleton from "./Messages/MessageItem/index.skeleton";
+import { arrayUniqueByKey } from "../../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { stopStreaming } from "../../../redux/chat/chatSlice";
 
-const EmptyMessages = ({ hasChats, hasIntegrations }) => (
+const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
     className={classNames(
       styles.emptyMessages,
@@ -23,7 +24,7 @@ const EmptyMessages = ({ hasChats, hasIntegrations }) => (
     )}
   >
     <CommentIcon />
-    <h3>Ask a question!</h3>
+    <h3>{!isChat ? "Search Files" : "Ask a question!"}</h3>
     <p>
       Effective questioning involves more than just forming inquiries; it
       requires a thoughtful approach.
@@ -41,11 +42,16 @@ const Chatting = ({
   handleSelectIntegration,
   isChat,
   chatId,
-  refetch
+  refetch,
+  setRelatedFiles
 }) => {
   const listRef = createRef();
+  const dispatch = useDispatch();
 
   const [text, setText] = useState("");
+  const textGenerator = useSelector(
+    (store) => store.chat.textGenerator[chatId]
+  );
 
   const {
     data,
@@ -56,21 +62,40 @@ const Chatting = ({
   const { startPrompting, questions } = usePrompt({
     chatId,
     refetchMessages,
-    listRef
+    listRef,
+    setRelatedFiles
   });
 
   const disabled = useMemo(() => !text, [text]);
+
+  useEffect(() => {
+    if (isChat || !data || !data.lists) return;
+
+    const _files = [];
+
+    data.lists
+      ?.filter((message) => message.searchFiles?.length > 0)
+      ?.forEach((message) =>
+        message.searchFiles?.map((file) => _files.push(file))
+      );
+
+    setRelatedFiles((prev) => arrayUniqueByKey([...prev, ..._files]));
+  }, [data]);
 
   const onTexting = (e) => {
     setText(e.target.value);
   };
 
-  const onSend = (e) => {
-    e.preventDefault();
-    setText("");
+  const onSend = useCallback(
+    (e) => {
+      e.preventDefault();
+      setText("");
 
-    startPrompting(text);
-  };
+      if (textGenerator?.isStreaming) dispatch(stopStreaming({ chatId }));
+      else startPrompting(text);
+    },
+    [textGenerator, text, chatId]
+  );
 
   const onSelectQuestion = (question) => {
     startPrompting(question);
@@ -78,27 +103,24 @@ const Chatting = ({
 
   return (
     <div className={styles.chattingContainer}>
-      <TopChatList
-        chats={chats}
-        integrations={integrations}
-        activeChat={activeChat}
-        activeIntegration={activeIntegration}
-        handleSelectChat={handleSelectChat}
-        handleSelectIntegration={handleSelectIntegration}
-        onCloseIntegration={onCloseIntegration}
-        isChat={isChat}
-      />
+      {!isChat && (
+        <TopChatList
+          chats={chats}
+          integrations={integrations}
+          activeChat={activeChat}
+          activeIntegration={activeIntegration}
+          handleSelectChat={handleSelectChat}
+          handleSelectIntegration={handleSelectIntegration}
+          onCloseIntegration={onCloseIntegration}
+          refetch={refetch}
+        />
+      )}
       <div className={styles.chatting}>
         <div
-          className={classNames(
-            styles.emptyMessages,
-            {
-              [styles.hasChats]: chats?.length > 0 || isChat
-            },
-            {
-              [styles.hasIntegrations]: integrations.length > 0 || isChat
-            }
-          )}
+          className={classNames(styles.messages, {
+            [styles.hasChats]: !isChat,
+            [styles.hasIntegrations]: !isChat
+          })}
         >
           {data?.lists?.length > 0 || isLoading ? (
             <Messages
@@ -111,11 +133,13 @@ const Chatting = ({
               activeChat={activeChat}
               refetch={refetch}
               isLoading={isLoading}
+              isStreaming={textGenerator?.isStreaming}
             />
           ) : (
             <EmptyMessages
-              hasChats={chats.length > 0 || !isChat}
-              hasIntegrations={integrations.length > 0}
+              hasChats={chats?.length > 0 || !isChat}
+              hasIntegrations={integrations?.length > 0}
+              isChat={isChat}
             />
           )}
         </div>
@@ -124,6 +148,7 @@ const Chatting = ({
           disabled={disabled}
           onTexting={onTexting}
           onSend={onSend}
+          isStreaming={textGenerator?.isStreaming}
         />
       </div>
     </div>

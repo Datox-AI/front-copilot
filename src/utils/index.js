@@ -60,3 +60,16 @@ export function copyNavigator(val, justValue = false) {
     document.body.removeChild(textArea);
   }
 }
+
+const key = "itemUrl";
+
+export const arrayUniqueByKey = (array, _key = key) => [
+  ...new Map(array.map((item) => [item[_key], item])).values()
+];
+
+export const makeLowerCase = (data) => {
+  const lowerCase = (str) => str[0].toLowerCase() + str.slice(1);
+  return data.map((obj) =>
+    Object.fromEntries(Object.entries(obj).map(([k, v]) => [lowerCase(k), v]))
+  );
+};

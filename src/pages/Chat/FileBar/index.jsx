@@ -1,16 +1,17 @@
 import styles from "./style.module.scss";
+import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
+import NewChatPopup from "./NewChatPopup";
+import NestedList from "../../../components/NestedList";
+import ChatItem from "../Chatting/TopChatList/ChatItem";
+import useChatsAPI from "../../../hooks/api/useChatsAPI";
+import DeleteChatPopup from "./DeleteChatPopup";
+import FileItem from "../../../components/FileItem";
 
 import { Box, Button, CircularProgress } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
-import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import { useCallback, useState } from "react";
-import NewChatPopup from "./NewChatPopup";
-import NestedList from "../../../components/NestedList";
-import MessageItem from "../Chatting/Messages/MessageItem";
-import ChatItem from "../Chatting/TopChatList/ChatItem";
 import { useNavigate } from "react-router-dom";
-import useChatsAPI from "../../../hooks/api/useChatsAPI";
-import DeleteChatPopup from "./DeleteChatPopup";
+import ChatTypeSelect from "./ChatTypeSelect";
 
 const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
   return (
@@ -37,13 +38,41 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
   );
 };
 
+const FilesList = ({ relatedFiles }) => {
+  return (
+    <Box
+      width="100%"
+      display="flex"
+      flexDirection="column"
+      gap="10px"
+      marginTop="20px"
+    >
+      {relatedFiles?.map((file, f) => (
+        <FileItem
+          name={file.ItemName || file.itemName}
+          type={file.ContentType || file.contentType}
+          url={file.ItemUrl || file.itemUrl}
+        />
+      ))}
+    </Box>
+  );
+};
+
 const RenderTypes = {
   messages: MessagesList,
-  files: NestedList,
+  files: FilesList,
   sql: NestedList
 };
 
-const FileBar = ({ activeIntegration, chats, refetch, activeChat }) => {
+const FileBar = ({
+  activeIntegration,
+  chats,
+  refetch,
+  activeChat,
+  relatedFiles,
+  hideNewChatBtn,
+  title
+}) => {
   const navigate = useNavigate();
   const { createChat, deleteChat } = useChatsAPI({});
 
@@ -52,7 +81,7 @@ const FileBar = ({ activeIntegration, chats, refetch, activeChat }) => {
 
   const toggle = () => setIsOpen((prev) => !prev);
 
-  const Renderer = RenderTypes[activeIntegration.type];
+  const Renderer = RenderTypes[activeIntegration?.type || "messages"];
 
   const onCreate = () => {
     createChat.mutate("Analytics", {
@@ -76,23 +105,30 @@ const FileBar = ({ activeIntegration, chats, refetch, activeChat }) => {
   return (
     <div className={styles.filebarContainer}>
       <header>
-        <h2>Chat</h2>
-        <Button
-          variant="contained"
-          onClick={() => onCreate()}
-          disabled={createChat.isLoading}
-          style={{
-            width: 125
-          }}
-        >
-          {createChat.isLoading ? (
-            <CircularProgress size={20} />
-          ) : (
-            <>
-              <Add /> New chat
-            </>
+        <Box display="flex" alignItems="center" gap="10px">
+          <h2>{title}</h2>
+          {!hideNewChatBtn && (
+            <Button
+              variant="contained"
+              onClick={() => onCreate()}
+              disabled={createChat.isLoading}
+            >
+              {createChat.isLoading ? (
+                <CircularProgress size={20} />
+              ) : (
+                <>
+                  <Add
+                    style={{
+                      fontSize: 14
+                    }}
+                  />
+                </>
+              )}
+            </Button>
           )}
-        </Button>
+        </Box>
+
+        <ChatTypeSelect />
       </header>
       <section className={styles.searchSection}>
         <label>
@@ -112,6 +148,7 @@ const FileBar = ({ activeIntegration, chats, refetch, activeChat }) => {
             refetch={refetch}
             activeChat={activeChat}
             onDelete={setDeletableChatId}
+            relatedFiles={relatedFiles}
           />
         </div>
       </section>
