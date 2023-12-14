@@ -37,7 +37,6 @@ jobs:
           app_location: "/"
           api_location: ""
           app_build_command: "yarn build"
-          skip_app_build: true
         env:
           CI: false
 
