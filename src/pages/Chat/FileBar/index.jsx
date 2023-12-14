@@ -16,8 +16,15 @@ import { useNavigate } from "react-router-dom";
 import { groupItemsByDate } from "../../../utils/group";
 
 const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
+  const pinnedChats = useMemo(() => {
+    return chats?.filter((chat) => chat.pinned);
+  }, [chats]);
+
   const groupedChats = useMemo(() => {
-    return groupItemsByDate(chats);
+    return groupItemsByDate(
+      chats.filter((chat) => !chat.pinned),
+      "lastMessage"
+    );
   }, [chats]);
 
   return (
@@ -28,6 +35,30 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
       gap="10px"
       marginTop="20px"
     >
+      <Box
+        width="100%"
+        display="flex"
+        flexDirection="column"
+        gap="10px"
+        marginTop="5px"
+      >
+        {pinnedChats?.map((chat) => (
+          <ChatItem
+            key={chat.id}
+            name={chat.name}
+            chatId={chat.id}
+            maxWidth={true}
+            isPinned={chat.pinned}
+            active={activeChat?.id === chat.id}
+            refetchChatList={refetch}
+            onDelete={onDelete}
+            style={{
+              height: 37
+            }}
+          />
+        ))}
+      </Box>
+
       {groupedChats.map((group) => (
         <ExpandMenu title={group.date}>
           <Box

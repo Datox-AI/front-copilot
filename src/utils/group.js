@@ -4,15 +4,21 @@ const differenceInDays = (date1, date2) => {
   return moment(date2).diff(moment(date1), "days");
 };
 
-export const groupItemsByDate = (data) => {
+export const groupItemsByDate = (data, key = "created") => {
   if (!data || data.length === 0) return [];
 
   const today = moment(new Date()).format("DD MMM yyyy");
   const yesterday = moment(new Date()).add(-1, "day").format("DD MMM yyyy");
 
+  const sortedData = data.sort(function compare(a, b) {
+    var dateA = new Date(a[key] || a.created);
+    var dateB = new Date(b[key] || b.created);
+    return dateB - dateA;
+  });
+
   // Group data by date
-  const groups = data.reduce((groups, message) => {
-    const date = message.created.split("T")[0];
+  const groups = sortedData.reduce((groups, message) => {
+    const date = (message[key] || message.created).split("T")[0];
     if (!groups[date]) {
       groups[date] = [];
     }
