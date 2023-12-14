@@ -2,7 +2,7 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import PersonIcon from "@mui/icons-material/Person";
 import DashboardCustomizeIcon from "@mui/icons-material/DashboardCustomize";
 import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
-import { ReactComponent as ChatIcon } from "../../../assets/icons/chat.svg";
+import { ReactComponent as ChatIcon } from "../../../assets/icons/chat_test.svg";
 import { ReactComponent as UsersIcon } from "../../../assets/icons/two-user.svg";
 import { ReactComponent as LogsIcon } from "../../../assets/icons/copy.svg";
 import { ReactComponent as SettingsIcon } from "../../../assets/icons/setting.svg";

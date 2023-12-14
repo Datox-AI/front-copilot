@@ -60,7 +60,7 @@
 
         svg {
           path {
-            fill: #fff !important;
+            stroke: #fff !important;
           }
         }
 
@@ -86,7 +86,7 @@
 
         svg {
           path {
-            fill: var(--inactive-color);
+            stroke: var(--inactive-color);
           }
         }
 

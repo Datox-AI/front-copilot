@@ -1,6 +1,6 @@
 export const tenantId = "common";
-export const redirectUri = "http://localhost:3000/";
-// export const redirectUri = "https://proud-bay-0c72ab810.4.azurestaticapps.net/";
+// export const redirectUri = "http://localhost:3000/";
+export const redirectUri = "https://ashy-wave-0c6d0ea0f.4.azurestaticapps.net/";
 export const clientId = "4b27aceb-ba01-4d7e-bb3b-bc114c8d1726";
 export const authority = `https://login.microsoftonline.com/${tenantId}`;
 

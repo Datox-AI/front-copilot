@@ -4,6 +4,7 @@ import Chat from "../pages/Chat";
 import Chatting from "../pages/Chat/Chatting";
 import ChattingContainer from "../pages/Chat/Chatting/index.container";
 import Integration from "../pages/Integration";
+import FallbackPage from "../components/FallbackPage";
 
 export const router = createBrowserRouter([
   {
@@ -53,5 +54,16 @@ export const router = createBrowserRouter([
         element: <Navigate to="/chat" />
       }
     ]
+  }
+]);
+
+export const emptyRoutes = createBrowserRouter([
+  {
+    path: "/",
+    element: <FallbackPage />
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" />
   }
 ]);

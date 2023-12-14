@@ -90,7 +90,8 @@ const ChatItem = ({
   isPinned,
   refetchChatList,
   onDelete,
-  isVerticalMoreIcon
+  isVerticalMoreIcon,
+  ...props
 }) => {
   const tooltipRef = useRef();
   const navigate = useNavigate();
@@ -166,6 +167,7 @@ const ChatItem = ({
         })}
         aria-describedby={id}
         type="button"
+        {...props}
       >
         {isRename ? (
           <RenameChat

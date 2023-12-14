@@ -6,14 +6,20 @@ import ChatItem from "../Chatting/TopChatList/ChatItem";
 import useChatsAPI from "../../../hooks/api/useChatsAPI";
 import DeleteChatPopup from "./DeleteChatPopup";
 import FileItem from "../../../components/FileItem";
+import ChatTypeSelect from "./ChatTypeSelect";
+import ExpandMenu from "../../../components/ExandMenu";
 
 import { Box, Button, CircularProgress } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ChatTypeSelect from "./ChatTypeSelect";
+import { groupItemsByDate } from "../../../utils/group";
 
 const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
+  const groupedChats = useMemo(() => {
+    return groupItemsByDate(chats);
+  }, [chats]);
+
   return (
     <Box
       width="100%"
@@ -22,17 +28,32 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
       gap="10px"
       marginTop="20px"
     >
-      {chats?.map((chat) => (
-        <ChatItem
-          key={chat.id}
-          name={chat.name}
-          chatId={chat.id}
-          maxWidth={true}
-          isPinned={chat.pinned}
-          active={activeChat?.id === chat.id}
-          refetchChatList={refetch}
-          onDelete={onDelete}
-        />
+      {groupedChats.map((group) => (
+        <ExpandMenu title={group.date}>
+          <Box
+            width="100%"
+            display="flex"
+            flexDirection="column"
+            gap="10px"
+            marginTop="5px"
+          >
+            {group.items?.map((chat) => (
+              <ChatItem
+                key={chat.id}
+                name={chat.name}
+                chatId={chat.id}
+                maxWidth={true}
+                isPinned={chat.pinned}
+                active={activeChat?.id === chat.id}
+                refetchChatList={refetch}
+                onDelete={onDelete}
+                style={{
+                  height: 37
+                }}
+              />
+            ))}
+          </Box>
+        </ExpandMenu>
       ))}
     </Box>
   );

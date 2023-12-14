@@ -24,6 +24,7 @@ function AuthenticatedProvider({ children }) {
       ...loginRequest,
       account: accounts[0]
     };
+
     if (inProgress === InteractionStatus.None) {
       instance
         .acquireTokenSilent(accessTokenRequest)

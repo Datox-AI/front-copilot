@@ -1,19 +1,18 @@
 import styles from "../style.module.scss";
-import { ReactComponent as Logo } from "../../../assets/images/logo.svg";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import useOutsideClick from "../../../hooks/useOutsideClick";
 import LogoutIcon from "@mui/icons-material/Logout";
+
+import { ReactComponent as Logo } from "../../../assets/images/logo.svg";
 import { useDispatch } from "react-redux";
 import { elements } from "./elements";
 import { NavLink, useLocation } from "react-router-dom";
 import { Box, Button, Typography, Popover, Avatar } from "@mui/material";
 import { useMemo, useRef, useState } from "react";
-import { setToken, setUser } from "../../../redux/auth/authSlice";
 import { stringAvatar } from "../../../utils";
-import { ReactComponent as LeftArrowIcon } from "../../../assets/icons/arrow-left.svg";
 import { ReactComponent as RightArrowIcon } from "../../../assets/icons/arrow-right.svg";
 import { Search } from "@mui/icons-material";
 import { useMsal } from "@azure/msal-react";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import useOutsideClick from "../../../hooks/useOutsideClick";
 import { toggleIntegration } from "../../../redux/integrations/integrationsSlice";
 
 const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
@@ -141,7 +140,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </Button>
           <Button className={styles.profile} onClick={handleClick}>
             <Box width="80%" display="flex">
-              <Avatar {...stringAvatar(accounts?.[0]?.name)} />
+              <Avatar {...stringAvatar(accounts?.[0]?.name || "DATOX USER")} />
 
               {isOpen && (
                 <Box
