@@ -22,7 +22,7 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
 
   const groupedChats = useMemo(() => {
     return groupItemsByDate(
-      chats.filter((chat) => !chat.pinned),
+      chats?.filter((chat) => !chat.pinned),
       "lastMessage"
     );
   }, [chats]);
