@@ -12,7 +12,7 @@ import {
   setUser,
   setUserRoles
 } from "../../redux/auth/authSlice";
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 
 function AuthenticatedProvider({ children }) {
   const dispatch = useDispatch();

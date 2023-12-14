@@ -1,6 +1,6 @@
 import style from "./style.module.scss";
 
-import { jwtDecode } from "jwt-decode";
+import jwtDecode from "jwt-decode";
 import { useMsal } from "@azure/msal-react";
 import { useDispatch } from "react-redux";
 import { setToken, setUser, setUserRoles } from "../../redux/auth/authSlice";
