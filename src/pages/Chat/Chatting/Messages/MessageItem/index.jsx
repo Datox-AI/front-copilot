@@ -5,7 +5,11 @@ import CopyAllRoundedIcon from "@mui/icons-material/CopyAllRounded";
 import Tooltip from "@mui/material/Tooltip";
 import IconButton from "@mui/material/IconButton";
 
-import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+  dark,
+  darcula,
+  duotoneDark
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Avatar } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -52,7 +56,7 @@ const MessageItem = ({
                           handleCopyCode(String(children).replace(/\n$/, ""))
                         }
                       >
-                        <CopyAllRoundedIcon />
+                        <CopyAllRoundedIcon style={{ color: "#fff" }} />
                       </IconButton>
                     </Tooltip>
 
@@ -61,7 +65,7 @@ const MessageItem = ({
                       PreTag="div"
                       children={String(children).replace(/\n$/, "")}
                       language={match[1]}
-                      style={coy}
+                      style={darcula}
                     />
                   </div>
                 ) : (

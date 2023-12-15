@@ -42,11 +42,11 @@
     margin-top: 20px;
 
     label {
-      width: calc(100% - 20px);
+      width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      width: 254px;
+      // width: 254px;
       height: 42px;
       flex-shrink: 0;
       border-radius: 10px;
