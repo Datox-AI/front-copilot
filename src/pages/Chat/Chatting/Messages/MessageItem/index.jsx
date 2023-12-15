@@ -1,8 +1,15 @@
-import { Avatar } from "@mui/material";
 import styles from "./style.module.scss";
-import { stringAvatar } from "../../../../../utils";
 import classNames from "classnames";
-import { useEffect, useRef, useState } from "react";
+import Markdown from "react-markdown";
+import CopyAllRoundedIcon from "@mui/icons-material/CopyAllRounded";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+
+import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Avatar } from "@mui/material";
+import { stringAvatar } from "../../../../../utils";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { useState } from "react";
 
 const MessageItem = ({
   author_fullname,
@@ -10,9 +17,15 @@ const MessageItem = ({
   time,
   isBot,
   questions,
-  onSelectQuestion,
-  isTyping
+  onSelectQuestion
 }) => {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyCode = async (txt) => {
+    await navigator.clipboard.writeText(txt);
+    setIsCopied(true);
+  };
+
   return (
     <div
       className={classNames(styles.container, {
@@ -24,9 +37,43 @@ const MessageItem = ({
       </div>
       <div className={styles.content}>
         <p className={styles.message}>
-          {message}
+          <Markdown
+            children={message}
+            components={{
+              code(props) {
+                const { children, className, node, ...rest } = props;
+                const match = /language-(\w+)/.exec(className || "");
+                return match ? (
+                  <div className={styles.codeContainer}>
+                    <Tooltip title={isCopied ? "Copied!" : "Copy"}>
+                      <IconButton
+                        className={styles.copyBtn}
+                        onClick={() =>
+                          handleCopyCode(String(children).replace(/\n$/, ""))
+                        }
+                      >
+                        <CopyAllRoundedIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <SyntaxHighlighter
+                      {...rest}
+                      PreTag="div"
+                      children={String(children).replace(/\n$/, "")}
+                      language={match[1]}
+                      style={coy}
+                    />
+                  </div>
+                ) : (
+                  <code {...rest} className={className}>
+                    {children}
+                  </code>
+                );
+              }
+            }}
+          />
           {questions && questions.length > 0 && (
-            <ul>
+            <ul className={styles.questions}>
               {questions.map((question, q) => (
                 <li key={q} onClick={() => onSelectQuestion(question)}>
                   {question}

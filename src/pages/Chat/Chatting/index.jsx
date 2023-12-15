@@ -1,33 +1,35 @@
 import Input from "./Input";
 import Messages from "./Messages";
 import styles from "./style.module.scss";
-import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 import TopChatList from "./TopChatList";
 import classNames from "classnames";
-import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 import useMessagesAPI from "../../../hooks/api/useMessagesAPI";
 import usePrompt from "../../../hooks/usePrompt";
+import searchFileIcon from "../../../assets/icons/search-files.png";
+
+import { stopStreaming } from "../../../redux/chat/chatSlice";
 import { arrayUniqueByKey } from "../../../utils";
 import { useDispatch, useSelector } from "react-redux";
-import { stopStreaming } from "../../../redux/chat/chatSlice";
+import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
+import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
-    className={classNames(
-      styles.emptyMessages,
-      {
-        [styles.hasChats]: hasChats
-      },
-      {
-        [styles.hasIntegrations]: hasIntegrations
-      }
-    )}
+    className={classNames(styles.emptyMessages, {
+      [styles.hasChats]: hasChats,
+      [styles.hasIntegrations]: hasIntegrations
+    })}
   >
-    <CommentIcon />
+    {isChat ? (
+      <CommentIcon />
+    ) : (
+      <img src={searchFileIcon} width={150} height={150} />
+    )}
     <h3>{!isChat ? "Search Files" : "Ask a question!"}</h3>
     <p>
-      Effective questioning involves more than just forming inquiries; it
-      requires a thoughtful approach.
+      {isChat
+        ? "Effective questioning involves more than just forming inquiries; itrequires a thoughtful approach."
+        : "Ask me where your files are at and extract document contents and summaries."}
     </p>
   </div>
 );
