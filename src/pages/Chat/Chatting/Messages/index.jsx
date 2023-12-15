@@ -5,6 +5,7 @@ import styles from "./style.module.scss";
 import moment from "moment";
 import useChatsAPI from "../../../../hooks/api/useChatsAPI";
 import MessageItemSkeleton from "./MessageItem/index.skeleton";
+import { useMsal } from "@azure/msal-react";
 
 const errorEmptyMessage = "Something wrong with response prompt";
 
@@ -22,6 +23,7 @@ const Messages = forwardRef(
     },
     listRef
   ) => {
+    const { accounts } = useMsal();
     const { generateChatName } = useChatsAPI({});
 
     useEffect(() => {
@@ -88,7 +90,7 @@ const Messages = forwardRef(
                     author_fullname={
                       message.role === "Assistant"
                         ? "Datox GPT"
-                        : "Otabek Nosirov"
+                        : accounts?.[0]?.name || "DATOX USER"
                     }
                     message={
                       message.text || (!isStreaming ? errorEmptyMessage : "")
