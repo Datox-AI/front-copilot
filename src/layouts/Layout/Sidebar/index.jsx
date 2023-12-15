@@ -1,95 +1,14 @@
 import styles from "../style.module.scss";
-import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
-import useOutsideClick from "../../../hooks/useOutsideClick";
 import LogoutIcon from "@mui/icons-material/Logout";
+import MenuItem from "./MenuItem";
 
 import { ReactComponent as Logo } from "../../../assets/images/logo.svg";
-import { useDispatch } from "react-redux";
 import { elements } from "./elements";
-import { NavLink, useLocation } from "react-router-dom";
 import { Box, Button, Typography, Popover, Avatar } from "@mui/material";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { stringAvatar } from "../../../utils";
 import { ReactComponent as RightArrowIcon } from "../../../assets/icons/arrow-right.svg";
-import { Search } from "@mui/icons-material";
 import { useMsal } from "@azure/msal-react";
-import { toggleIntegration } from "../../../redux/integrations/integrationsSlice";
-
-const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
-  const dispatch = useDispatch();
-  const ref = useRef();
-  const { pathname } = useLocation();
-
-  const [isOpen, setIsOpen] = useState(false);
-
-  const onClickIntegration = (integration) => {
-    dispatch(toggleIntegration({ data: integration, isNotDelete: true }));
-  };
-
-  useOutsideClick(ref, () => setIsOpen(false));
-
-  if (!to)
-    return (
-      <Box width="100%" position="relative" ref={ref}>
-        <button
-          className={isOpen ? styles.activeNavLink : styles.navLink}
-          onClick={() => setIsOpen((prev) => !prev)}
-          style={{
-            justifyContent: "space-between"
-          }}
-        >
-          <Box display="flex" alignItems="center">
-            {icon}
-            <Typography className={styles.label}>{label}</Typography>
-          </Box>
-          {isSidebarOpen && (
-            <ArrowForwardIosRoundedIcon
-              style={{
-                fontSize: 16,
-                transform: isOpen && "rotateZ(90deg)"
-              }}
-            />
-          )}
-        </button>
-        {list.length > 0 && isOpen && (
-          <div className={styles.context}>
-            <div className={styles.contextHeader}>
-              <label>
-                <Search />
-                <input placeholder="Search" />
-              </label>
-            </div>
-            <div className={styles.contextMenu}>
-              <ul>
-                {list.map((item, i) => (
-                  <li
-                    key={i}
-                    className={pathname.includes(item.to) && styles.active}
-                    onClick={() => onClickIntegration(item)}
-                  >
-                    <NavLink to={item.to}>{item.name}</NavLink>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            {/* <div className={styles.contextFooter}>
-              <button>See more</button>
-            </div> */}
-          </div>
-        )}
-      </Box>
-    );
-
-  return (
-    <NavLink
-      to={to}
-      className={pathname.includes(to) ? styles.activeNavLink : styles.navLink}
-    >
-      {icon}
-      <Typography className={styles.label}>{label}</Typography>
-    </NavLink>
-  );
-};
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { instance, accounts } = useMsal();
@@ -139,12 +58,12 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             />
           </Button>
           <Button className={styles.profile} onClick={handleClick}>
-            <Box width="80%" display="flex">
+            <Box width="100%" display="flex">
               <Avatar {...stringAvatar(accounts?.[0]?.name || "DATOX USER")} />
 
               {isOpen && (
                 <Box
-                  width="60%"
+                  width="calc(100% - 42px)"
                   ml="8px"
                   height="52px"
                   display="flex"

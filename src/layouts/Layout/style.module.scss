@@ -85,6 +85,7 @@
         background-color: transparent;
 
         svg {
+          min-width: 24px;
           path {
             stroke: var(--inactive-color);
           }
@@ -96,6 +97,15 @@
           font-weight: 500;
           color: var(--inactive-color);
           margin-left: 12px;
+          transition: 0.4s ease-in-out width;
+          transition: 0.8s ease-in-out opacity;
+          opacity: 0;
+          width: 0;
+
+          &.isOpen {
+            opacity: 1;
+            width: auto;
+          }
         }
       }
 
@@ -291,7 +301,7 @@
           .navLink,
           .activeNavLink {
             .label {
-              display: none;
+              // display: none;
             }
           }
         }

@@ -37,7 +37,9 @@ const Messages = forwardRef(
     }, [data, activeChat]);
 
     useEffect(() => {
-      listRef.current?.lastElementChild?.scrollIntoView();
+      listRef.current?.lastElementChild?.scrollIntoView({
+        block: "end"
+      });
     }, [data?.lists, chatId]);
 
     const groupedMessages = useMemo(() => {
