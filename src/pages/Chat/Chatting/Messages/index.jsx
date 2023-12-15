@@ -37,7 +37,7 @@ const Messages = forwardRef(
     }, [data, activeChat]);
 
     useEffect(() => {
-      listRef.current?.lastElementChild?.scrollIntoView({
+      listRef.current?.scrollIntoView({
         block: "end"
       });
     }, [data?.lists, chatId]);
@@ -81,7 +81,7 @@ const Messages = forwardRef(
           groupedMessages.map((block, b) => (
             <div className={styles.block} key={b}>
               <p>{block.date}</p>
-              <div className={styles.messageList} ref={listRef}>
+              <div className={styles.messageList}>
                 {block.messages.map((message, m) => (
                   <MessageItem
                     key={m}
@@ -104,6 +104,7 @@ const Messages = forwardRef(
                     }
                   />
                 ))}
+                <div ref={listRef}></div>
               </div>
             </div>
           ))
