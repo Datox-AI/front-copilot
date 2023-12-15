@@ -61,7 +61,7 @@ const Chatting = ({
     isLoading
   } = useMessagesAPI({ chatId });
 
-  const { startPrompting, questions } = usePrompt({
+  const { startPrompting, questions, files } = usePrompt({
     chatId,
     refetchMessages,
     listRef,
@@ -126,16 +126,17 @@ const Chatting = ({
         >
           {data?.lists?.length > 0 || isLoading ? (
             <Messages
-              chatId={chatId}
-              data={data}
-              refetchMessages={refetchMessages}
               ref={listRef}
-              questions={questions}
-              onSelectQuestion={onSelectQuestion}
-              activeChat={activeChat}
+              data={data}
+              files={files}
+              chatId={chatId}
               refetch={refetch}
               isLoading={isLoading}
+              questions={questions}
+              activeChat={activeChat}
               isStreaming={textGenerator?.isStreaming}
+              refetchMessages={refetchMessages}
+              onSelectQuestion={onSelectQuestion}
             />
           ) : (
             <EmptyMessages

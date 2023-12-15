@@ -22,6 +22,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   const { token } = useSelector((store) => store.auth);
 
   const [questions, setQuestions] = useState([]);
+  const [files, setFiles] = useState([]);
 
   const updateLastMessage = (text) => {
     const _cachedMsgs = [
