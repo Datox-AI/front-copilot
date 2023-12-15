@@ -186,7 +186,7 @@ const FileBar = ({
         <label>
           <Search />
           <input placeholder="Search" />
-          <TuneRoundedIcon />
+          {/* <TuneRoundedIcon /> */}
         </label>
       </section>
       <section className={styles.contentSection}>

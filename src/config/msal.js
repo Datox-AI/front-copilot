@@ -1,6 +1,6 @@
 export const tenantId = "common";
-// export const redirectUri = "http://localhost:3000/";
-export const redirectUri = "https://copilot.datox.ai/";
+export const redirectUri = "http://localhost:3000/";
+// export const redirectUri = "https://copilot.datox.ai/";
 export const clientId = "4b27aceb-ba01-4d7e-bb3b-bc114c8d1726";
 export const authority = `https://login.microsoftonline.com/${tenantId}`;
 
