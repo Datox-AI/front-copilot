@@ -11,8 +11,7 @@ import {
   startStreaming,
   stopStreaming
 } from "../redux/chat/chatSlice";
-
-const authorizationKey = "mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=";
+import { BASE_API_URL, COPILOT_API_KEY } from "../config/request";
 
 const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   const dispatch = useDispatch();
@@ -187,17 +186,14 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       lists: [..._cachedMsgs, { ...newMSG }]
     });
 
-    fetch(
-      `https://copilotwebapi.azurewebsites.net/api/chats/${chatId}/messages`,
-      {
-        method: "POST",
-        headers: {
-          ApiKey: `${authorizationKey}`,
-          Authorization: "Bearer " + token
-        },
-        body: formData
-      }
-    )
+    fetch(`${BASE_API_URL}api/chats/${chatId}/messages`, {
+      method: "POST",
+      headers: {
+        ApiKey: COPILOT_API_KEY,
+        Authorization: "Bearer " + token
+      },
+      body: formData
+    })
       .then((res) => onFetchSuccess(res, message))
       .catch((err) => {
         console.log(err);
