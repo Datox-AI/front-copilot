@@ -3,15 +3,17 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import MenuItem from "./MenuItem";
 
 import { ReactComponent as Logo } from "../../../assets/images/logo.svg";
-import { elements } from "./elements";
+import { elements, userElements } from "./elements";
 import { Box, Button, Typography, Popover, Avatar } from "@mui/material";
 import { useMemo, useState } from "react";
 import { stringAvatar } from "../../../utils";
 import { ReactComponent as RightArrowIcon } from "../../../assets/icons/arrow-right.svg";
 import { useMsal } from "@azure/msal-react";
+import { useSelector } from "react-redux";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { instance, accounts } = useMsal();
+  const { userRoles } = useSelector((store) => store.auth);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -24,8 +26,10 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   };
 
   const els = useMemo(() => {
-    return elements;
-  }, []);
+    if (userRoles?.includes("Admin")) return elements;
+
+    return userElements;
+  }, [userRoles]);
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;

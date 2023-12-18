@@ -78,3 +78,18 @@ export const elements = [
     ]
   }
 ];
+
+export const userElements = [
+  {
+    name: "chat",
+    label: "Chat",
+    to: "/chat",
+    icon: <ChatIcon />
+  },
+  {
+    name: "integrations",
+    label: "Integrations",
+    icon: <SettingsIcon />,
+    children: [..._integrations.filter((integration) => !!integration.name)]
+  }
+];
