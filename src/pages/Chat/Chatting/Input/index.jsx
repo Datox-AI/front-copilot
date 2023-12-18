@@ -30,6 +30,7 @@ const Input = ({
         value={text}
         onChange={onTexting}
         disabled={isStreaming}
+        autoComplete="off"
       />
 
       <button

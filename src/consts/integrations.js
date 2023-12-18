@@ -10,7 +10,8 @@ export const _integrations = [
     name: null,
     to: "/chat",
     type: "messages",
-    iconType: "chat"
+    iconType: "chat",
+    searchBy: "name"
   },
   //   {
   //     id: 2,
@@ -24,7 +25,8 @@ export const _integrations = [
     name: "SharePoint",
     to: "/integration/3",
     type: "files",
-    iconType: "sharepoint"
+    iconType: "sharepoint",
+    searchBy: "itemName"
   }
   //   {
   //     id: 4,

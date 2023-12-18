@@ -15,17 +15,25 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { groupItemsByDate } from "../../../utils/group";
 
-const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
+const MessagesList = ({ chats, refetch, activeChat, onDelete, search }) => {
   const pinnedChats = useMemo(() => {
-    return chats?.filter((chat) => chat.pinned);
-  }, [chats]);
+    return chats
+      ?.filter((chat) =>
+        search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
+      )
+      ?.filter((chat) => chat.pinned);
+  }, [chats, search]);
 
   const groupedChats = useMemo(() => {
     return groupItemsByDate(
-      chats?.filter((chat) => !chat.pinned),
+      chats
+        ?.filter((chat) =>
+          search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
+        )
+        ?.filter((chat) => !chat.pinned),
       "lastMessage"
     );
-  }, [chats]);
+  }, [chats, search]);
 
   return (
     <Box
@@ -90,7 +98,15 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete }) => {
   );
 };
 
-const FilesList = ({ relatedFiles }) => {
+const FilesList = ({ relatedFiles, search }) => {
+  const mutatedFiles = useMemo(() => {
+    return relatedFiles.filter((file) =>
+      search
+        ? file.itemName.toLowerCase().includes(search?.toLowerCase())
+        : file
+    );
+  }, [search, relatedFiles]);
+
   return (
     <Box
       width="100%"
@@ -99,7 +115,7 @@ const FilesList = ({ relatedFiles }) => {
       gap="10px"
       marginTop="20px"
     >
-      {relatedFiles?.map((file, f) => (
+      {mutatedFiles?.map((file, f) => (
         <FileItem
           name={file.ItemName || file.itemName}
           type={file.ContentType || file.contentType}
@@ -130,6 +146,7 @@ const FileBar = ({
 
   const [isOpen, setIsOpen] = useState(false);
   const [deletableChatId, setDeletableChatId] = useState(null);
+  const [search, setSearch] = useState("");
 
   const toggle = () => setIsOpen((prev) => !prev);
 
@@ -185,7 +202,11 @@ const FileBar = ({
       <section className={styles.searchSection}>
         <label>
           <Search />
-          <input placeholder="Search" />
+          <input
+            placeholder="Search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
           {/* <TuneRoundedIcon /> */}
         </label>
       </section>
@@ -201,6 +222,8 @@ const FileBar = ({
             activeChat={activeChat}
             onDelete={setDeletableChatId}
             relatedFiles={relatedFiles}
+            searchBy={activeIntegration.searchBy}
+            search={search}
           />
         </div>
       </section>

@@ -73,3 +73,7 @@ export const makeLowerCase = (data) => {
     Object.fromEntries(Object.entries(obj).map(([k, v]) => [lowerCase(k), v]))
   );
 };
+
+export const focusOnInput = () => {
+  document.querySelector("#input-message").focus();
+};

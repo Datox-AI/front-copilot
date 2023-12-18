@@ -2,7 +2,6 @@ export const tenantId = "common";
 export const redirectUri = process.env.REACT_APP_MSAL_REDIRECT_URI;
 export const clientId = process.env.REACT_APP_MSAL_CLIENT_ID;
 export const authority = `https://login.microsoftonline.com/${tenantId}`;
-// export const redirectUri = "https://copilot.datox.ai/";
 
 // Uncomment localhost when development, and comment for deployment
 export const msalConfig = {

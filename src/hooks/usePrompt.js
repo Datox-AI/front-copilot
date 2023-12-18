@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { store } from "../redux/store";
 import { queryClient } from "../config/queryClient";
 import moment from "moment";
-import { arrayUniqueByKey, makeLowerCase } from "../utils";
+import { arrayUniqueByKey, focusOnInput, makeLowerCase } from "../utils";
 import {
   createTextGenerator,
   destroyTextGenerator,
@@ -43,6 +43,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   };
 
   useEffect(() => {
+    focusOnInput();
     setQuestions([]);
 
     if (setRelatedFiles) setRelatedFiles([]);
