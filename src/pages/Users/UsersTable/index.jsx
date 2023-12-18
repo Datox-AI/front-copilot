@@ -2,7 +2,7 @@ import styles from "../style.module.scss";
 import { ReactComponent as CheckboxIcon } from "../../../assets/icons/checkbox.svg";
 import { ReactComponent as EditIcon } from "../../../assets/icons/edit.svg";
 import { ReactComponent as TrashIcon } from "../../../assets/icons/trash.svg";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import { stringAvatar } from "../../../utils";
 
 const _data = [
@@ -31,6 +31,63 @@ const _data = [
     role: "Admin"
   }
 ];
+
+const UserItemSkeleton = () => {
+  return (
+    <tr className={styles.userItem}>
+      <td>
+        <Box display="flex" alignItems="center" gap="10px">
+          <CheckboxIcon />
+          <Skeleton variant="circular" width={42} height={42} />
+          <Box display="flex" flexDirection="column">
+            <Typography
+              variant="h3"
+              fontSize="16px"
+              fontWeight={500}
+              color="#616161"
+            >
+              <Skeleton width={250} height={16} variant="rectangular" />
+            </Typography>
+            <Typography
+              variant="h3"
+              fontSize="16px"
+              fontWeight={400}
+              color="#c4c4c4"
+              marginTop="6px"
+            >
+              <Skeleton width={200} height={16} variant="rectangular" />
+            </Typography>
+          </Box>
+        </Box>
+      </td>
+      <td>
+        <Skeleton width={250} height={16} variant="rectangular" />
+      </td>
+      <td>
+        <Skeleton width={100} height={16} variant="rectangular" />
+      </td>
+      <td>
+        <Skeleton width={100} height={16} variant="rectangular" />
+      </td>
+      <td>
+        <Box
+          width="100%"
+          display="flex"
+          alignItems="center"
+          justifyContent="flex-end"
+          gap="10px"
+        >
+          <button>
+            <EditIcon />
+          </button>
+          <button>
+            <TrashIcon />
+          </button>
+        </Box>
+      </td>
+    </tr>
+  );
+};
 
 const UserItem = ({
   fullname,
@@ -89,7 +146,7 @@ const UserItem = ({
   );
 };
 
-const UsersTable = ({ users }) => {
+const UsersTable = ({ users, isLoading }) => {
   return (
     <table className={styles.table}>
       <thead>
@@ -108,15 +165,19 @@ const UsersTable = ({ users }) => {
         </tr>
       </thead>
       <tbody>
-        {users?.map((user, u) => (
-          <UserItem
-            fullname={user?.displayName}
-            email={user?.status}
-            department="-"
-            title="-"
-            role={user?.roles?.length > 1 ? "Admin" : "User"}
-          />
-        ))}
+        {isLoading
+          ? Array(10)
+              .fill(1)
+              .map(() => <UserItemSkeleton />)
+          : users?.map((user, u) => (
+              <UserItem
+                fullname={user?.displayName}
+                email={user?.status}
+                department="-"
+                title="-"
+                role={user?.roles?.length > 1 ? "Admin" : "User"}
+              />
+            ))}
       </tbody>
     </table>
   );
