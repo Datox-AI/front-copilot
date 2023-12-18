@@ -9,7 +9,7 @@ import FileItem from "../../../components/FileItem";
 import ChatTypeSelect from "./ChatTypeSelect";
 import ExpandMenu from "../../../components/ExandMenu";
 
-import { Box, Button, CircularProgress } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -34,6 +34,13 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete, search }) => {
       "lastMessage"
     );
   }, [chats, search]);
+
+  if (chats?.length === 0)
+    return (
+      <Typography mt={2} fontWeight={500}>
+        No Messages
+      </Typography>
+    );
 
   return (
     <Box
@@ -106,6 +113,13 @@ const FilesList = ({ relatedFiles, search }) => {
         : file
     );
   }, [search, relatedFiles]);
+
+  if (!relatedFiles || relatedFiles?.length === 0)
+    return (
+      <Typography mt={2} fontWeight={500}>
+        No Related Files
+      </Typography>
+    );
 
   return (
     <Box
