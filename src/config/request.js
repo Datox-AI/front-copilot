@@ -2,8 +2,11 @@ import axios from "axios";
 import { store } from "../redux/store";
 import { setAuthorized } from "../redux/auth/authSlice";
 
+export const BASE_API_URL = process.env.REACT_APP_BASE_API_URL;
+export const COPILOT_API_KEY = process.env.REACT_APP_COPILOT_API_KEY;
+
 export const request = axios.create({
-  baseURL: "https://copilotwebapi.azurewebsites.net/"
+  baseURL: BASE_API_URL
 });
 
 const errorHandler = (error) => {
@@ -26,10 +29,7 @@ request.interceptors?.request.use(
 
     if (config.headers["Content-Type"] !== "multipart/form-data")
       config.headers.set("Content-Type", "application/json");
-    config.headers.set(
-      "ApiKey",
-      "mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus="
-    );
+    config.headers.set("ApiKey", COPILOT_API_KEY);
 
     return config;
   },
