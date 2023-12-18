@@ -27,18 +27,6 @@ const Integration = () => {
   const [relatedFiles, setRelatedFiles] = useState([]);
 
   useEffect(() => {
-    if (chatId || !data) return;
-    if (!data.lists) return;
-    if (!activeIntegration) return navigate("/chat");
-
-    // if (data.lists.length === 0) navigate(`${activeIntegration.id}`);
-    // else navigate(`${activeIntegration.id}/${data.lists[0].id}`)
-
-    navigate(activeIntegration.id);
-    setActiveChat(null);
-  }, [chatId, data, activeIntegration]);
-
-  useEffect(() => {
     if (openedIntegrations[0]) return;
 
     dispatch(toggleIntegration({ data: _integrations[1] }));
@@ -46,14 +34,19 @@ const Integration = () => {
 
   useEffect(() => {
     if (openedIntegrations.length === 0) return;
-    if (!integrationId) return setActiveIntegration(openedIntegrations[0]);
+    if (!activeIntegration && openedIntegrations.length === 0)
+      return navigate("/chat");
+    if (!integrationId)
+      return navigate(
+        String(activeIntegration?.id || openedIntegrations[0]?.id)
+      );
 
-    const _integration =
-      openedIntegrations.find((inte) => inte.id === Number(integrationId)) ||
-      _integrations.find((inte) => inte.id === Number(integrationId));
+    const _integration = openedIntegrations?.find(
+      (inte) => inte.id === Number(integrationId)
+    );
 
     setActiveIntegration(_integration);
-  }, [integrationId, openedIntegrations]);
+  }, [integrationId, openedIntegrations, activeIntegration]);
 
   const onCloseIntegration = (integrationId) => {
     const foundIntegrationIndex = openedIntegrations.findIndex(
