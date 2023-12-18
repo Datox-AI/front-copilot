@@ -75,5 +75,5 @@ export const makeLowerCase = (data) => {
 };
 
 export const focusOnInput = () => {
-  document.querySelector("#input-message").focus();
+  document.querySelector("#input-message")?.focus();
 };

@@ -13,13 +13,13 @@ export const _integrations = [
     iconType: "chat",
     searchBy: "name"
   },
-  //   {
-  //     id: 2,
-  //     name: "Snowflake",
-  //     to: "/integration/2",
-  //     type: "sql",
-  //     iconType: "snowflake"
-  //   }
+  {
+    id: 2,
+    name: "Snowflake",
+    to: "/integration/2",
+    type: "sql",
+    iconType: "snowflake"
+  },
   {
     id: 3,
     name: "SharePoint",

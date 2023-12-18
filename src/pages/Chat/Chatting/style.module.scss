@@ -1,7 +1,7 @@
 .chattingContainer {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width: calc(100% - 284px);
   height: 100vh;
 
   .chatting {
@@ -129,7 +129,7 @@
     gap: 10px;
     overflow-x: scroll;
     position: relative;
-    padding-right: 300px;
+    // padding-right: 300px;
 
     .add {
       display: flex;

@@ -146,13 +146,15 @@ const Chatting = ({
             />
           )}
         </div>
-        <Input
-          text={text}
-          disabled={disabled}
-          onTexting={onTexting}
-          onSend={onSend}
-          isStreaming={textGenerator?.isStreaming}
-        />
+        {chatId && (
+          <Input
+            text={text}
+            disabled={disabled}
+            onTexting={onTexting}
+            onSend={onSend}
+            isStreaming={textGenerator?.isStreaming}
+          />
+        )}
       </div>
     </div>
   );

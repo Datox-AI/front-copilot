@@ -29,10 +29,13 @@ const Integration = () => {
   useEffect(() => {
     if (chatId || !data) return;
     if (!data.lists) return;
-    if (data.lists.length === 0) return;
-    if (!activeIntegration) return;
+    if (!activeIntegration) return navigate("/chat");
 
-    navigate(`${activeIntegration.id}/${data.lists[0].id}`);
+    // if (data.lists.length === 0) navigate(`${activeIntegration.id}`);
+    // else navigate(`${activeIntegration.id}/${data.lists[0].id}`)
+
+    navigate(activeIntegration.id);
+    setActiveChat(null);
   }, [chatId, data, activeIntegration]);
 
   useEffect(() => {
@@ -42,12 +45,14 @@ const Integration = () => {
   }, [openedIntegrations, integrationId]);
 
   useEffect(() => {
-    if (!openedIntegrations[0]) return;
+    if (openedIntegrations.length === 0) return;
     if (!integrationId) return setActiveIntegration(openedIntegrations[0]);
 
-    setActiveIntegration(
-      openedIntegrations.find((inte) => inte.id === Number(integrationId))
-    );
+    const _integration =
+      openedIntegrations.find((inte) => inte.id === Number(integrationId)) ||
+      _integrations.find((inte) => inte.id === Number(integrationId));
+
+    setActiveIntegration(_integration);
   }, [integrationId, openedIntegrations]);
 
   const onCloseIntegration = (integrationId) => {

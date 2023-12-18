@@ -1,9 +1,9 @@
-/* config-overrides.js */
-const { override, addLessLoader } = require("customize-cra");
+// /* config-overrides.js */
+// const { override, addLessLoader } = require("customize-cra");
 
-module.exports = override(
-  addLessLoader({
-    javascriptEnabled: true,
-    modifyVars: { "@base-color": "#434ae9" }
-  })
-);
+// module.exports = override(
+//   addLessLoader({
+//     javascriptEnabled: true,
+//     modifyVars: { "@base-color": "#434ae9" }
+//   })
+// );

@@ -222,7 +222,6 @@ const FileBar = ({
             activeChat={activeChat}
             onDelete={setDeletableChatId}
             relatedFiles={relatedFiles}
-            searchBy={activeIntegration.searchBy}
             search={search}
           />
         </div>
