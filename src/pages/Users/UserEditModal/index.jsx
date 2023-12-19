@@ -14,82 +14,61 @@ import {
 } from "@mui/material";
 import { stringAvatar } from "../../../utils";
 import useRolesAPI from "../../../hooks/api/useRolesAPI";
+import toast from "react-hot-toast";
 
-const UserAddModal = ({ isOpen, close, refetch }) => {
-  const {
-    data,
-    updateMutation,
-    refetch: refetchInactiveUsers
-  } = useUsersAPI("Inactive");
+const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
+  const { updateMutation, refetch: refetchInactiveUsers } = useUsersAPI("none");
   const { data: roles } = useRolesAPI();
 
   const [selectedRole, setSelectedRole] = useState(null);
-  const [search, setSearch] = useState("");
-  const [selectedUsers, setSelectedUsers] = useState([]);
 
   useEffect(() => {
-    if (!roles || !!selectedRole) return;
+    if (!roles || !selectedUser) return;
 
-    setSelectedRole(roles?.lists?.find((role) => role.name === "User")?.id);
-  }, [roles]);
+    setSelectedRole(selectedUser?.roles?.[0].id);
+  }, [roles, selectedUser]);
 
-  const toggleSelectedUsers = (user) => {
-    const foundUser = selectedUsers.find((_user) => _user.adId === user.adId);
-
-    if (foundUser)
-      setSelectedUsers((prev) =>
-        prev.filter((_user) => _user.adId !== user.adId)
+  const handleSave = useCallback(
+    async () => {
+      updateMutation.mutate(
+        {
+          roleIds: [selectedRole],
+          userId: selectedUser?.adId
+        },
+        {
+          onSuccess: () => {
+            refetch();
+            refetchInactiveUsers();
+            close();
+          },
+          onError: (err) => {
+            toast.error(err.data.title);
+          }
+        }
       );
-    else setSelectedUsers((prev) => [...prev, user]);
-  };
-
-  const handleSave = useCallback(async () => {
-    selectedUsers.map(async (selectedUser) => {
-      await updateMutation.mutateAsync({
-        roleIds: [selectedRole],
-        userId: selectedUser.adId
-      });
-
-      refetch();
-      refetchInactiveUsers();
-    });
-  }, [selectedRole, selectedUsers]);
+    },
+    [selectedRole],
+    selectedUser
+  );
 
   return (
-    <Popup isOpen={isOpen} title="Add User" close={close}>
+    <Popup isOpen={isOpen} title="Edit User" close={close}>
       <div className={styles.addModal}>
-        <label>
-          <Search />
-          <input
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </label>
-
         <ul>
-          {data?.lists?.map((user, u) => (
-            <li
-              key={u}
-              onClick={() => toggleSelectedUsers(user)}
-              className={
-                selectedUsers.find((_user) => _user.adId === user.adId) &&
-                styles.selected
-              }
-            >
-              <CheckboxIcon />{" "}
+          {!!selectedUser && (
+            <li>
               <Avatar
-                {...stringAvatar(user.displayName)}
+                {...stringAvatar(selectedUser?.displayName)}
                 sx={{
-                  ...stringAvatar(user.displayName).sx,
+                  ...stringAvatar(selectedUser?.displayName).sx,
                   height: 32,
                   width: 32,
                   fontSize: 14
                 }}
               />{" "}
-              {user.displayName}
+              {selectedUser?.displayName}
             </li>
-          ))}
+          )}
         </ul>
 
         <Box width="100%" mt={2}>
@@ -134,4 +113,4 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
   );
 };
 
-export default UserAddModal;
+export default UserEditModal;

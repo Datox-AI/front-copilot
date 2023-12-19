@@ -2,7 +2,14 @@ import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import Popup from "../../../../components/Popup";
 import alertImg from "../../../../assets/icons/alert.png";
 
-const DeleteChatPopup = ({ isOpen, close, onSubmit, isLoading }) => {
+const DeleteChatPopup = ({
+  isOpen,
+  close,
+  onSubmit,
+  isLoading,
+  title = " Are you sure you want to close this chat?",
+  description = "All chat tabs associated with this will be closed."
+}) => {
   return (
     <Popup isOpen={isOpen} close={close}>
       <Box
@@ -18,7 +25,7 @@ const DeleteChatPopup = ({ isOpen, close, onSubmit, isLoading }) => {
           textAlign="center"
           marginTop="16px"
         >
-          Are you sure you want to close this chat?
+          {title}
         </Typography>
         <Typography
           fontSize="16px"
@@ -26,7 +33,7 @@ const DeleteChatPopup = ({ isOpen, close, onSubmit, isLoading }) => {
           textAlign="center"
           marginTop="8px"
         >
-          All chat tabs associated with this will be closed.
+          {description}
         </Typography>
 
         <Box

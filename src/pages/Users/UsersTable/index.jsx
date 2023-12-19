@@ -94,13 +94,16 @@ const UserItem = ({
   email = "someone@datox.ai",
   department,
   title,
-  role
+  role,
+  onSelect,
+  onDelete,
+  data
 }) => {
   return (
     <tr className={styles.userItem}>
       <td>
         <Box display="flex" alignItems="center" gap="10px">
-          <CheckboxIcon />
+          {/* <CheckboxIcon /> */}
           <Avatar {...stringAvatar(fullname)} />
           <Box display="flex" flexDirection="column">
             <Typography
@@ -134,10 +137,10 @@ const UserItem = ({
           justifyContent="flex-end"
           gap="10px"
         >
-          <button>
+          <button onClick={() => onSelect(data)}>
             <EditIcon />
           </button>
-          <button>
+          <button onClick={() => onDelete(data)}>
             <TrashIcon />
           </button>
         </Box>
@@ -146,7 +149,12 @@ const UserItem = ({
   );
 };
 
-const UsersTable = ({ users, isLoading }) => {
+const UsersTable = ({
+  users,
+  isLoading,
+  toggleEditModal,
+  toggleDeleteModal
+}) => {
   return (
     <table className={styles.table}>
       <thead>
@@ -175,6 +183,9 @@ const UsersTable = ({ users, isLoading }) => {
                 email={user?.status}
                 department="-"
                 title="-"
+                onSelect={toggleEditModal}
+                onDelete={toggleDeleteModal}
+                data={user}
                 role={
                   user?.roles?.length > 1 || user?.roles?.[0]?.name === "Admin"
                     ? "Admin"
