@@ -1,12 +1,20 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { request } from "../../config/request";
 
-const useUsersAPI = () => {
-  const { data, isLoading, refetch } = useQuery(["GET_USERS"], () =>
-    request.get("api/users")
+const useUsersAPI = (status) => {
+  const { data, isLoading, refetch } = useQuery(["GET_USERS", status], () =>
+    request.get("api/users", {
+      params: {
+        UserStatuses: status
+      }
+    })
   );
 
-  return { data, isLoading, refetch };
+  const updateMutation = useMutation((payload) =>
+    request.put("/api/users/updateuserroles", payload)
+  );
+
+  return { data, isLoading, refetch, updateMutation };
 };
 
 export default useUsersAPI;

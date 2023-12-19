@@ -81,3 +81,87 @@
     }
   }
 }
+
+.addModal {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 20px;
+
+  label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 10px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #f8f9fa;
+    padding: 11px 10px;
+
+    svg {
+      color: #c4c4c4;
+
+      &:last-child {
+        color: #616161;
+      }
+    }
+
+    input {
+      background-color: transparent;
+      outline: none;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      width: 95%;
+
+      &::placeholder {
+        color: #c4c4c4;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+  }
+
+  ul {
+    margin: 15px 0 0 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+    max-height: 250px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    li {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      gap: 10px;
+      height: 45px;
+      border: 1px solid #e2e2e2;
+      border-radius: 6px;
+      padding: 5px 7px;
+
+      &.selected {
+        svg {
+          path {
+            // stroke: rgb(47, 207, 47);
+            stroke: var(--primary-color);
+          }
+        }
+
+        border-color: var(--primary-color);
+      }
+    }
+  }
+
+  .button {
+    height: 42px !important;
+  }
+}

@@ -176,7 +176,7 @@ const UsersTable = ({ users, isLoading }) => {
                 department="-"
                 title="-"
                 role={
-                  user?.roles?.length > 1 || user?.roles?.[0]?.name
+                  user?.roles?.length > 1 || user?.roles?.[0]?.name === "Admin"
                     ? "Admin"
                     : user?.roles?.length === 0
                     ? "Imposter"
