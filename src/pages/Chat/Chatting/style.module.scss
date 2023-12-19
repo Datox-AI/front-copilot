@@ -140,6 +140,7 @@
     padding: 0 10px;
     gap: 10px;
     overflow-x: scroll;
+    overflow-y: visible;
     position: relative;
 
     &::-webkit-scrollbar {
