@@ -175,7 +175,13 @@ const UsersTable = ({ users, isLoading }) => {
                 email={user?.status}
                 department="-"
                 title="-"
-                role={user?.roles?.length > 1 ? "Admin" : "User"}
+                role={
+                  user?.roles?.length > 1 || user?.roles?.[0]?.name
+                    ? "Admin"
+                    : user?.roles?.length === 0
+                    ? "Imposter"
+                    : "User"
+                }
               />
             ))}
       </tbody>

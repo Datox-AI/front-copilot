@@ -3,6 +3,8 @@ import styles from "./style.module.scss";
 import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
 import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
 import classNames from "classnames";
+import useOAuth from "../../hooks/useOAuth";
+import { Button } from "@mui/material";
 
 const _data = [
   {
@@ -82,11 +84,13 @@ const NestedListItem = ({ listItem }) => {
 
 const NestedList = ({ data = _data }) => {
   return (
-    <ul className={styles.nestedList}>
-      {data.map((item, i) => (
-        <NestedListItem key={i} listItem={item} />
-      ))}
-    </ul>
+    <>
+      <ul className={styles.nestedList}>
+        {data.map((item, i) => (
+          <NestedListItem key={i} listItem={item} />
+        ))}
+      </ul>
+    </>
   );
 };
 
