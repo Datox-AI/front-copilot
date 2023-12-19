@@ -144,6 +144,8 @@
 
     &::-webkit-scrollbar {
       width: 5px;
+      position: absolute;
+      height: 3px;
     }
 
     &::-webkit-scrollbar-track {
@@ -152,7 +154,7 @@
 
     &::-webkit-scrollbar-thumb {
       background-color: darkgrey;
-      outline: 1px solid slategrey;
+      outline: 1px solid rgb(189, 194, 198);
       border-radius: 8px;
       width: 2px;
     }
