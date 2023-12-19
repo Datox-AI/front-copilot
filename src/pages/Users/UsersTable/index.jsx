@@ -37,7 +37,7 @@ const UserItemSkeleton = () => {
     <tr className={styles.userItem}>
       <td>
         <Box display="flex" alignItems="center" gap="10px">
-          <CheckboxIcon />
+          {/* <CheckboxIcon /> */}
           <Skeleton variant="circular" width={42} height={42} />
           <Box display="flex" flexDirection="column">
             <Typography
