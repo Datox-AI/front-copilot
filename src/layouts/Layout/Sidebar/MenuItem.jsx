@@ -16,6 +16,7 @@ const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
   const { pathname } = useLocation();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const onClickIntegration = (integration) => {
     dispatch(toggleIntegration({ data: integration, isNotDelete: true }));
@@ -57,20 +58,28 @@ const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
             <div className={styles.contextHeader}>
               <label>
                 <Search />
-                <input placeholder="Search" />
+                <input
+                  placeholder="Search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </label>
             </div>
             <div className={styles.contextMenu}>
               <ul>
-                {list.map((item, i) => (
-                  <li
-                    key={i}
-                    className={pathname.includes(item.to) && styles.active}
-                    onClick={() => onClickIntegration(item)}
-                  >
-                    <NavLink to={item.to}>{item.name}</NavLink>
-                  </li>
-                ))}
+                {list
+                  ?.filter((item) =>
+                    item.name.toLowerCase().includes(search.toLowerCase())
+                  )
+                  .map((item, i) => (
+                    <li
+                      key={i}
+                      className={pathname.includes(item.to) && styles.active}
+                      onClick={() => onClickIntegration(item)}
+                    >
+                      <NavLink to={item.to}>{item.name}</NavLink>
+                    </li>
+                  ))}
               </ul>
             </div>
             {/* <div className={styles.contextFooter}>

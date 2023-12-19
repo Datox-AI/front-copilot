@@ -68,28 +68,32 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
         </label>
 
         <ul>
-          {data?.lists?.map((user, u) => (
-            <li
-              key={u}
-              onClick={() => toggleSelectedUsers(user)}
-              className={
-                selectedUsers.find((_user) => _user.adId === user.adId) &&
-                styles.selected
-              }
-            >
-              <CheckboxIcon />{" "}
-              <Avatar
-                {...stringAvatar(user.displayName)}
-                sx={{
-                  ...stringAvatar(user.displayName).sx,
-                  height: 32,
-                  width: 32,
-                  fontSize: 14
-                }}
-              />{" "}
-              {user.displayName}
-            </li>
-          ))}
+          {data?.lists
+            ?.filter((user) =>
+              user.displayName.toLowerCase().includes(search.toLowerCase())
+            )
+            ?.map((user, u) => (
+              <li
+                key={u}
+                onClick={() => toggleSelectedUsers(user)}
+                className={
+                  selectedUsers.find((_user) => _user.adId === user.adId) &&
+                  styles.selected
+                }
+              >
+                <CheckboxIcon />{" "}
+                <Avatar
+                  {...stringAvatar(user.displayName)}
+                  sx={{
+                    ...stringAvatar(user.displayName).sx,
+                    height: 32,
+                    width: 32,
+                    fontSize: 14
+                  }}
+                />{" "}
+                {user.displayName}
+              </li>
+            ))}
         </ul>
 
         <Box width="100%" mt={2}>
