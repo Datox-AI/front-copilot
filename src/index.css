@@ -156,3 +156,23 @@ code {
 .DatePicker input::placeholder {
   color: #262626;
 }
+
+.menu-item-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.menu-item-select svg path {
+  stroke: #616161;
+}
+
+.MuiSelect-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.MuiSelect-select svg path {
+  stroke: #616161;
+}

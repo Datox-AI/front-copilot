@@ -1,43 +1,18 @@
 import styles from "../style.module.scss";
 import { ReactComponent as CheckboxIcon } from "../../../assets/icons/checkbox.svg";
+import { ReactComponent as CheckedIcon } from "../../../assets/icons/checked.svg";
 import { ReactComponent as EditIcon } from "../../../assets/icons/edit.svg";
 import { ReactComponent as TrashIcon } from "../../../assets/icons/trash.svg";
 import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import { stringAvatar } from "../../../utils";
-
-const _data = [
-  {
-    fullname: "Otabek Nosirov",
-    department: "IT",
-    title: "Senior Frontend Developer",
-    role: "Admin"
-  },
-  {
-    fullname: "Ivan Ivanov",
-    department: "Marketing",
-    title: "Lead Marketolog",
-    role: "User"
-  },
-  {
-    fullname: "Kungfu Panda",
-    department: "IT",
-    title: "Frontend Developer",
-    role: "User"
-  },
-  {
-    fullname: "Jacky Chan",
-    department: "Data Science",
-    title: "Senior Data Scientist",
-    role: "Admin"
-  }
-];
+import classNames from "classnames";
 
 const UserItemSkeleton = () => {
   return (
     <tr className={styles.userItem}>
       <td>
         <Box display="flex" alignItems="center" gap="10px">
-          {/* <CheckboxIcon /> */}
+          <CheckboxIcon />
           <Skeleton variant="circular" width={42} height={42} />
           <Box display="flex" flexDirection="column">
             <Typography
@@ -97,13 +72,23 @@ const UserItem = ({
   role,
   onSelect,
   onDelete,
-  data
+  toggleUser,
+  data,
+  isSelected
 }) => {
   return (
-    <tr className={styles.userItem}>
+    <tr
+      className={classNames(styles.userItem, {
+        [styles.isSelected]: isSelected
+      })}
+    >
       <td>
         <Box display="flex" alignItems="center" gap="10px">
-          {/* <CheckboxIcon /> */}
+          {isSelected ? (
+            <CheckedIcon onClick={toggleUser} />
+          ) : (
+            <CheckboxIcon onClick={toggleUser} />
+          )}
           <Avatar {...stringAvatar(fullname)} />
           <Box display="flex" flexDirection="column">
             <Typography
@@ -152,8 +137,10 @@ const UserItem = ({
 const UsersTable = ({
   users,
   isLoading,
+  selectedUsers,
   toggleEditModal,
-  toggleDeleteModal
+  toggleDeleteModal,
+  toggleSelectedUsers
 }) => {
   return (
     <table className={styles.table}>
@@ -181,11 +168,13 @@ const UsersTable = ({
               <UserItem
                 fullname={user?.displayName}
                 email={user?.status}
-                department="-"
+                department="Engineering"
                 title="-"
                 onSelect={toggleEditModal}
                 onDelete={toggleDeleteModal}
                 data={user}
+                isSelected={selectedUsers.includes(user.adId)}
+                toggleUser={() => toggleSelectedUsers(user?.adId)}
                 role={
                   user?.roles?.length > 1 || user?.roles?.[0]?.name === "Admin"
                     ? "Admin"

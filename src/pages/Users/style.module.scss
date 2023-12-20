@@ -1,7 +1,87 @@
-.container {
+.header {
   width: calc(100% - 20px);
-  min-height: calc(100vh - 20px);
-  max-height: calc(100vh - 20px);
+  height: 55px;
+  background-color: #fff;
+  border-radius: 10px 0px 0px 10px;
+  margin: 10px;
+  padding: 0 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  button {
+    background-color: transparent;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #242424;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 140%; /* 25.2px */
+
+    svg {
+      path {
+        stroke: var(--primary-color);
+      }
+    }
+
+    &:disabled {
+      color: #c4c4c4;
+
+      svg {
+        path {
+          stroke: #c4c4c4;
+        }
+      }
+    }
+  }
+
+  label {
+    width: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 10px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #f8f9fa;
+    padding: 11px 10px;
+    border: 1px solid #e2e2e2;
+    background: #fff;
+
+    svg {
+      color: #c4c4c4;
+
+      &:last-child {
+        color: #616161;
+      }
+    }
+
+    input {
+      background-color: transparent;
+      outline: none;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      width: 95%;
+
+      &::placeholder {
+        color: #c4c4c4;
+        font-size: 16px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.container {
+  margin-top: 10px;
+  width: calc(100% - 20px);
+  min-height: calc(100vh - 85px);
+  max-height: calc(100vh - 85px);
   overflow-y: scroll;
   background-color: #fff;
   border-radius: 16px 0px 0px 10px;
@@ -42,6 +122,17 @@
         height: 70px;
         background: #fff;
 
+        &.isSelected {
+          td {
+            border-color: var(--primary-color);
+            &,
+            &:first-child,
+            &:last-child {
+              border-color: var(--primary-color);
+            }
+          }
+        }
+
         td {
           height: 100%;
           border-top: 1px solid #e2e2e2;
@@ -49,6 +140,7 @@
           color: #616161;
           font-size: 16px;
           font-weight: 500;
+          transition: 0.4s ease-in-out all;
 
           &:first-child {
             border-left: 1px solid #e2e2e2;
@@ -131,7 +223,7 @@
     padding: 0;
     list-style: none;
     width: 100%;
-    max-height: 250px;
+    max-height: 260px;
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
@@ -143,7 +235,7 @@
       align-items: center;
       cursor: pointer;
       gap: 10px;
-      height: 45px;
+      height: 69px;
       border: 1px solid #e2e2e2;
       border-radius: 6px;
       padding: 5px 7px;

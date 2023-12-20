@@ -7,6 +7,7 @@ const DeleteChatPopup = ({
   close,
   onSubmit,
   isLoading,
+  newImg,
   title = " Are you sure you want to close this chat?",
   description = "All chat tabs associated with this will be closed."
 }) => {
@@ -18,7 +19,7 @@ const DeleteChatPopup = ({
         flexDirection="column"
         alignItems="center"
       >
-        <img src={alertImg} width={120} height={120} alt="alert" />
+        <img src={newImg || alertImg} width={120} height={120} alt="alert" />
         <Typography
           fontSize="24px"
           fontWeight={500}
