@@ -6,6 +6,9 @@ import { ReactComponent as TrashIcon } from "../../../assets/icons/trash.svg";
 import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import { stringAvatar } from "../../../utils";
 import classNames from "classnames";
+import { useState } from "react";
+import { Popover } from "react-tiny-popover";
+import DeletePopover from "../../../components/DeletePopover";
 
 const UserItemSkeleton = () => {
   return (
@@ -71,11 +74,14 @@ const UserItem = ({
   title,
   role,
   onSelect,
-  onDelete,
+
   toggleUser,
   data,
-  isSelected
+  isSelected,
+  onDeleteSubmit
 }) => {
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
   return (
     <tr
       className={classNames(styles.userItem, {
@@ -114,22 +120,36 @@ const UserItem = ({
       <td>{department}</td>
       <td>{title}</td>
       <td>{role}</td>
-      <td>
-        <Box
-          width="100%"
-          display="flex"
-          alignItems="center"
-          justifyContent="flex-end"
-          gap="10px"
-        >
-          <button onClick={() => onSelect(data)}>
-            <EditIcon />
-          </button>
-          <button onClick={() => onDelete(data)}>
-            <TrashIcon />
-          </button>
-        </Box>
-      </td>
+      <Popover
+        isOpen={isPopoverOpen}
+        positions={["bottom", "right"]}
+        content={
+          <DeletePopover
+            onCancel={() => setIsPopoverOpen(false)}
+            onSubmit={() => {
+              onDeleteSubmit();
+              setIsPopoverOpen(false);
+            }}
+          />
+        }
+      >
+        <td>
+          <Box
+            width="100%"
+            display="flex"
+            alignItems="center"
+            justifyContent="flex-end"
+            gap="10px"
+          >
+            <button onClick={() => onSelect(data)}>
+              <EditIcon />
+            </button>
+            <button onClick={() => setIsPopoverOpen((prev) => !prev)}>
+              <TrashIcon />
+            </button>
+          </Box>
+        </td>
+      </Popover>
     </tr>
   );
 };
@@ -140,7 +160,8 @@ const UsersTable = ({
   selectedUsers,
   toggleEditModal,
   toggleDeleteModal,
-  toggleSelectedUsers
+  toggleSelectedUsers,
+  onDeleteSubmit
 }) => {
   return (
     <table className={styles.table}>
@@ -171,10 +192,10 @@ const UsersTable = ({
                 department="Engineering"
                 title="-"
                 onSelect={toggleEditModal}
-                onDelete={toggleDeleteModal}
                 data={user}
                 isSelected={selectedUsers.includes(user.adId)}
                 toggleUser={() => toggleSelectedUsers(user?.adId)}
+                onDeleteSubmit={() => onDeleteSubmit(user)}
                 role={
                   user?.roles?.length > 1 || user?.roles?.[0]?.name === "Admin"
                     ? "Admin"

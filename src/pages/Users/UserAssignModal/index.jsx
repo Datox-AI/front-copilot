@@ -16,31 +16,43 @@ import {
 } from "@mui/material";
 import { stringAvatar } from "../../../utils";
 import useRolesAPI from "../../../hooks/api/useRolesAPI";
+import toast from "react-hot-toast";
 
-const UserAddModal = ({ isOpen, close, refetch }) => {
-  const {
-    data,
-    updateMutation,
-    refetch: refetchInactiveUsers
-  } = useUsersAPI("Inactive");
+const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
+  const { updateMutation } = useUsersAPI("Inactive");
   const { data: roles } = useRolesAPI();
 
-  const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
 
   useEffect(() => {
-    setSelectedUsers([]);
-  }, [data]);
+    setSelectedUsers(
+      _users.map((_user) => ({ userId: _user.adId, roleId: _user.roles[0].id }))
+    );
+  }, [_users]);
 
   const handleSave = useCallback(async () => {
-    selectedUsers.map(async (selectedUser) => {
-      await updateMutation.mutateAsync({
-        roleIds: [selectedUser.roleId],
-        userId: selectedUser.userId
-      });
-
-      refetch();
-      refetchInactiveUsers();
+    selectedUsers.map((selectedUser, idx) => {
+      updateMutation.mutate(
+        {
+          roleIds: [selectedUser.roleId],
+          userId: selectedUser.userId
+        },
+        {
+          onSuccess: () => {
+            if (idx === selectedUsers.length - 1) {
+              toast.success(
+                `${
+                  selectedUsers.length === 1 ? "User is" : "Users are"
+                } successful assigned`
+              );
+              onClear();
+            }
+          },
+          onError: (err) => {
+            toast.error(err.data?.message);
+          }
+        }
+      );
     });
   }, [selectedUsers]);
 
@@ -63,75 +75,57 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
   };
 
   return (
-    <Popup isOpen={isOpen} title="Add User" close={close}>
+    <Popup isOpen={isOpen} title="Assign Roles" close={close}>
       <div className={styles.addModal}>
-        <label>
-          <Search />
-          <input
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </label>
-
         <ul>
-          {data?.lists
-            ?.filter((user) =>
-              user.displayName.toLowerCase().includes(search.toLowerCase())
-            )
-            ?.map((user, u) => {
-              const foundUser =
-                selectedUsers.length > 0 &&
-                selectedUsers?.find((sel) => sel.userId === user.adId);
+          {_users.map((user, u) => {
+            const foundUser =
+              selectedUsers?.length > 0 &&
+              selectedUsers?.find((sel) => sel.userId === user.adId);
 
-              return (
-                <li key={u} className={!!foundUser && styles.selected}>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    width="100%"
-                    gap="10px"
-                  >
-                    <Avatar
-                      {...stringAvatar(user.displayName)}
-                      sx={{
-                        ...stringAvatar(user.displayName).sx,
-                        height: 32,
-                        width: 32,
-                        fontSize: 14
-                      }}
-                    />{" "}
-                    {user.displayName}
-                  </Box>
-
-                  <Select
-                    key={user.adId}
-                    labelId="role-select-label"
-                    id="role-select"
-                    value={foundUser?.roleId}
-                    placeholder="Select a role"
-                    onChange={(e) => onChangeRole(user.adId, e.target.value)}
-                    style={{
-                      width: 200
+            return (
+              <li key={u} className={!!foundUser && styles.selected}>
+                <Box display="flex" alignItems="center" width="100%" gap="10px">
+                  <Avatar
+                    {...stringAvatar(user.displayName)}
+                    sx={{
+                      ...stringAvatar(user.displayName).sx,
+                      height: 32,
+                      width: 32,
+                      fontSize: 14
                     }}
-                  >
-                    <MenuItem value={null} className="menu-item-select">
-                      None
+                  />{" "}
+                  {user.displayName}
+                </Box>
+
+                <Select
+                  key={user.adId}
+                  labelId="role-select-label"
+                  id="role-select"
+                  value={foundUser?.roleId || user.roles[0].id}
+                  placeholder="Select a role"
+                  onChange={(e) => onChangeRole(user.adId, e.target.value)}
+                  style={{
+                    width: 200
+                  }}
+                >
+                  <MenuItem value={null} className="menu-item-select">
+                    None
+                  </MenuItem>
+                  {roles?.lists?.map((role) => (
+                    <MenuItem
+                      value={role.id}
+                      key={role.id}
+                      className="menu-item-select"
+                    >
+                      {role.name === "Admin" ? <AdminIcon /> : <PeopleIcon />}{" "}
+                      {role.name}
                     </MenuItem>
-                    {roles?.lists?.map((role) => (
-                      <MenuItem
-                        value={role.id}
-                        key={role.id}
-                        className="menu-item-select"
-                      >
-                        {role.name === "Admin" ? <AdminIcon /> : <PeopleIcon />}{" "}
-                        {role.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </li>
-              );
-            })}
+                  ))}
+                </Select>
+              </li>
+            );
+          })}
         </ul>
 
         <Box display="flex" alignItems="center" width="100%" mt={2} gap="10px">
@@ -158,4 +152,4 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
   );
 };
 
-export default UserAddModal;
+export default UserAssignModal;

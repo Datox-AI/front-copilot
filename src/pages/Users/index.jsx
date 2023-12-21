@@ -12,6 +12,7 @@ import UserEditModal from "./UserEditModal";
 import DeleteChatPopup from "../Chat/FileBar/DeleteChatPopup";
 import notUser from "../../assets/icons/delete-usr.png";
 import toast from "react-hot-toast";
+import UserAssignModal from "./UserAssignModal";
 
 const Users = () => {
   const { data, isLoading, refetch, updateMutation } = useUsersAPI("Active");
@@ -20,7 +21,7 @@ const Users = () => {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [assignableUsers, setAssignableUsers] = useState([]);
+  const [assignableUsers, setAssignableUsers] = useState(null);
   const [deletableUser, setDeletableUser] = useState(null);
   const [deletableUsers, setDeletableUsers] = useState(null);
 
@@ -41,10 +42,7 @@ const Users = () => {
 
   const toggleAssignModal = (users) => {
     setAssignableUsers(
-      users?.map((user) => ({
-        userId: user.adId,
-        roleId: user.roles[0]?.id
-      })) || null
+      data?.lists?.filter((_user) => users?.includes(_user.adId)) || null
     );
   };
 
@@ -53,10 +51,10 @@ const Users = () => {
 
   const toggleAddUserModal = () => setIsAddOpen((prev) => !prev);
 
-  const onDeleteSubmit = () => {
+  const onDeleteSubmit = (data) => {
     updateMutation.mutate(
       {
-        userId: deletableUser.adId,
+        userId: data.adId,
         roleIds: []
       },
       {
@@ -97,6 +95,15 @@ const Users = () => {
     );
   };
 
+  const onClear = () => {
+    setSelectedUsers([]);
+    setSelectedUser(null);
+    setAssignableUsers([]);
+    setDeletableUser([]);
+    setDeletableUser(null);
+    refetch();
+  };
+
   return (
     <>
       <section className={styles.header}>
@@ -110,7 +117,10 @@ const Users = () => {
           >
             <DeactivateIcon /> Deactivate Users
           </button>
-          <button disabled={selectedUsers.length === 0}>
+          <button
+            disabled={selectedUsers.length === 0}
+            onClick={() => toggleAssignModal(selectedUsers)}
+          >
             <AssignIcon /> Assign Roles
           </button>
         </Box>
@@ -134,8 +144,8 @@ const Users = () => {
           isLoading={isLoading}
           selectedUsers={selectedUsers}
           toggleEditModal={toggleEditModal}
-          toggleDeleteModal={toggleDeleteModal}
           toggleSelectedUsers={toggleSelectedUsers}
+          onDeleteSubmit={onDeleteSubmit}
         />
       </section>
 
@@ -159,6 +169,16 @@ const Users = () => {
         onSubmit={onDeleteSubmit}
         isLoading={updateMutation.isLoading}
       />
+
+      {!!assignableUsers && assignableUsers.length !== 0 && (
+        <UserAssignModal
+          refetch={refetch}
+          isOpen={!!assignableUsers}
+          close={toggleAssignModal}
+          _users={assignableUsers}
+          onClear={onClear}
+        />
+      )}
 
       {isAddOpen && (
         <UserAddModal

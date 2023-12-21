@@ -48,6 +48,7 @@
     "react-scripts": "5.0.1",
     "react-select": "^5.7.4",
     "react-syntax-highlighter": "^15.5.0",
+    "react-tiny-popover": "^8.0.4",
     "redux-persist": "^6.0.0",
     "rsuite": "^5.40.0",
     "sass": "^1.66.1",
