@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { stringAvatar } from "../../../utils";
 import useRolesAPI from "../../../hooks/api/useRolesAPI";
+import toast from "react-hot-toast";
 
 const UserAddModal = ({ isOpen, close, refetch }) => {
   const {
@@ -33,7 +34,7 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
   }, [data]);
 
   const handleSave = useCallback(async () => {
-    selectedUsers.map(async (selectedUser) => {
+    selectedUsers.map(async (selectedUser, u) => {
       await updateMutation.mutateAsync({
         roleIds: [selectedUser.roleId],
         userId: selectedUser.userId
@@ -41,6 +42,9 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
 
       refetch();
       refetchInactiveUsers();
+
+      if (u === selectedUsers.length - 1)
+        toast.success("User is successfuly updated");
     });
   }, [selectedUsers]);
 

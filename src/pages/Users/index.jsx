@@ -63,6 +63,7 @@ const Users = () => {
         onSuccess: () => {
           refetch();
           toggleDeleteModal();
+          toast.success("User is successfuly deactivated");
         },
         onError: (err) => {
           toast.error(err.data.title);
@@ -85,6 +86,7 @@ const Users = () => {
               refetch();
               toggleDeletableUsers();
               setSelectedUsers([]);
+              toast.success("Users are successfuly deactivated");
             }
           },
           onError: (err) => {
@@ -138,14 +140,23 @@ const Users = () => {
       </section>
 
       <DeleteChatPopup
-        title={`Are you sure want to remove ${
-          deletableUser?.displayName || "users"
-        } from active users?`}
+        title={`Are you sure want to remove users from active list?`}
         description=" "
         newImg={notUser}
-        isOpen={!!deletableUser || !!deletableUsers}
-        close={deletableUser ? toggleDeleteModal : toggleDeletableUsers}
-        onSubmit={deletableUser ? onDeleteSubmit : onDeleteAllSubmit}
+        isOpen={!!deletableUsers}
+        close={toggleDeletableUsers}
+        onSubmit={onDeleteAllSubmit}
+        isLoading={updateMutation.isLoading}
+      />
+
+      {/* FOR BULK DEACTIVATE */}
+      <DeleteChatPopup
+        title={`Are you sure want to remove ${deletableUser?.displayName} from active users?`}
+        description=" "
+        newImg={notUser}
+        isOpen={!!deletableUser}
+        close={toggleDeleteModal}
+        onSubmit={onDeleteSubmit}
         isLoading={updateMutation.isLoading}
       />
 

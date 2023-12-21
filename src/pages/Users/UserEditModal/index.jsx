@@ -2,7 +2,9 @@ import { Search } from "@mui/icons-material";
 import Popup from "../../../components/Popup";
 import useUsersAPI from "../../../hooks/api/useUsersAPI";
 import styles from "../style.module.scss";
-import { ReactComponent as CheckboxIcon } from "../../../assets/icons/checkbox.svg";
+
+import { ReactComponent as AdminIcon } from "../../../assets/icons/admin.svg";
+import { ReactComponent as PeopleIcon } from "../../../assets/icons/people.svg";
 import { useCallback, useEffect, useState } from "react";
 import {
   Avatar,
@@ -28,66 +30,73 @@ const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
     setSelectedRole(selectedUser?.roles?.[0].id);
   }, [roles, selectedUser]);
 
-  const handleSave = useCallback(
-    async () => {
-      updateMutation.mutate(
-        {
-          roleIds: [selectedRole],
-          userId: selectedUser?.adId
+  const handleSave = useCallback(async () => {
+    updateMutation.mutate(
+      {
+        roleIds: !!selectedRole ? [selectedRole] : [],
+        userId: selectedUser?.adId
+      },
+      {
+        onSuccess: () => {
+          refetch();
+          refetchInactiveUsers();
+          close();
+          toast.success("User is successfuly updated");
         },
-        {
-          onSuccess: () => {
-            refetch();
-            refetchInactiveUsers();
-            close();
-          },
-          onError: (err) => {
-            toast.error(err.data.title);
-          }
+        onError: (err) => {
+          toast.error(err.data.title);
         }
-      );
-    },
-    [selectedRole],
-    selectedUser
-  );
+      }
+    );
+  }, [selectedRole, selectedUser]);
 
   return (
     <Popup isOpen={isOpen} title="Edit User" close={close}>
       <div className={styles.addModal}>
         <ul>
           {!!selectedUser && (
-            <li>
-              <Avatar
-                {...stringAvatar(selectedUser?.displayName)}
-                sx={{
-                  ...stringAvatar(selectedUser?.displayName).sx,
-                  height: 32,
-                  width: 32,
-                  fontSize: 14
+            <li className={!!selectedUser && styles.selected}>
+              <Box display="flex" alignItems="center" width="100%" gap="10px">
+                <Avatar
+                  {...stringAvatar(selectedUser.displayName)}
+                  sx={{
+                    ...stringAvatar(selectedUser.displayName).sx,
+                    height: 32,
+                    width: 32,
+                    fontSize: 14
+                  }}
+                />{" "}
+                {selectedUser.displayName}
+              </Box>
+
+              <Select
+                key={selectedUser.adId}
+                labelId="role-select-label"
+                id="role-select"
+                value={selectedRole}
+                placeholder="Select a role"
+                onChange={(e) => setSelectedRole(e.target.value)}
+                style={{
+                  width: 200
                 }}
-              />{" "}
-              {selectedUser?.displayName}
+              >
+                <MenuItem value={null} className="menu-item-select">
+                  None
+                </MenuItem>
+                {roles?.lists?.map((role) => (
+                  <MenuItem
+                    value={role.id}
+                    key={role.id}
+                    className="menu-item-select"
+                  >
+                    {role.name === "Admin" ? <AdminIcon /> : <PeopleIcon />}{" "}
+                    {role.name}
+                  </MenuItem>
+                ))}
+              </Select>
             </li>
           )}
         </ul>
-
-        <Box width="100%" mt={2}>
-          <Select
-            labelId="role-select-label"
-            id="role-select"
-            value={selectedRole}
-            placeholder="Select a role"
-            label="Role"
-            onChange={(e) => setSelectedRole(e.target.value)}
-            fullWidth
-          >
-            {roles?.lists?.map((role) => (
-              <MenuItem value={role.id} key={role.id}>
-                {role.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </Box>
 
         <Box display="flex" alignItems="center" width="100%" mt={2} gap="10px">
           <Button
