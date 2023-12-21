@@ -19,7 +19,9 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
         icon: EyeIcon,
         onClick: () => {
           document
-            .getElementById("message-" + pinnedMessages?.[0]?.id)
+            .getElementById(
+              "message-" + pinnedMessages?.[pinnedMessages.length - 1]?.id
+            )
             ?.scrollIntoView({ block: "start" });
         }
       },
@@ -27,7 +29,7 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
         title: "Unpin",
         icon: UnpinIcon,
         onClick: () => {
-          const lastPinnedMessage = pinnedMessages?.[0];
+          const lastPinnedMessage = pinnedMessages?.[pinnedMessages.length - 1];
           pinMutation.mutate(
             {
               id: lastPinnedMessage?.id,
@@ -56,7 +58,8 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
     <div className={styles.container}>
       <ul>
         <li>
-          <PinIcon /> <span>{pinnedMessages?.[0]?.text}</span>{" "}
+          <PinIcon />{" "}
+          <span>{pinnedMessages?.[pinnedMessages.length - 1]?.text}</span>{" "}
           <PopoverMenu mainIcon={<VerticalDotsIcon />} data={commands} />
         </li>
       </ul>
