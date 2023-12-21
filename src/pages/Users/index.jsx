@@ -140,7 +140,9 @@ const Users = () => {
         </Box>
 
         <UsersTable
-          users={data?.lists}
+          users={data?.lists?.filter((_user) =>
+            _user.displayName.toLowerCase().includes(search.toLowerCase())
+          )}
           isLoading={isLoading}
           selectedUsers={selectedUsers}
           toggleEditModal={toggleEditModal}
