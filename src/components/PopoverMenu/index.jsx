@@ -31,7 +31,7 @@ const PopoverMenu = ({ data = _data, mainIcon = <MoreHorizIcon /> }) => {
         <ul className={styles.commands}>
           {data.map((item, i) => (
             <li className={styles.command} key={i} onClick={item.onClick}>
-              <item.icon />
+              <item.icon {...item.iconProps} />
               {item.title}
             </li>
           ))}

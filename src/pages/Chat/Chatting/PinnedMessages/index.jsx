@@ -8,6 +8,7 @@ import PopoverMenu from "../../../../components/PopoverMenu";
 import { useMemo } from "react";
 import useMessagesAPI from "../../../../hooks/api/useMessagesAPI";
 import toast from "react-hot-toast";
+import { CircularProgress } from "@mui/material";
 
 const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
   const { pinMutation } = useMessagesAPI({});
@@ -26,8 +27,11 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
         }
       },
       {
+        iconProps: {
+          size: 16
+        },
         title: "Unpin",
-        icon: UnpinIcon,
+        icon: pinMutation.isLoading ? CircularProgress : UnpinIcon,
         onClick: () => {
           const lastPinnedMessage = pinnedMessages?.[pinnedMessages.length - 1];
           pinMutation.mutate(
