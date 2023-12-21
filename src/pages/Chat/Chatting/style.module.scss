@@ -34,6 +34,12 @@
         max-height: calc(100vh - 146px);
       }
 
+      &.hasChats.hasIntegrations.hasPinnedMessages {
+        // height of chat & integration containers: 86px
+        height: calc(100vh - 176px);
+        max-height: calc(100vh - 176px);
+      }
+
       &.hasPinnedMessages {
         // height of pinned container: 30px
         height: calc(100vh - 90px);
