@@ -49,7 +49,7 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
             }
           },
           onError: (err) => {
-            toast.error(err.data?.message);
+            toast.error(err.data?.detail);
           }
         }
       );

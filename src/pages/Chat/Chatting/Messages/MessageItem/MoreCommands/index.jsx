@@ -30,7 +30,7 @@ const MoreCommands = ({ refetch, messageId, message, chatId, isPinned }) => {
           refetch();
         },
         onError: (err) => {
-          toast.error(err?.data?.message);
+          toast.error(err.data?.detail);
         }
       }
     );

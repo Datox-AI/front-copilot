@@ -42,7 +42,7 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
                 refetch();
               },
               onError: (err) => {
-                toast.error(err.data?.message);
+                toast.error(err.data?.detail);
               }
             }
           );
