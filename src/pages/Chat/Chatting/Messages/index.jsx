@@ -6,6 +6,7 @@ import moment from "moment";
 import useChatsAPI from "../../../../hooks/api/useChatsAPI";
 import MessageItemSkeleton from "./MessageItem/index.skeleton";
 import { useMsal } from "@azure/msal-react";
+import useMessages from "../../../../hooks/useMessages";
 
 const errorEmptyMessage = "Something wrong with response prompt";
 
@@ -19,51 +20,19 @@ const Messages = forwardRef(
       activeChat,
       refetch,
       isLoading,
+      refetchMessages,
       isStreaming
     },
     listRef
   ) => {
     const { accounts } = useMsal();
-    const { generateChatName } = useChatsAPI({});
-
-    useEffect(() => {
-      if (!data || !activeChat) return;
-      if (data.lists.length > 2) return;
-      if (activeChat?.name !== "New Chat") return;
-
-      generateChatName.mutate(activeChat?.id, {
-        onSuccess: () => refetch()
-      });
-    }, [data, activeChat]);
-
-    useEffect(() => {
-      listRef.current?.scrollIntoView({
-        block: "end"
-      });
-    }, [data?.lists, chatId]);
-
-    const groupedMessages = useMemo(() => {
-      if (!data || !data.lists) return [];
-
-      // Group messages by date
-      const groups = data.lists.reduce((groups, message) => {
-        const date = message.created.split("T")[0];
-        if (!groups[date]) {
-          groups[date] = [];
-        }
-        groups[date].push(message);
-        return groups;
-      }, {});
-
-      const groupArrays = Object.keys(groups).map((date) => {
-        return {
-          date: moment(date).format("DD MMM yyyy"),
-          messages: groups[date]
-        };
-      });
-
-      return groupArrays;
-    }, [data]);
+    const { messages } = useMessages({
+      activeChat,
+      refetch,
+      data,
+      listRef,
+      chatId
+    });
 
     return (
       <div className={styles.messages}>
@@ -78,32 +47,40 @@ const Messages = forwardRef(
             </div>
           </div>
         ) : (
-          groupedMessages.map((block, b) => (
+          messages.map((block, b) => (
             <div className={styles.block} key={b}>
               <p>{block.date}</p>
               <div className={styles.messageList}>
-                {block.messages.map((message, m) => (
-                  <MessageItem
-                    key={m}
-                    isBot={message.role === "Assistant"}
-                    time={moment(message.created).format("hh:mm A")}
-                    onSelectQuestion={onSelectQuestion}
-                    isTyping={message.isTyping}
-                    author_fullname={
-                      message.role === "Assistant"
-                        ? "Datox GPT"
-                        : accounts?.[0]?.name || "DATOX USER"
-                    }
-                    message={
-                      message.text || (!isStreaming ? errorEmptyMessage : "")
-                    }
-                    questions={
-                      b === groupedMessages.length - 1 &&
-                      m === block.messages.length - 1 &&
-                      questions
-                    }
-                  />
-                ))}
+                {block.messages.map((message, m) => {
+                  const realMessage =
+                    message.text || (!isStreaming ? errorEmptyMessage : "");
+
+                  const realQuestions =
+                    b === messages.length - 1 &&
+                    m === block.messages.length - 1 &&
+                    questions;
+
+                  const author =
+                    message.role === "Assistant"
+                      ? "Datox GPT"
+                      : accounts?.[0]?.name || "DATOX USER";
+                  return (
+                    <MessageItem
+                      key={m}
+                      chatId={chatId}
+                      refetch={refetchMessages}
+                      isBot={message.role === "Assistant"}
+                      time={moment(message.created).format("hh:mm A")}
+                      onSelectQuestion={onSelectQuestion}
+                      isTyping={message.isTyping}
+                      messageId={message.id}
+                      isPinned={message.pinned}
+                      author_fullname={author}
+                      message={realMessage}
+                      questions={realQuestions}
+                    />
+                  );
+                })}
                 <div ref={listRef}></div>
               </div>
             </div>

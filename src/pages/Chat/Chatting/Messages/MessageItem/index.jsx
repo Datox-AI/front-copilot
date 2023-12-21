@@ -1,37 +1,28 @@
 import styles from "./style.module.scss";
 import classNames from "classnames";
-import Markdown from "react-markdown";
-import CopyAllRoundedIcon from "@mui/icons-material/CopyAllRounded";
-import Tooltip from "@mui/material/Tooltip";
-import IconButton from "@mui/material/IconButton";
+import CustomMarkdown from "./CustomMarkdown";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-import {
-  dark,
-  darcula,
-  duotoneDark
-} from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Avatar } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { useState } from "react";
+import QuestionsList from "./QuestionsList";
+import MoreCommands from "./MoreCommands";
 
 const MessageItem = ({
-  author_fullname,
-  message,
   time,
   isBot,
+  chatId,
+  message,
+  refetch,
+  isPinned,
   questions,
+  messageId,
+  author_fullname,
   onSelectQuestion
 }) => {
-  const [isCopied, setIsCopied] = useState(false);
-
-  const handleCopyCode = async (txt) => {
-    await navigator.clipboard.writeText(txt);
-    setIsCopied(true);
-  };
-
   return (
     <div
+      id={`message-${messageId}`}
       className={classNames(styles.container, {
         [styles.isBot]: isBot
       })}
@@ -41,49 +32,19 @@ const MessageItem = ({
       </div>
       <div className={styles.content}>
         <p className={styles.message}>
-          <Markdown
-            children={message}
-            components={{
-              code(props) {
-                const { children, className, node, ...rest } = props;
-                const match = /language-(\w+)/.exec(className || "");
-                return match ? (
-                  <div className={styles.codeContainer}>
-                    <Tooltip title={isCopied ? "Copied!" : "Copy"}>
-                      <IconButton
-                        className={styles.copyBtn}
-                        onClick={() =>
-                          handleCopyCode(String(children).replace(/\n$/, ""))
-                        }
-                      >
-                        <CopyAllRoundedIcon style={{ color: "#fff" }} />
-                      </IconButton>
-                    </Tooltip>
-
-                    <SyntaxHighlighter
-                      {...rest}
-                      PreTag="div"
-                      children={String(children).replace(/\n$/, "")}
-                      language={match[1]}
-                      style={darcula}
-                    />
-                  </div>
-                ) : (
-                  <code {...rest} className={className}>
-                    {children}
-                  </code>
-                );
-              }
-            }}
+          <MoreCommands
+            chatId={chatId}
+            refetch={refetch}
+            message={message}
+            isPinned={isPinned}
+            messageId={messageId}
           />
+          <CustomMarkdown message={message} />
           {questions && questions.length > 0 && (
-            <ul className={styles.questions}>
-              {questions.map((question, q) => (
-                <li key={q} onClick={() => onSelectQuestion(question)}>
-                  {question}
-                </li>
-              ))}
-            </ul>
+            <QuestionsList
+              questions={questions}
+              onSelectQuestion={onSelectQuestion}
+            />
           )}
         </p>
         <span className={styles.time}>{time}</span>

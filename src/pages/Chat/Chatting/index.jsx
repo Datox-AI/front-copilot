@@ -12,6 +12,7 @@ import { arrayUniqueByKey } from "../../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 import { createRef, useCallback, useEffect, useMemo, useState } from "react";
+import PinnedMessages from "./PinnedMessages";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -60,6 +61,12 @@ const Chatting = ({
     refetch: refetchMessages,
     isLoading
   } = useMessagesAPI({ chatId });
+
+  const pinnedMessages = useMemo(() => {
+    if (!data || !data.lists) return [];
+
+    return data.lists.filter((message) => message.pinned);
+  }, [data]);
 
   const { startPrompting, questions, files } = usePrompt({
     chatId,
@@ -117,11 +124,17 @@ const Chatting = ({
           refetch={refetch}
         />
       )}
+      <PinnedMessages
+        pinnedMessages={pinnedMessages}
+        chatId={chatId}
+        refetch={refetchMessages}
+      />
       <div className={styles.chatting}>
         <div
           className={classNames(styles.messages, {
             [styles.hasChats]: !isChat,
-            [styles.hasIntegrations]: !isChat
+            [styles.hasIntegrations]: !isChat,
+            [styles.hasPinnedMessages]: pinnedMessages?.length > 0
           })}
         >
           {data?.lists?.length > 0 || isLoading ? (

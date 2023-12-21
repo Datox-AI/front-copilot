@@ -10,10 +10,34 @@
 
     .content {
       .message {
+        position: relative;
         border-radius: 12px 12px 12px 0px;
         background: #fff;
         color: #242424 !important;
         text-align: left !important;
+
+        .more {
+          position: absolute;
+          right: 10px;
+          left: auto;
+
+          cursor: pointer;
+          color: #616161;
+
+          .pin_icon {
+            path {
+              stroke: #616161;
+              fill: #616161;
+            }
+          }
+
+          .command_context {
+            .commands {
+              left: 0;
+              right: auto;
+            }
+          }
+        }
 
         p {
           text-align: justify;
@@ -68,11 +92,98 @@
       border-radius: 12px 12px 0px 12px;
       background: #8887d1;
       color: #fff !important;
-      padding: 16px 24px !important;
+      padding: 22px 32px !important;
       text-align: justify !important;
       font-size: 14px;
       font-weight: 400;
       line-height: 140%; /* 19.6px */
+      position: relative;
+
+      &:hover {
+        .more {
+          display: block;
+          .more_icon {
+            display: block;
+          }
+        }
+      }
+
+      .more {
+        position: absolute;
+        left: 10px;
+        top: 5px;
+        cursor: pointer;
+        color: #fff;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        z-index: 9;
+
+        .more_icon,
+        .pin_icon {
+          font-size: 14px;
+        }
+
+        .more_icon {
+          display: none;
+        }
+
+        .pin_icon {
+          path {
+            stroke: #fff;
+            fill: #fff;
+          }
+        }
+
+        &:hover {
+          .commands {
+            display: block !important;
+          }
+        }
+
+        .command_context {
+          position: relative;
+          z-index: 10;
+
+          .commands {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: none;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-radius: 10px;
+            border: 1px solid #0177fb;
+            background: #fff;
+            box-shadow: 0px 7px 15px 0px rgba(0, 0, 0, 0.1),
+              0px 27px 27px 0px rgba(0, 0, 0, 0.09),
+              0px 62px 37px 0px rgba(0, 0, 0, 0.05),
+              0px 110px 44px 0px rgba(0, 0, 0, 0.01),
+              0px 171px 48px 0px rgba(0, 0, 0, 0);
+            overflow: hidden;
+
+            .command {
+              width: 171px;
+              height: 30px;
+              display: flex;
+              align-items: center;
+              padding: 0 15px;
+              gap: 12px;
+              cursor: pointer;
+
+              color: #616161;
+              font-size: 12px;
+              font-weight: 500;
+              border-bottom: 1px solid #f6f5f8;
+
+              &:hover {
+                background: #f6f5f8;
+              }
+            }
+          }
+        }
+      }
 
       .codeContainer {
         position: relative;

@@ -1,0 +1,72 @@
+.more {
+  min-height: 30px;
+  cursor: pointer;
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  z-index: 9;
+
+  .more_icon,
+  .pin_icon {
+    font-size: 14px;
+    color: #fff;
+  }
+
+  &:hover {
+    .commands {
+      display: block !important;
+    }
+  }
+
+  .command_context {
+    position: relative;
+    z-index: 10;
+
+    .commands {
+      position: absolute;
+      top: 0;
+      right: 0;
+      min-width: 141px;
+      display: none;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      border-radius: 10px;
+      border: 1px solid #0177fb;
+      background: #fff !important;
+      box-shadow: 0px 7px 15px 0px rgba(0, 0, 0, 0.1),
+        0px 27px 27px 0px rgba(0, 0, 0, 0.09),
+        0px 62px 37px 0px rgba(0, 0, 0, 0.05),
+        0px 110px 44px 0px rgba(0, 0, 0, 0.01),
+        0px 171px 48px 0px rgba(0, 0, 0, 0);
+      overflow: hidden;
+
+      .command {
+        width: 171px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        padding: 0 15px;
+        gap: 12px;
+        cursor: pointer;
+
+        color: #616161;
+        font-size: 12px;
+        font-weight: 500;
+        border-bottom: 1px solid #f6f5f8;
+        background: #fff;
+
+        svg {
+          path {
+            stroke: #616161;
+          }
+        }
+
+        &:hover {
+          background: #f6f5f8;
+        }
+      }
+    }
+  }
+}

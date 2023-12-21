@@ -24,9 +24,11 @@ const useMessagesAPI = ({ chatId }) => {
     }
   );
 
-  const pinMutation = useMutation((data) => pinMessage(data, chatId));
-  const unpinMutation = useMutation((data) => unpinMessage(data, chatId));
-  const deleteMutation = useMutation((data) => deleteMessage(data, chatId));
+  const pinMutation = useMutation((data) => pinMessage(data, data.chatId));
+  const unpinMutation = useMutation((data) => unpinMessage(data, data.chatId));
+  const deleteMutation = useMutation((data) =>
+    deleteMessage(data, data.chatId)
+  );
   const sendMutation = useMutation((data) => sendMessage(data, chatId));
 
   return {
