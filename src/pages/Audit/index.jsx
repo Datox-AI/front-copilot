@@ -46,7 +46,7 @@ const Audit = () => {
               key={user.adId}
               onClick={() => navigate(user.id)}
               className={classNames({
-                [styles.active]: userId === user.adId
+                [styles.active]: userId === user.id
               })}
             >
               <Avatar {...stringAvatar(user.displayName)} />
