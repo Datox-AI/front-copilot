@@ -18,8 +18,11 @@ const Chat = ({ isAudit }) => {
   const [activeChat, setActiveChat] = useState(null);
 
   const chats = useMemo(
-    () => data?.lists?.filter((chat) => chat?.type === "Analytics"),
-    [data]
+    () =>
+      isAudit
+        ? data?.lists
+        : data?.lists?.filter((chat) => chat?.type === "Analytics"),
+    [data, isAudit]
   );
 
   const handleSelectChat = (chat) => {
