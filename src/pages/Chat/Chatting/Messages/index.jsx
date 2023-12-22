@@ -62,7 +62,7 @@ const Messages = forwardRef(
                   const realQuestions =
                     b === messages.length - 1 &&
                     m === block.messages.length - 1 &&
-                    questions;
+                    (questions.length > 0 ? questions : message.questions);
 
                   const author =
                     message.role === "Assistant"

@@ -44,7 +44,7 @@ const Audit = () => {
           {users?.map((user) => (
             <li
               key={user.adId}
-              onClick={() => navigate(user.adId)}
+              onClick={() => navigate(user.id)}
               className={classNames({
                 [styles.active]: userId === user.adId
               })}

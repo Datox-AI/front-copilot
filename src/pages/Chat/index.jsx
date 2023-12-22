@@ -9,8 +9,8 @@ import { _integrations } from "../../consts/integrations";
 const Chat = ({ isAudit }) => {
   const { chatId, userId } = useParams();
   const { data, refetch } = useChatsAPI({
-    isGetUsers: true
-    // userId
+    isGetUsers: true,
+    userId
   });
 
   const [relatedFiles, setRelatedFiles] = useState([]);

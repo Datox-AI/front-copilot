@@ -165,10 +165,6 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   );
 
   const fetchStream = (message) => {
-    const formData = new FormData();
-
-    formData.append("Prompt", message);
-
     let newMSG = {
       prompt: "",
       created: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
@@ -190,9 +186,12 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       method: "POST",
       headers: {
         ApiKey: COPILOT_API_KEY,
-        Authorization: "Bearer " + token
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json"
       },
-      body: formData
+      body: JSON.stringify({
+        prompt: message
+      })
     })
       .then((res) => onFetchSuccess(res, message))
       .catch((err) => {
