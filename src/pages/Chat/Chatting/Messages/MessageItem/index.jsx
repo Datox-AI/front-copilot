@@ -1,12 +1,11 @@
 import styles from "./style.module.scss";
 import classNames from "classnames";
 import CustomMarkdown from "./CustomMarkdown";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import QuestionsList from "./QuestionsList";
+import MoreCommands from "./MoreCommands";
 
 import { Avatar } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
-import QuestionsList from "./QuestionsList";
-import MoreCommands from "./MoreCommands";
 
 const MessageItem = ({
   time,
@@ -18,13 +17,17 @@ const MessageItem = ({
   questions,
   messageId,
   author_fullname,
-  onSelectQuestion
+  onSelectQuestion,
+  toggleMessage,
+  isSelected,
+  fullData
 }) => {
   return (
     <div
       id={`message-${messageId}`}
       className={classNames(styles.container, {
-        [styles.isBot]: isBot
+        [styles.isBot]: isBot,
+        [styles.isSelected]: isSelected
       })}
     >
       <div className={styles.author}>
@@ -35,9 +38,11 @@ const MessageItem = ({
           <MoreCommands
             chatId={chatId}
             refetch={refetch}
-            message={message}
+            message={fullData}
             isPinned={isPinned}
             messageId={messageId}
+            isSelected={isSelected}
+            toggleMessage={toggleMessage}
           />
           <CustomMarkdown message={message} />
           {questions && questions.length > 0 && (

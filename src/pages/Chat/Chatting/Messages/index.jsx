@@ -21,7 +21,9 @@ const Messages = forwardRef(
       refetch,
       isLoading,
       refetchMessages,
-      isStreaming
+      isStreaming,
+      selectedMessages,
+      toggleMessage
     },
     listRef
   ) => {
@@ -72,9 +74,12 @@ const Messages = forwardRef(
                       isBot={message.role === "Assistant"}
                       time={moment(message.created).format("hh:mm A")}
                       onSelectQuestion={onSelectQuestion}
+                      isSelected={selectedMessages.includes(message.id)}
+                      toggleMessage={() => toggleMessage(message.id)}
                       isTyping={message.isTyping}
                       messageId={message.id}
                       isPinned={message.pinned}
+                      fullData={message}
                       author_fullname={author}
                       message={realMessage}
                       questions={realQuestions}

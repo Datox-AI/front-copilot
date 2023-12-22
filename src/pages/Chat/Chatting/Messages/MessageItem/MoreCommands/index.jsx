@@ -11,9 +11,34 @@ import { ReactComponent as CopyIcon } from "../../../../../../assets/icons/copy_
 import { ReactComponent as TickIcon } from "../../../../../../assets/icons/tick.svg";
 import { ReactComponent as TrashIcon } from "../../../../../../assets/icons/trash.svg";
 import { Box, CircularProgress } from "@mui/material";
+import { copyNavigator } from "../../../../../../utils";
 
-const MoreCommands = ({ refetch, messageId, message, chatId, isPinned }) => {
-  const { pinMutation } = useMessagesAPI({});
+const MoreCommands = ({
+  refetch,
+  messageId,
+  message,
+  chatId,
+  isPinned,
+  isSelected,
+  toggleMessage
+}) => {
+  const { pinMutation, deleteMutation } = useMessagesAPI({});
+
+  const handleDeleteMessage = () => {
+    if (deleteMutation.isLoading) return;
+
+    deleteMutation.mutate(
+      { chatId: chatId, body: [messageId] },
+      {
+        onSuccess: () => {
+          refetch();
+        },
+        onError: (err) => {
+          toast.error(err.data.detail);
+        }
+      }
+    );
+  };
 
   const handleTogglePin = () => {
     pinMutation.mutate(
@@ -30,7 +55,7 @@ const MoreCommands = ({ refetch, messageId, message, chatId, isPinned }) => {
           refetch();
         },
         onError: (err) => {
-          toast.error(err.data?.detail);
+          toast.error(err.data?.title);
         }
       }
     );
@@ -59,17 +84,26 @@ const MoreCommands = ({ refetch, messageId, message, chatId, isPinned }) => {
             )}
             {isPinned ? "Unpin" : "Pin"}
           </li>
-          <li className={styles.command}>
+          <li className={styles.command} onClick={() => copyNavigator(message)}>
             <CopyIcon />
             Copy
           </li>
-          <li className={styles.command}>
+          <li className={styles.command} onClick={toggleMessage}>
             <TickIcon />
-            Select
+            {isSelected ? "Unselect" : "Select"}
           </li>
-          <li className={styles.command}>
-            <TrashIcon />
-            Delete
+          <li className={styles.command} onClick={handleDeleteMessage}>
+            {deleteMutation.isLoading ? (
+              <>
+                <CircularProgress size={14} />
+                Deleting...
+              </>
+            ) : (
+              <>
+                <TrashIcon />
+                Delete
+              </>
+            )}
           </li>
         </ul>
       </div>

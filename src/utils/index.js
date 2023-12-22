@@ -34,31 +34,9 @@ export function stringAvatar(name) {
   };
 }
 
-export function copyNavigator(val, justValue = false) {
-  if ("clipboard" in navigator) {
-    if (justValue) navigator.clipboard.writeText(val);
-    // else navigator.clipboard.writeText("https://form.tripoasia.com/" + val);
-
-    toast.success("Copied!");
-  } else {
-    const textArea = document.createElement("textarea");
-
-    if (justValue) textArea.value = val;
-    // else textArea.value = "https://form.tripoasia.com/" + val;
-
-    textArea.style.opacity = 0;
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-
-    try {
-      const success = document.execCommand("copy");
-      if (success) toast.success("Copied!");
-    } catch (err) {
-      console.error(err.name, err.message);
-    }
-    document.body.removeChild(textArea);
-  }
+export async function copyNavigator(val) {
+  await navigator.clipboard.writeText(val);
+  toast.success("Copied!");
 }
 
 const key = "itemUrl";

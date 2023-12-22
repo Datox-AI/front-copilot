@@ -27,7 +27,7 @@ const useMessagesAPI = ({ chatId }) => {
   const pinMutation = useMutation((data) => pinMessage(data, data.chatId));
   const unpinMutation = useMutation((data) => unpinMessage(data, data.chatId));
   const deleteMutation = useMutation((data) =>
-    deleteMessage(data, data.chatId)
+    deleteMessage(data.body, data.chatId)
   );
   const sendMutation = useMutation((data) => sendMessage(data, chatId));
 

@@ -1,7 +1,12 @@
 import { useMsal } from "@azure/msal-react";
 import useChatsAPI from "./api/useChatsAPI";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import moment from "moment";
+
+export const chatModes = {
+  CHAT: "CHAT",
+  SELECT: "SELECT"
+};
 
 const useMessages = ({ activeChat, refetch, data, chatId, listRef }) => {
   const { generateChatName } = useChatsAPI({});

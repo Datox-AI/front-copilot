@@ -57,9 +57,12 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
     ];
   }, [pinnedMessages, pinMutation, chatId]);
 
-  if (pinnedMessages.length === 0) return <></>;
   return (
-    <div className={styles.container}>
+    <div
+      className={classNames(styles.container, {
+        [styles.open]: pinnedMessages.length > 0
+      })}
+    >
       <ul>
         <li>
           <PinIcon />{" "}

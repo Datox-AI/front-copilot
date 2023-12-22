@@ -13,6 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 import PinnedMessages from "./PinnedMessages";
+import { chatModes } from "../../../hooks/useMessages";
+import SelectedMessages from "./SelectedMessages";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -51,7 +53,6 @@ const Chatting = ({
   const listRef = createRef();
   const dispatch = useDispatch();
 
-  const [text, setText] = useState("");
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
   );
@@ -62,12 +63,6 @@ const Chatting = ({
     isLoading
   } = useMessagesAPI({ chatId });
 
-  const pinnedMessages = useMemo(() => {
-    if (!data || !data.lists) return [];
-
-    return data.lists.filter((message) => message.pinned);
-  }, [data]);
-
   const { startPrompting, questions, files } = usePrompt({
     chatId,
     refetchMessages,
@@ -75,7 +70,37 @@ const Chatting = ({
     setRelatedFiles
   });
 
+  const [text, setText] = useState("");
+  const [mode, setMode] = useState(chatModes);
+  const [selectedMessages, setSelectedMessages] = useState(["asds"]);
+
+  const pinnedMessages = useMemo(() => {
+    if (!data || !data.lists) return [];
+
+    return data.lists.filter((message) => message.pinned);
+  }, [data]);
+
+  const clearAllSelectedMessages = () => {
+    setSelectedMessages([]);
+  };
+
+  const deleteAllSelectedMessages = () => {};
+
+  const toggleMessage = (messageId) => {
+    if (selectedMessages.includes(messageId))
+      setSelectedMessages((prev) =>
+        prev.filter((msgId) => msgId !== messageId)
+      );
+    else setSelectedMessages((prev) => [...prev, messageId]);
+  };
+
   const disabled = useMemo(() => !text, [text]);
+
+  useEffect(() => {
+    if (selectedMessages.length === 0) return setMode(chatModes.CHAT);
+
+    return setMode(chatModes.SELECT);
+  }, [selectedMessages]);
 
   useEffect(() => {
     if (isChat || !data || !data.lists) return;
@@ -124,6 +149,13 @@ const Chatting = ({
           refetch={refetch}
         />
       )}
+
+      <SelectedMessages
+        selectedMessages={selectedMessages}
+        onCancel={clearAllSelectedMessages}
+        onDelete={deleteAllSelectedMessages}
+      />
+
       <PinnedMessages
         pinnedMessages={pinnedMessages}
         chatId={chatId}
@@ -134,7 +166,8 @@ const Chatting = ({
           className={classNames(styles.messages, {
             [styles.hasChats]: !isChat,
             [styles.hasIntegrations]: !isChat,
-            [styles.hasPinnedMessages]: pinnedMessages?.length > 0
+            [styles.hasPinnedMessages]: pinnedMessages?.length > 0,
+            [styles.hasSelectedMessages]: selectedMessages.length > 0
           })}
         >
           {data?.lists?.length > 0 || isLoading ? (
@@ -147,7 +180,9 @@ const Chatting = ({
               isLoading={isLoading}
               questions={questions}
               activeChat={activeChat}
+              selectedMessages={selectedMessages}
               isStreaming={textGenerator?.isStreaming}
+              toggleMessage={toggleMessage}
               refetchMessages={refetchMessages}
               onSelectQuestion={onSelectQuestion}
             />
