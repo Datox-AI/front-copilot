@@ -13,6 +13,7 @@ const MessageItem = ({
   chatId,
   message,
   refetch,
+  onClick,
   isPinned,
   questions,
   messageId,
@@ -25,6 +26,7 @@ const MessageItem = ({
   return (
     <div
       id={`message-${messageId}`}
+      onClick={onClick}
       className={classNames(styles.container, {
         [styles.isBot]: isBot,
         [styles.isSelected]: isSelected

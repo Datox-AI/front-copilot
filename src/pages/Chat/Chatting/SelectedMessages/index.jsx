@@ -4,7 +4,12 @@ import { Box, Button, Typography } from "@mui/material";
 import { ReactComponent as TickIcon } from "../../../../assets/icons/tick.svg";
 import classNames from "classnames";
 
-const SelectedMessages = ({ selectedMessages, onCancel, onDelete }) => {
+const SelectedMessages = ({
+  selectedMessages,
+  onCancel,
+  onDelete,
+  isLoading
+}) => {
   return (
     <div
       className={classNames(styles.selectedMessages, {
@@ -25,8 +30,8 @@ const SelectedMessages = ({ selectedMessages, onCancel, onDelete }) => {
         <Button variant="outlined" onClick={onCancel}>
           Cancel
         </Button>
-        <Button variant="contained" onDelete={onDelete}>
-          Delete
+        <Button variant="contained" onClick={onDelete} disabled={isLoading}>
+          {isLoading ? "Deleting..." : "Delete"}
         </Button>
       </Box>
     </div>

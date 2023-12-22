@@ -6,7 +6,7 @@ import moment from "moment";
 import useChatsAPI from "../../../../hooks/api/useChatsAPI";
 import MessageItemSkeleton from "./MessageItem/index.skeleton";
 import { useMsal } from "@azure/msal-react";
-import useMessages from "../../../../hooks/useMessages";
+import useMessages, { chatModes } from "../../../../hooks/useMessages";
 
 const errorEmptyMessage = "Something wrong with response prompt";
 
@@ -14,6 +14,7 @@ const Messages = forwardRef(
   (
     {
       data,
+      mode,
       chatId,
       questions,
       onSelectQuestion,
@@ -69,6 +70,11 @@ const Messages = forwardRef(
                   return (
                     <MessageItem
                       key={m}
+                      onClick={
+                        mode === chatModes.SELECT
+                          ? () => toggleMessage(message.id)
+                          : () => {}
+                      }
                       chatId={chatId}
                       refetch={refetchMessages}
                       isBot={message.role === "Assistant"}

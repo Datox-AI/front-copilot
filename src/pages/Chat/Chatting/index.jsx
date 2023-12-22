@@ -15,6 +15,7 @@ import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 import PinnedMessages from "./PinnedMessages";
 import { chatModes } from "../../../hooks/useMessages";
 import SelectedMessages from "./SelectedMessages";
+import toast from "react-hot-toast";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -60,7 +61,8 @@ const Chatting = ({
   const {
     data,
     refetch: refetchMessages,
-    isLoading
+    isLoading,
+    deleteMutation
   } = useMessagesAPI({ chatId });
 
   const { startPrompting, questions, files } = usePrompt({
@@ -72,7 +74,7 @@ const Chatting = ({
 
   const [text, setText] = useState("");
   const [mode, setMode] = useState(chatModes);
-  const [selectedMessages, setSelectedMessages] = useState(["asds"]);
+  const [selectedMessages, setSelectedMessages] = useState([]);
 
   const pinnedMessages = useMemo(() => {
     if (!data || !data.lists) return [];
@@ -84,7 +86,23 @@ const Chatting = ({
     setSelectedMessages([]);
   };
 
-  const deleteAllSelectedMessages = () => {};
+  const deleteAllSelectedMessages = () => {
+    deleteMutation.mutate(
+      {
+        chatId,
+        body: [...selectedMessages]
+      },
+      {
+        onSuccess: () => {
+          refetchMessages();
+          setSelectedMessages([]);
+        },
+        onError: (err) => {
+          toast.error(err.data?.title);
+        }
+      }
+    );
+  };
 
   const toggleMessage = (messageId) => {
     if (selectedMessages.includes(messageId))
@@ -154,6 +172,7 @@ const Chatting = ({
         selectedMessages={selectedMessages}
         onCancel={clearAllSelectedMessages}
         onDelete={deleteAllSelectedMessages}
+        isLoading={deleteMutation.isLoading}
       />
 
       <PinnedMessages
@@ -174,6 +193,7 @@ const Chatting = ({
             <Messages
               ref={listRef}
               data={data}
+              mode={mode}
               files={files}
               chatId={chatId}
               refetch={refetch}
