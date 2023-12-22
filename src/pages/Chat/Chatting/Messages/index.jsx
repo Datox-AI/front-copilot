@@ -90,7 +90,7 @@ const Messages = forwardRef(
                       fullData={message}
                       author_fullname={author}
                       message={realMessage}
-                      questions={realQuestions}
+                      questions={!isAudit && realQuestions}
                     />
                   );
                 })}
