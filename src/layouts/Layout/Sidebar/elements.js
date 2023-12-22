@@ -23,9 +23,9 @@ export const elements = [
     icon: <UsersIcon />
   },
   {
-    name: "logs",
+    name: "audit",
     label: "Audit Logs",
-    to: "/logs",
+    to: "/audit",
     icon: <LogsIcon />
   },
   {

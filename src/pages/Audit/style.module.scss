@@ -1,0 +1,121 @@
+.auditContainer {
+  width: 100%;
+  display: flex;
+
+  .user_list {
+    width: 250px;
+    background-color: #fff;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e2e2e2;
+    padding: 15px;
+
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding-bottom: 15px;
+      border-bottom: 1px solid #e2e2e2;
+
+      h2 {
+        color: #242424;
+        font-size: 22px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+      }
+
+      button {
+        min-width: 26px;
+        max-width: 26px;
+        padding: 0;
+        height: 26px;
+        border-radius: 5px;
+      }
+    }
+
+    .searchSection {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      margin-top: 20px;
+      padding: 0 10px;
+
+      label {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        // width: 254px;
+        height: 42px;
+        flex-shrink: 0;
+        border-radius: 10px;
+        background: #f8f9fa;
+        padding: 11px 10px;
+
+        svg {
+          color: #c4c4c4;
+
+          &:last-child {
+            color: #616161;
+          }
+        }
+
+        input {
+          background-color: transparent;
+          outline: none;
+          border: none;
+
+          font-size: 16px;
+          font-weight: 500;
+
+          &::placeholder {
+            color: #c4c4c4;
+            font-size: 16px;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    ul {
+      list-style: none;
+      margin: 15px 0 0;
+      padding: 0;
+
+      li {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #e2e2e2;
+        cursor: pointer;
+        transition: 0.4s ease-in-out all;
+
+        p {
+          font-size: 14px;
+          color: #616161;
+        }
+
+        span {
+          font-size: 12px;
+          color: #c4c4c4;
+        }
+
+        &.active,
+        &:hover {
+          background-color: #f8f9fa;
+        }
+      }
+    }
+  }
+
+  .outlet {
+    height: 100vh;
+    width: calc(100% - 250px);
+  }
+}

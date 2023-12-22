@@ -16,6 +16,7 @@ const Messages = forwardRef(
       data,
       mode,
       chatId,
+      isAudit,
       questions,
       onSelectQuestion,
       activeChat,
@@ -75,6 +76,7 @@ const Messages = forwardRef(
                           ? () => toggleMessage(message.id)
                           : () => {}
                       }
+                      isAudit={isAudit}
                       chatId={chatId}
                       refetch={refetchMessages}
                       isBot={message.role === "Assistant"}

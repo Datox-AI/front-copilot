@@ -18,6 +18,11 @@
       max-height: calc(100vh - 60px);
       transition: 0.4s ease-in-out all;
 
+      &.isAudit {
+        height: 100vh;
+        max-height: 100vh;
+      }
+
       &.hasIntegrations {
         // height of integration container: 66px
         height: calc(100vh - 126px);

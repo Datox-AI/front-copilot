@@ -12,6 +12,7 @@ const MessageItem = ({
   isBot,
   chatId,
   message,
+  isAudit,
   refetch,
   onClick,
   isPinned,
@@ -37,15 +38,17 @@ const MessageItem = ({
       </div>
       <div className={styles.content}>
         <p className={styles.message}>
-          <MoreCommands
-            chatId={chatId}
-            refetch={refetch}
-            message={fullData}
-            isPinned={isPinned}
-            messageId={messageId}
-            isSelected={isSelected}
-            toggleMessage={toggleMessage}
-          />
+          {!isAudit && (
+            <MoreCommands
+              chatId={chatId}
+              refetch={refetch}
+              message={fullData}
+              isPinned={isPinned}
+              messageId={messageId}
+              isSelected={isSelected}
+              toggleMessage={toggleMessage}
+            />
+          )}
           <CustomMarkdown message={message} />
           {questions && questions.length > 0 && (
             <QuestionsList

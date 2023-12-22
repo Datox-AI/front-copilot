@@ -49,7 +49,8 @@ const Chatting = ({
   isChat,
   chatId,
   refetch,
-  setRelatedFiles
+  setRelatedFiles,
+  isAudit
 }) => {
   const listRef = createRef();
   const dispatch = useDispatch();
@@ -155,7 +156,7 @@ const Chatting = ({
 
   return (
     <div className={styles.chattingContainer}>
-      {!isChat && (
+      {!isChat && !isAudit && (
         <TopChatList
           chats={chats}
           integrations={integrations}
@@ -168,25 +169,31 @@ const Chatting = ({
         />
       )}
 
-      <SelectedMessages
-        selectedMessages={selectedMessages}
-        onCancel={clearAllSelectedMessages}
-        onDelete={deleteAllSelectedMessages}
-        isLoading={deleteMutation.isLoading}
-      />
+      {!isAudit && (
+        <>
+          <SelectedMessages
+            selectedMessages={selectedMessages}
+            onCancel={clearAllSelectedMessages}
+            onDelete={deleteAllSelectedMessages}
+            isLoading={deleteMutation.isLoading}
+          />
 
-      <PinnedMessages
-        pinnedMessages={pinnedMessages}
-        chatId={chatId}
-        refetch={refetchMessages}
-      />
+          <PinnedMessages
+            pinnedMessages={pinnedMessages}
+            chatId={chatId}
+            refetch={refetchMessages}
+          />
+        </>
+      )}
       <div className={styles.chatting}>
         <div
           className={classNames(styles.messages, {
-            [styles.hasChats]: !isChat,
-            [styles.hasIntegrations]: !isChat,
-            [styles.hasPinnedMessages]: pinnedMessages?.length > 0,
-            [styles.hasSelectedMessages]: selectedMessages.length > 0
+            [styles.hasChats]: !isChat && !isAudit,
+            [styles.hasIntegrations]: !isChat && !isAudit,
+            [styles.hasPinnedMessages]: pinnedMessages?.length > 0 && !isAudit,
+            [styles.hasSelectedMessages]:
+              selectedMessages.length > 0 && !isAudit,
+            [styles.isAudit]: isAudit
           })}
         >
           {data?.lists?.length > 0 || isLoading ? (
@@ -195,6 +202,7 @@ const Chatting = ({
               data={data}
               mode={mode}
               files={files}
+              isAudit={isAudit}
               chatId={chatId}
               refetch={refetch}
               isLoading={isLoading}
@@ -214,7 +222,7 @@ const Chatting = ({
             />
           )}
         </div>
-        {chatId && (
+        {chatId && !isAudit && (
           <Input
             text={text}
             disabled={disabled}

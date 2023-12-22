@@ -15,7 +15,14 @@ import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { groupItemsByDate } from "../../../utils/group";
 
-const MessagesList = ({ chats, refetch, activeChat, onDelete, search }) => {
+const MessagesList = ({
+  chats,
+  refetch,
+  activeChat,
+  onDelete,
+  search,
+  isAudit
+}) => {
   const pinnedChats = useMemo(() => {
     return chats
       ?.filter((chat) =>
@@ -67,6 +74,7 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete, search }) => {
             active={activeChat?.id === chat.id}
             refetchChatList={refetch}
             onDelete={onDelete}
+            isAudit={isAudit}
             style={{
               height: 37
             }}
@@ -86,6 +94,7 @@ const MessagesList = ({ chats, refetch, activeChat, onDelete, search }) => {
             {group.items?.map((chat) => (
               <ChatItem
                 key={chat.id}
+                isAudit={isAudit}
                 name={chat.name}
                 chatId={chat.id}
                 maxWidth={true}
@@ -153,7 +162,8 @@ const FileBar = ({
   activeChat,
   relatedFiles,
   hideNewChatBtn,
-  title
+  title,
+  isAudit
 }) => {
   const navigate = useNavigate();
   const { createChat, deleteChat } = useChatsAPI({});
@@ -211,7 +221,7 @@ const FileBar = ({
           )}
         </Box>
 
-        <ChatTypeSelect />
+        {!isAudit && <ChatTypeSelect />}
       </header>
       <section className={styles.searchSection}>
         <label>
@@ -237,6 +247,7 @@ const FileBar = ({
             onDelete={setDeletableChatId}
             relatedFiles={relatedFiles}
             search={search}
+            isAudit={isAudit}
           />
         </div>
       </section>

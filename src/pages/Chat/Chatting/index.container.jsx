@@ -15,7 +15,8 @@ const ChattingContainer = ({}) => {
     handleSelectIntegration,
     chatId,
     refetch,
-    setRelatedFiles
+    setRelatedFiles,
+    isAudit
   } = useOutletContext();
 
   return (
@@ -32,6 +33,7 @@ const ChattingContainer = ({}) => {
       chatId={chatId}
       refetch={refetch}
       setRelatedFiles={setRelatedFiles}
+      isAudit={isAudit}
     />
   );
 };

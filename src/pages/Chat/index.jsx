@@ -6,12 +6,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { _integrations } from "../../consts/integrations";
 
-const Chat = () => {
-  const { chatId } = useParams();
+const Chat = ({ isAudit }) => {
+  const { chatId, userId } = useParams();
   const { data, refetch } = useChatsAPI({
     isGetUsers: true
+    // userId
   });
 
+  const [relatedFiles, setRelatedFiles] = useState([]);
   const [activeIntegration] = useState(_integrations[0]);
   const [activeChat, setActiveChat] = useState(null);
 
@@ -39,6 +41,8 @@ const Chat = () => {
         chats={chats}
         activeChat={activeChat}
         refetch={refetch}
+        isAudit={isAudit}
+        hideNewChatBtn={isAudit}
         title="Chat"
       />
       <Outlet
@@ -48,7 +52,9 @@ const Chat = () => {
           activeIntegration,
           handleSelectChat,
           chatId,
-          refetch
+          refetch,
+          setRelatedFiles,
+          isAudit
         }}
       />
     </Box>

@@ -91,6 +91,7 @@ const ChatItem = ({
   refetchChatList,
   onDelete,
   isVerticalMoreIcon,
+  isAudit,
   ...props
 }) => {
   const tooltipRef = useRef();
@@ -181,65 +182,67 @@ const ChatItem = ({
               {isPinned && <PinIcon />}
               <p onClick={() => navigate(chatId)}>{newName}</p>
             </div>
-            <span onClick={handleClick} ref={tooltipRef}>
-              {updateChat.isLoading ? (
-                <CircularProgress size={10} />
-              ) : (
-                <MoreHorizRoundedIcon
-                  style={{
-                    transform: isVerticalMoreIcon && "rotateZ(90deg)"
-                  }}
-                />
-              )}
+            {!isAudit && (
+              <span onClick={handleClick} ref={tooltipRef}>
+                {updateChat.isLoading ? (
+                  <CircularProgress size={10} />
+                ) : (
+                  <MoreHorizRoundedIcon
+                    style={{
+                      transform: isVerticalMoreIcon && "rotateZ(90deg)"
+                    }}
+                  />
+                )}
 
-              <BasePopup
-                id={id}
-                open={open}
-                anchor={anchor}
-                style={{
-                  zIndex: 4
-                }}
-              >
-                <PopupBody>
-                  <ul>
-                    <li>
-                      <button
-                        onClick={() => {
-                          setAnchor(null);
-                          setIsRename((prev) => !prev);
-                        }}
-                      >
-                        <EditOutlinedIcon />
-                        Rename
-                      </button>
-                    </li>
-                    <li>
-                      <button onClick={onTogglePin}>
-                        {isPinned ? (
-                          <>
-                            <PushPinRoundedIcon /> Unpin
-                          </>
-                        ) : (
-                          <>
-                            <PushPinOutlinedIcon /> Pin
-                          </>
-                        )}
-                      </button>
-                    </li>
-                    <li>
-                      <button
-                        onClick={() => {
-                          onDelete(chatId);
-                          setAnchor(null);
-                        }}
-                      >
-                        <DeleteOutlineOutlinedIcon /> Delete
-                      </button>
-                    </li>
-                  </ul>
-                </PopupBody>
-              </BasePopup>
-            </span>
+                <BasePopup
+                  id={id}
+                  open={open}
+                  anchor={anchor}
+                  style={{
+                    zIndex: 4
+                  }}
+                >
+                  <PopupBody>
+                    <ul>
+                      <li>
+                        <button
+                          onClick={() => {
+                            setAnchor(null);
+                            setIsRename((prev) => !prev);
+                          }}
+                        >
+                          <EditOutlinedIcon />
+                          Rename
+                        </button>
+                      </li>
+                      <li>
+                        <button onClick={onTogglePin}>
+                          {isPinned ? (
+                            <>
+                              <PushPinRoundedIcon /> Unpin
+                            </>
+                          ) : (
+                            <>
+                              <PushPinOutlinedIcon /> Pin
+                            </>
+                          )}
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={() => {
+                            onDelete(chatId);
+                            setAnchor(null);
+                          }}
+                        >
+                          <DeleteOutlineOutlinedIcon /> Delete
+                        </button>
+                      </li>
+                    </ul>
+                  </PopupBody>
+                </BasePopup>
+              </span>
+            )}
           </>
         )}
       </button>

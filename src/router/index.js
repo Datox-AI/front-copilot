@@ -5,6 +5,7 @@ import ChattingContainer from "../pages/Chat/Chatting/index.container";
 import Integration from "../pages/Integration";
 import FallbackPage from "../components/FallbackPage";
 import Users from "../pages/Users";
+import Audit from "../pages/Audit";
 
 export const userRouter = createBrowserRouter([
   {
@@ -95,6 +96,22 @@ export const adminRouter = createBrowserRouter([
       {
         path: "users",
         element: <Users />
+      },
+      {
+        path: "audit",
+        element: <Audit />,
+        children: [
+          {
+            path: ":userId",
+            element: <Chat isAudit={true} />,
+            children: [
+              {
+                path: ":chatId",
+                element: <ChattingContainer />
+              }
+            ]
+          }
+        ]
       },
       {
         path: "*",
