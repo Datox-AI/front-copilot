@@ -76,6 +76,7 @@ const Messages = forwardRef(
                           ? () => toggleMessage(message.id)
                           : () => {}
                       }
+                      mode={mode}
                       isAudit={isAudit}
                       chatId={chatId}
                       refetch={refetchMessages}

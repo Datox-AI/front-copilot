@@ -1,6 +1,6 @@
 import { useMsal } from "@azure/msal-react";
 import useChatsAPI from "./api/useChatsAPI";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import moment from "moment";
 
 export const chatModes = {
@@ -9,6 +9,8 @@ export const chatModes = {
 };
 
 const useMessages = ({ activeChat, refetch, data, chatId, listRef }) => {
+  const oneTimeRenderRef = useRef();
+
   const { generateChatName } = useChatsAPI({});
 
   useEffect(() => {
@@ -22,10 +24,18 @@ const useMessages = ({ activeChat, refetch, data, chatId, listRef }) => {
   }, [data, activeChat]);
 
   useEffect(() => {
+    oneTimeRenderRef.current = false;
+  }, [chatId]);
+
+  useEffect(() => {
+    if (oneTimeRenderRef.current) return;
+
     listRef.current?.scrollIntoView({
       block: "end"
     });
-  }, [data?.lists, chatId]);
+
+    oneTimeRenderRef.current = true;
+  }, [data?.lists, chatId, oneTimeRenderRef]);
 
   const groupedMessages = useMemo(() => {
     if (!data || !data.lists) return [];

@@ -3,12 +3,16 @@ import classNames from "classnames";
 import CustomMarkdown from "./CustomMarkdown";
 import QuestionsList from "./QuestionsList";
 import MoreCommands from "./MoreCommands";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
-import { Avatar } from "@mui/material";
+import { Avatar, Checkbox } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
+import { chatModes } from "../../../../../hooks/useMessages";
 
 const MessageItem = ({
   time,
+  mode,
   isBot,
   chatId,
   message,
@@ -34,6 +38,14 @@ const MessageItem = ({
       })}
     >
       <div className={styles.author}>
+        {mode === chatModes.SELECT && (
+          <Checkbox
+            value={isSelected}
+            checked={isSelected}
+            icon={<RadioButtonUncheckedIcon />}
+            checkedIcon={<CheckCircleIcon />}
+          />
+        )}
         {<Avatar {...stringAvatar(isBot ? "Datox GPT" : author_fullname)} />}
       </div>
       <div className={styles.content}>

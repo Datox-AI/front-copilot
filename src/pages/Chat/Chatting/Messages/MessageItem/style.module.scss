@@ -85,6 +85,9 @@
 
   .author {
     display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
   }
 
   .content {
@@ -116,7 +119,7 @@
 
       .more {
         position: absolute;
-        left: 10px;
+        right: 10px;
         top: 5px;
         cursor: pointer;
         color: #fff;

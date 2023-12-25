@@ -16,6 +16,7 @@ import PinnedMessages from "./PinnedMessages";
 import { chatModes } from "../../../hooks/useMessages";
 import SelectedMessages from "./SelectedMessages";
 import toast from "react-hot-toast";
+import { useMsal } from "@azure/msal-react";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -54,6 +55,8 @@ const Chatting = ({
 }) => {
   const listRef = createRef();
   const dispatch = useDispatch();
+
+  const { accounts } = useMsal();
 
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
@@ -150,6 +153,23 @@ const Chatting = ({
     [textGenerator, text, chatId]
   );
 
+  const handleCopySelectedMessages = async () => {
+    let copyMarkdown = "";
+    data?.lists?.forEach((message) => {
+      if (selectedMessages.includes(message.id)) {
+        copyMarkdown += `– ${
+          message.role === "Assistant"
+            ? "Datox Copilot"
+            : "User: " + accounts?.[0]?.name
+        }\nMessage: ${message.text}\n\n`;
+      }
+    });
+
+    await navigator.clipboard.writeText(copyMarkdown);
+
+    toast.success("Copied!");
+  };
+
   const onSelectQuestion = (question) => {
     startPrompting(question);
   };
@@ -175,6 +195,7 @@ const Chatting = ({
             selectedMessages={selectedMessages}
             onCancel={clearAllSelectedMessages}
             onDelete={deleteAllSelectedMessages}
+            onCopy={handleCopySelectedMessages}
             isLoading={deleteMutation.isLoading}
           />
 

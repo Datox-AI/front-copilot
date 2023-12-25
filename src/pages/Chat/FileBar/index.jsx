@@ -23,24 +23,27 @@ const MessagesList = ({
   search,
   isAudit
 }) => {
+  const mutatedChats = useMemo(() => {
+    const _chats = chats?.filter((chat) =>
+      search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
+    );
+
+    // in audit page to hide chats without messages
+    if (isAudit) return _chats?.filter((chat) => chat.messagesCount !== 0);
+
+    return _chats;
+  }, [chats, search, isAudit]);
+
   const pinnedChats = useMemo(() => {
-    return chats
-      ?.filter((chat) =>
-        search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
-      )
-      ?.filter((chat) => chat.pinned);
-  }, [chats, search]);
+    return mutatedChats?.filter((chat) => chat.pinned);
+  }, [mutatedChats]);
 
   const groupedChats = useMemo(() => {
     return groupItemsByDate(
-      chats
-        ?.filter((chat) =>
-          search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
-        )
-        ?.filter((chat) => !chat.pinned),
+      mutatedChats?.filter((chat) => !chat.pinned),
       "lastMessage"
     );
-  }, [chats, search]);
+  }, [mutatedChats]);
 
   if (chats?.length === 0)
     return (
