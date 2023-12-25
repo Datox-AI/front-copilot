@@ -1,12 +1,11 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from "react";
-
 import MessageItem from "./MessageItem";
 import styles from "./style.module.scss";
 import moment from "moment";
-import useChatsAPI from "../../../../hooks/api/useChatsAPI";
 import MessageItemSkeleton from "./MessageItem/index.skeleton";
-import { useMsal } from "@azure/msal-react";
 import useMessages, { chatModes } from "../../../../hooks/useMessages";
+
+import { forwardRef } from "react";
+import { useMsal } from "@azure/msal-react";
 import { focusOnInput } from "../../../../utils";
 
 const errorEmptyMessage = "Something wrong with response prompt";
@@ -60,7 +59,13 @@ const Messages = forwardRef(
         ) : (
           messages.map((block, b) => (
             <div className={styles.block} key={b}>
-              <p>{block.date}</p>
+              <p
+                style={{
+                  textAlign: "center!important"
+                }}
+              >
+                {block.date}
+              </p>
               <div className={styles.messageList}>
                 {block.messages.map((message, m) => {
                   const realMessage =
