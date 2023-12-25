@@ -97,12 +97,34 @@
     gap: 12px;
     background-color: transparent;
 
+    .reply {
+      border-radius: 3px;
+      background: #6463af;
+
+      padding-left: 8px;
+      border-left: 4px solid #434ae9;
+      display: flex;
+      height: 48px;
+      padding-right: 25px;
+      align-items: center;
+      margin-bottom: 15px;
+
+      p {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+
+        text-align: left;
+      }
+    }
+
     .message {
       border-radius: 12px 12px 0px 12px;
       background: #8887d1;
       color: #fff !important;
       padding: 22px 32px !important;
-      text-align: justify !important;
+      text-align: left !important;
       font-size: 14px;
       font-weight: 400;
       line-height: 140%; /* 19.6px */

@@ -2,6 +2,7 @@ import styles from "./style.module.scss";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
 import { ReactComponent as SendIcon } from "../../../../assets/icons/PaperPlaneRight.svg";
+import ReplyState from "./States/Reply";
 
 const Input = ({
   text,
@@ -9,6 +10,8 @@ const Input = ({
   onSend,
   onTexting,
   isStreaming,
+  replyMessage,
+  clearReplyMessage,
   onCancel
 }) => {
   return (
@@ -23,15 +26,23 @@ const Input = ({
         <AttachFileRoundedIcon />
       </label>
 
-      <input
-        id="input-message"
-        className={styles.input}
-        placeholder="Ask anything..."
-        value={text}
-        onChange={onTexting}
-        disabled={isStreaming}
-        autoComplete="off"
-      />
+      <div className={styles.input}>
+        {replyMessage && (
+          <ReplyState
+            message={replyMessage.text}
+            onClearReply={clearReplyMessage}
+          />
+        )}
+        <input
+          id="input-message"
+          // className={styles.input}
+          placeholder="Ask anything..."
+          value={text}
+          onChange={onTexting}
+          disabled={isStreaming}
+          autoComplete="off"
+        />
+      </div>
 
       <button
         type="submit"

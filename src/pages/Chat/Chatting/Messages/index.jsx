@@ -7,6 +7,7 @@ import useChatsAPI from "../../../../hooks/api/useChatsAPI";
 import MessageItemSkeleton from "./MessageItem/index.skeleton";
 import { useMsal } from "@azure/msal-react";
 import useMessages, { chatModes } from "../../../../hooks/useMessages";
+import { focusOnInput } from "../../../../utils";
 
 const errorEmptyMessage = "Something wrong with response prompt";
 
@@ -25,6 +26,7 @@ const Messages = forwardRef(
       refetchMessages,
       isStreaming,
       selectedMessages,
+      selectReplyMessage,
       toggleMessage
     },
     listRef
@@ -37,6 +39,11 @@ const Messages = forwardRef(
       listRef,
       chatId
     });
+
+    const onReply = (message) => {
+      selectReplyMessage(message);
+      focusOnInput();
+    };
 
     return (
       <div className={styles.messages}>
@@ -79,11 +86,15 @@ const Messages = forwardRef(
                       mode={mode}
                       isAudit={isAudit}
                       chatId={chatId}
+                      replyMessage={data?.lists?.find(
+                        (msg) => msg.id === message.replyTo
+                      )}
                       refetch={refetchMessages}
                       isBot={message.role === "Assistant"}
                       time={moment(message.created).format("hh:mm A")}
                       onSelectQuestion={onSelectQuestion}
                       isSelected={selectedMessages.includes(message.id)}
+                      onReply={() => onReply(message)}
                       toggleMessage={() => toggleMessage(message.id)}
                       isTyping={message.isTyping}
                       messageId={message.id}

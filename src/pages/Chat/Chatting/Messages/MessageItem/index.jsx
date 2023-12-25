@@ -22,12 +22,19 @@ const MessageItem = ({
   isPinned,
   questions,
   messageId,
+  onReply,
+  replyMessage,
   author_fullname,
   onSelectQuestion,
   toggleMessage,
   isSelected,
   fullData
 }) => {
+  const onClickReply = (_id) => {
+    document.getElementById("message-" + _id).scrollIntoView({
+      block: "start"
+    });
+  };
   return (
     <div
       id={`message-${messageId}`}
@@ -59,7 +66,16 @@ const MessageItem = ({
               messageId={messageId}
               isSelected={isSelected}
               toggleMessage={toggleMessage}
+              onReply={onReply}
             />
+          )}
+          {replyMessage && (
+            <div
+              className={styles.reply}
+              onClick={() => onClickReply(replyMessage.id)}
+            >
+              <p>{replyMessage?.text}</p>
+            </div>
           )}
           <CustomMarkdown message={message} />
           {questions && questions.length > 0 && (

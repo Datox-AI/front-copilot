@@ -12,6 +12,7 @@ import {
   stopStreaming
 } from "../redux/chat/chatSlice";
 import { BASE_API_URL, COPILOT_API_KEY } from "../config/request";
+import toast from "react-hot-toast";
 
 const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   const dispatch = useDispatch();
@@ -21,11 +22,14 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   const { token } = useSelector((store) => store.auth);
 
   const [questions, setQuestions] = useState([]);
+  const [replyMessage, setReplyMessage] = useState(null);
   const [files, setFiles] = useState([]);
+
+  const clearReplyMessage = () => setReplyMessage(null);
 
   const updateLastMessage = (text) => {
     const _cachedMsgs = [
-      ...queryClient.getQueryData(["GET_MESSAGES", chatId])?.lists
+      ...(queryClient?.getQueryData(["GET_MESSAGES", chatId])?.lists || [])
     ];
 
     const lastIndex = _cachedMsgs.length - 1;
@@ -39,6 +43,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
     queryClient.setQueryData(["GET_MESSAGES", chatId], {
       lists: [..._cachedMsgs]
     });
+    scrollToTheEndOfTheChat();
   };
 
   useEffect(() => {
@@ -51,7 +56,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   useEffect(() => {
     if (!textGenerator || !textGenerator?.isStreaming) return;
 
-    updateLastMessage(textGenerator.text);
+    if (textGenerator.text) updateLastMessage(textGenerator.text);
 
     return () => {
       // clean text generator
@@ -61,6 +66,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
 
   const onText = (text) => {
     dispatch(setTextToGenerator({ chatId, text }));
+    scrollToTheEndOfTheChat();
     // updateLastMessage(text);
   };
 
@@ -77,7 +83,9 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
     setQuestions(qstns);
   };
 
-  const onError = () => {};
+  const onError = (err) => {
+    toast.error(err);
+  };
 
   const onParseTypes = (type, data) => {
     switch (type) {
@@ -94,7 +102,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
         break;
 
       case "Error":
-        onError();
+        onError(data.Text);
         break;
 
       default:
@@ -119,6 +127,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
             if (done) {
               dispatch(stopStreaming({ chatId }));
               refetchMessages();
+              scrollToTheEndOfTheChat();
 
               return;
             }
@@ -126,6 +135,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
             if (!isStreaming) {
               refetchMessages();
               reader.cancel();
+              scrollToTheEndOfTheChat();
 
               return;
             }
@@ -170,6 +180,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       created: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
       files: [],
+      replyTo: null,
       text: " ",
       role: "Assistant"
     };
@@ -190,7 +201,8 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        prompt: message
+        prompt: message,
+        replyTo: replyMessage?.id
       })
     })
       .then((res) => onFetchSuccess(res, message))
@@ -206,6 +218,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       created: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
       files: [],
+      replyTo: replyMessage?.id,
       text,
       role: "User"
     };
@@ -218,18 +231,26 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       lists: [..._cachedMsgs, { ...newMSG }]
     });
 
-    if (listRef.current) {
-      listRef?.current.scrollIntoView({
-        block: "end"
-      });
-    }
-
+    scrollToTheEndOfTheChat();
     setQuestions([]);
+    setReplyMessage(null);
     dispatch(createTextGenerator({ chatId }));
     fetchStream(text);
   };
 
-  return { startPrompting, questions };
+  const scrollToTheEndOfTheChat = useCallback(() => {
+    listRef?.current?.scrollIntoView({
+      block: "end"
+    });
+  }, [listRef]);
+
+  return {
+    startPrompting,
+    questions,
+    replyMessage,
+    clearReplyMessage,
+    selectReplyMessage: setReplyMessage
+  };
 };
 
 export default usePrompt;

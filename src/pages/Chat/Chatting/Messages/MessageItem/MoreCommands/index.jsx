@@ -20,7 +20,8 @@ const MoreCommands = ({
   chatId,
   isPinned,
   isSelected,
-  toggleMessage
+  toggleMessage,
+  onReply
 }) => {
   const { pinMutation, deleteMutation } = useMessagesAPI({});
 
@@ -70,7 +71,7 @@ const MoreCommands = ({
 
       <div className={styles.command_context}>
         <ul className={styles.commands}>
-          <li className={styles.command}>
+          <li className={styles.command} onClick={onReply}>
             <ReplyIcon />
             Reply
           </li>

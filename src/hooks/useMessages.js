@@ -9,7 +9,7 @@ export const chatModes = {
 };
 
 const useMessages = ({ activeChat, refetch, data, chatId, listRef }) => {
-  const oneTimeRenderRef = useRef();
+  const oneTimeRenderRef = useRef(null);
 
   const { generateChatName } = useChatsAPI({});
 
@@ -28,14 +28,14 @@ const useMessages = ({ activeChat, refetch, data, chatId, listRef }) => {
   }, [chatId]);
 
   useEffect(() => {
-    if (oneTimeRenderRef.current) return;
+    if (!oneTimeRenderRef.current && data?.lists.length > 0) {
+      listRef.current?.scrollIntoView({
+        block: "end"
+      });
 
-    listRef.current?.scrollIntoView({
-      block: "end"
-    });
-
-    oneTimeRenderRef.current = true;
-  }, [data?.lists, chatId, oneTimeRenderRef]);
+      oneTimeRenderRef.current = true;
+    }
+  }, [data?.lists, chatId, oneTimeRenderRef.current]);
 
   const groupedMessages = useMemo(() => {
     if (!data || !data.lists) return [];

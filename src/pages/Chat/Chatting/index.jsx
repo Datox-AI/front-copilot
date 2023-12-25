@@ -69,7 +69,14 @@ const Chatting = ({
     deleteMutation
   } = useMessagesAPI({ chatId });
 
-  const { startPrompting, questions, files } = usePrompt({
+  const {
+    files,
+    questions,
+    replyMessage,
+    startPrompting,
+    clearReplyMessage,
+    selectReplyMessage
+  } = usePrompt({
     chatId,
     refetchMessages,
     listRef,
@@ -154,6 +161,8 @@ const Chatting = ({
   );
 
   const handleCopySelectedMessages = async () => {
+    if (!selectedMessages || selectedMessages.length === 0) return;
+
     let copyMarkdown = "";
     data?.lists?.forEach((message) => {
       if (selectedMessages.includes(message.id)) {
@@ -226,6 +235,7 @@ const Chatting = ({
               isAudit={isAudit}
               chatId={chatId}
               refetch={refetch}
+              replyMessage={replyMessage}
               isLoading={isLoading}
               questions={questions}
               activeChat={activeChat}
@@ -234,6 +244,8 @@ const Chatting = ({
               toggleMessage={toggleMessage}
               refetchMessages={refetchMessages}
               onSelectQuestion={onSelectQuestion}
+              clearReplyMessage={clearReplyMessage}
+              selectReplyMessage={selectReplyMessage}
             />
           ) : (
             <EmptyMessages
@@ -249,6 +261,8 @@ const Chatting = ({
             disabled={disabled}
             onTexting={onTexting}
             onSend={onSend}
+            replyMessage={replyMessage}
+            clearReplyMessage={clearReplyMessage}
             isStreaming={textGenerator?.isStreaming}
           />
         )}
