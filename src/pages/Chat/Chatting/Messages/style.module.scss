@@ -27,11 +27,11 @@
     width: 100%;
     flex-direction: column;
 
-    p {
+    .date {
       padding: 0;
       margin: 0;
       width: 100% !important;
-      // text-align: center;
+      text-align: center;
     }
 
     .messageList {

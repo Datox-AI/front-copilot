@@ -6,7 +6,7 @@ import MoreCommands from "./MoreCommands";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
-import { Avatar, Checkbox } from "@mui/material";
+import { Avatar, Box, Checkbox } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
 import { chatModes } from "../../../../../hooks/useMessages";
 
@@ -35,6 +35,7 @@ const MessageItem = ({
       block: "start"
     });
   };
+
   return (
     <div
       id={`message-${messageId}`}
@@ -44,49 +45,65 @@ const MessageItem = ({
         [styles.isSelected]: isSelected
       })}
     >
-      <div className={styles.author}>
-        {mode === chatModes.SELECT && (
-          <Checkbox
-            value={isSelected}
-            checked={isSelected}
-            icon={<RadioButtonUncheckedIcon />}
-            checkedIcon={<CheckCircleIcon />}
-          />
-        )}
-        {<Avatar {...stringAvatar(isBot ? "Datox GPT" : author_fullname)} />}
-      </div>
-      <div className={styles.content}>
-        <p className={styles.message}>
-          {!isAudit && (
-            <MoreCommands
-              chatId={chatId}
-              refetch={refetch}
-              message={fullData}
-              isPinned={isPinned}
-              messageId={messageId}
-              isSelected={isSelected}
-              toggleMessage={toggleMessage}
-              onReply={onReply}
+      <Box
+        display="flex"
+        alignItems="flex-end"
+        gap="8px"
+        flexDirection={isBot ? "row" : "row-reverse"}
+        width="95%"
+      >
+        <div className={styles.author}>
+          {mode === chatModes.SELECT && isBot && (
+            <Checkbox
+              value={isSelected}
+              checked={isSelected}
+              icon={<RadioButtonUncheckedIcon />}
+              checkedIcon={<CheckCircleIcon />}
             />
           )}
-          {replyMessage && (
-            <div
-              className={styles.reply}
-              onClick={() => onClickReply(replyMessage.id)}
-            >
-              <p>{replyMessage?.text}</p>
-            </div>
-          )}
-          <CustomMarkdown message={message} />
-          {questions && questions.length > 0 && (
-            <QuestionsList
-              questions={questions}
-              onSelectQuestion={onSelectQuestion}
-            />
-          )}
-        </p>
-        <span className={styles.time}>{time}</span>
-      </div>
+          {<Avatar {...stringAvatar(isBot ? "Datox GPT" : author_fullname)} />}
+        </div>
+        <div className={styles.content}>
+          <p className={styles.message}>
+            {!isAudit && (
+              <MoreCommands
+                chatId={chatId}
+                refetch={refetch}
+                message={fullData}
+                isPinned={isPinned}
+                messageId={messageId}
+                isSelected={isSelected}
+                toggleMessage={toggleMessage}
+                onReply={onReply}
+              />
+            )}
+            {replyMessage?.id && (
+              <div
+                className={styles.reply}
+                onClick={() => onClickReply(replyMessage.id)}
+              >
+                <p>{replyMessage?.text}</p>
+              </div>
+            )}
+            <CustomMarkdown message={message} />
+            {questions && questions.length > 0 && (
+              <QuestionsList
+                questions={questions}
+                onSelectQuestion={onSelectQuestion}
+              />
+            )}
+          </p>
+          <span className={styles.time}>{time}</span>
+        </div>
+      </Box>
+      {mode === chatModes.SELECT && !isBot && (
+        <Checkbox
+          value={isSelected}
+          checked={isSelected}
+          icon={<RadioButtonUncheckedIcon />}
+          checkedIcon={<CheckCircleIcon />}
+        />
+      )}
     </div>
   );
 };

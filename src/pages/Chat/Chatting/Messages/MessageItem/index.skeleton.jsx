@@ -1,8 +1,7 @@
-import { Avatar, Skeleton } from "@mui/material";
-import styles from "./style.module.scss";
-import { stringAvatar } from "../../../../../utils";
 import classNames from "classnames";
-import { useEffect, useMemo, useRef, useState } from "react";
+import styles from "./style.module.scss";
+import { useMemo } from "react";
+import { Box, Skeleton } from "@mui/material";
 
 function generateRandom(min, max) {
   // find diff
@@ -42,24 +41,39 @@ const MessageItemSkeleton = ({ isBot }) => {
         [styles.isBot]: isBot
       })}
     >
-      <div className={styles.author}>
-        <Skeleton animation="wave" variant="circular" width={42} height={42} />
-      </div>
-      <div className={styles.content}>
-        <Skeleton
-          width={width}
-          variant="rectangular"
-          height={height}
-          style={{
-            "border-radius": isBot ? "12px 12px 12px 0px" : "12px 12px 0px 12px"
-          }}
-        >
-          <p className={styles.message}></p>
-        </Skeleton>
-        <span className={styles.time}>
-          <Skeleton width={50} height={24} />
-        </span>
-      </div>
+      <Box
+        display="flex"
+        alignItems="flex-end"
+        gap="8px"
+        flexDirection={isBot ? "row" : "row-reverse"}
+        width="95%"
+      >
+        <div className={styles.author}>
+          <Skeleton
+            animation="wave"
+            variant="circular"
+            width={42}
+            height={42}
+          />
+        </div>
+        <div className={styles.content}>
+          <Skeleton
+            width={width}
+            variant="rectangular"
+            height={height}
+            style={{
+              "border-radius": isBot
+                ? "12px 12px 12px 0px"
+                : "12px 12px 0px 12px"
+            }}
+          >
+            <p className={styles.message}></p>
+          </Skeleton>
+          <span className={styles.time}>
+            <Skeleton width={50} height={24} />
+          </span>
+        </div>
+      </Box>
     </div>
   );
 };

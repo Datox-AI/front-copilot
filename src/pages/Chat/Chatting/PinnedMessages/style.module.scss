@@ -7,6 +7,27 @@
   height: 0;
   opacity: 0;
 
+  &.open.isExpanded {
+    height: 150px;
+    background: #3b455e;
+
+    ul {
+      li {
+        line-height: 22px;
+
+        span {
+          width: 96%;
+          overflow: hidden;
+          display: flex;
+          overflow: scroll;
+          height: 150px;
+          overflow: scroll;
+          padding: 10px 0;
+        }
+      }
+    }
+  }
+
   &.open {
     height: 30px;
     opacity: 1;
@@ -41,6 +62,7 @@
       font-size: 14px;
       font-weight: 400;
       line-height: 30px;
+      transition: none;
 
       span {
         width: 96%;

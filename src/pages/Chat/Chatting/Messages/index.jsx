@@ -59,13 +59,7 @@ const Messages = forwardRef(
         ) : (
           messages.map((block, b) => (
             <div className={styles.block} key={b}>
-              <p
-                style={{
-                  textAlign: "center!important"
-                }}
-              >
-                {block.date}
-              </p>
+              <p className={styles.date}>{block.date}</p>
               <div className={styles.messageList}>
                 {block.messages.map((message, m) => {
                   const realMessage =
@@ -80,20 +74,13 @@ const Messages = forwardRef(
                     message.role === "Assistant"
                       ? "Datox GPT"
                       : accounts?.[0]?.name || "DATOX USER";
+
                   return (
                     <MessageItem
                       key={m}
-                      onClick={
-                        mode === chatModes.SELECT
-                          ? () => toggleMessage(message.id)
-                          : () => {}
-                      }
                       mode={mode}
                       isAudit={isAudit}
                       chatId={chatId}
-                      replyMessage={data?.lists?.find(
-                        (msg) => msg.id === message.replyTo
-                      )}
                       refetch={refetchMessages}
                       isBot={message.role === "Assistant"}
                       time={moment(message.created).format("hh:mm A")}
@@ -108,6 +95,14 @@ const Messages = forwardRef(
                       author_fullname={author}
                       message={realMessage}
                       questions={!isAudit && realQuestions}
+                      replyMessage={data?.lists?.find(
+                        (msg) => msg.id === message.replyTo
+                      )}
+                      onClick={
+                        mode === chatModes.SELECT
+                          ? () => toggleMessage(message.id)
+                          : () => {}
+                      }
                     />
                   );
                 })}

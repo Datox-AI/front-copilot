@@ -3,18 +3,33 @@ import { ReactComponent as PinIcon } from "../../../../assets/icons/pin.svg";
 import { ReactComponent as VerticalDotsIcon } from "../../../../assets/icons/vertical_dots.svg";
 import { ReactComponent as EyeIcon } from "../../../../assets/icons/eye.svg";
 import { ReactComponent as UnpinIcon } from "../../../../assets/icons/unpin.svg";
+import { useMemo, useState } from "react";
+import { CircularProgress } from "@mui/material";
+
+import UnfoldLessRoundedIcon from "@mui/icons-material/UnfoldLessRounded";
+import UnfoldMoreRoundedIcon from "@mui/icons-material/UnfoldMoreRounded";
 import classNames from "classnames";
 import PopoverMenu from "../../../../components/PopoverMenu";
-import { useMemo } from "react";
 import useMessagesAPI from "../../../../hooks/api/useMessagesAPI";
 import toast from "react-hot-toast";
-import { CircularProgress } from "@mui/material";
 
 const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
   const { pinMutation } = useMessagesAPI({});
 
+  const [isCollapsed, setIsCollapsed] = useState(true);
+
   const commands = useMemo(() => {
     return [
+      {
+        title: isCollapsed ? "Expand" : "Collapse",
+        icon: isCollapsed ? UnfoldLessRoundedIcon : UnfoldMoreRoundedIcon,
+        onClick: () => setIsCollapsed((prev) => !prev),
+        iconProps: {
+          size: 14,
+          width: 14,
+          fontSize: "14px"
+        }
+      },
       {
         title: "Go to message",
         icon: EyeIcon,
@@ -60,7 +75,8 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
   return (
     <div
       className={classNames(styles.container, {
-        [styles.open]: pinnedMessages.length > 0
+        [styles.open]: pinnedMessages.length > 0,
+        [styles.isExpanded]: !isCollapsed
       })}
     >
       <ul>
