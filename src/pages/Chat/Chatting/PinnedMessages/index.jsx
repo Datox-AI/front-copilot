@@ -22,7 +22,7 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
     return [
       {
         title: isCollapsed ? "Expand" : "Collapse",
-        icon: isCollapsed ? UnfoldLessRoundedIcon : UnfoldMoreRoundedIcon,
+        icon: !isCollapsed ? UnfoldLessRoundedIcon : UnfoldMoreRoundedIcon,
         onClick: () => setIsCollapsed((prev) => !prev),
         iconProps: {
           size: 14,
@@ -70,7 +70,7 @@ const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
         }
       }
     ];
-  }, [pinnedMessages, pinMutation, chatId]);
+  }, [pinnedMessages, pinMutation, chatId, isCollapsed]);
 
   return (
     <div

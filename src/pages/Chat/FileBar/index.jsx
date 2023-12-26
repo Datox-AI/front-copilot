@@ -28,10 +28,7 @@ const MessagesList = ({
       search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
     );
 
-    // in audit page to hide chats without messages
-    if (isAudit) return _chats?.filter((chat) => chat.messagesCount !== 0);
-
-    return _chats;
+    return _chats?.filter((chat) => chat.messagesCount !== 0);
   }, [chats, search, isAudit]);
 
   const pinnedChats = useMemo(() => {
