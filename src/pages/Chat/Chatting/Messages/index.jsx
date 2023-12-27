@@ -94,6 +94,7 @@ const Messages = forwardRef(
                       fullData={message}
                       author_fullname={author}
                       message={realMessage}
+                      files={message.files}
                       questions={!isAudit && realQuestions}
                       replyMessage={data?.lists?.find(
                         (msg) => msg.id === message.replyTo
@@ -106,7 +107,12 @@ const Messages = forwardRef(
                     />
                   );
                 })}
-                <div ref={listRef}></div>
+                <div
+                  ref={listRef}
+                  style={{
+                    padding: "10px 0"
+                  }}
+                ></div>
               </div>
             </div>
           ))

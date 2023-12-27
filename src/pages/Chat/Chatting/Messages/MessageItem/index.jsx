@@ -9,6 +9,15 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import { Avatar, Box, Checkbox } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
 import { chatModes } from "../../../../../hooks/useMessages";
+import File from "../../../../../components/File";
+
+const ReplyMessage = ({ onClickReply, replyMessage }) => {
+  return (
+    <div className={styles.reply} onClick={() => onClickReply(replyMessage.id)}>
+      <p>{replyMessage?.text}</p>
+    </div>
+  );
+};
 
 const MessageItem = ({
   time,
@@ -22,6 +31,7 @@ const MessageItem = ({
   isPinned,
   questions,
   messageId,
+  files,
   onReply,
   replyMessage,
   author_fullname,
@@ -77,14 +87,28 @@ const MessageItem = ({
                 onReply={onReply}
               />
             )}
+
             {replyMessage?.id && (
-              <div
-                className={styles.reply}
-                onClick={() => onClickReply(replyMessage.id)}
-              >
-                <p>{replyMessage?.text}</p>
-              </div>
+              <ReplyMessage
+                replyMessage={replyMessage}
+                onClickReply={onClickReply}
+              />
             )}
+
+            {files?.length > 0 && (
+              <Box
+                display="flex"
+                width="480px"
+                flexDirection="column"
+                gap="8px"
+                marginBottom="10px"
+              >
+                {files.map((file) => (
+                  <File name={file.fileName} type={file.fileType} />
+                ))}
+              </Box>
+            )}
+
             <CustomMarkdown message={message} />
             {questions && questions.length > 0 && (
               <QuestionsList

@@ -1,29 +1,31 @@
+import moment from "moment";
+import toast from "react-hot-toast";
+
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { store } from "../redux/store";
 import { queryClient } from "../config/queryClient";
-import moment from "moment";
 import { arrayUniqueByKey, focusOnInput, makeLowerCase } from "../utils";
 import {
+  clearFiles,
   createTextGenerator,
-  destroyTextGenerator,
   setTextToGenerator,
   startStreaming,
   stopStreaming
 } from "../redux/chat/chatSlice";
 import { BASE_API_URL, COPILOT_API_KEY } from "../config/request";
-import toast from "react-hot-toast";
 
 const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   const dispatch = useDispatch();
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
   );
+  const files = useSelector((store) => store.chat.files[chatId]);
+
   const { token } = useSelector((store) => store.auth);
 
   const [questions, setQuestions] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
-  const [files, setFiles] = useState([]);
 
   const clearReplyMessage = () => setReplyMessage(null);
 
@@ -193,6 +195,8 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       lists: [..._cachedMsgs, { ...newMSG }]
     });
 
+    dispatch(clearFiles({ chatId }));
+
     fetch(`${BASE_API_URL}api/chats/${chatId}/messages`, {
       method: "POST",
       headers: {
@@ -202,7 +206,8 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       },
       body: JSON.stringify({
         prompt: message,
-        replyTo: replyMessage?.id
+        replyTo: replyMessage?.id,
+        files: [...(files || []).map((file) => file.fileId)]
       })
     })
       .then((res) => onFetchSuccess(res, message))
@@ -217,7 +222,13 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       prompt: text,
       created: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
-      files: [],
+      files: [
+        ...(files || []).map((file) => ({
+          fileName: file.file.name,
+          fileType:
+            file.file.name.split(".")[file.file.name.split(".").length - 1]
+        }))
+      ],
       replyTo: replyMessage?.id,
       text,
       role: "User"
@@ -231,10 +242,10 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       lists: [..._cachedMsgs, { ...newMSG }]
     });
 
-    scrollToTheEndOfTheChat();
     setQuestions([]);
     setReplyMessage(null);
     dispatch(createTextGenerator({ chatId }));
+    scrollToTheEndOfTheChat();
     fetchStream(text);
   };
 

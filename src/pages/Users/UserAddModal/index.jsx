@@ -2,7 +2,6 @@ import { Search } from "@mui/icons-material";
 import Popup from "../../../components/Popup";
 import useUsersAPI from "../../../hooks/api/useUsersAPI";
 import styles from "../style.module.scss";
-import { ReactComponent as CheckboxIcon } from "../../../assets/icons/checkbox.svg";
 import { ReactComponent as AdminIcon } from "../../../assets/icons/admin.svg";
 import { ReactComponent as PeopleIcon } from "../../../assets/icons/people.svg";
 import { useCallback, useEffect, useState } from "react";

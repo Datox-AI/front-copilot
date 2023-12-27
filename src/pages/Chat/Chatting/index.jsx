@@ -17,6 +17,7 @@ import { chatModes } from "../../../hooks/useMessages";
 import SelectedMessages from "./SelectedMessages";
 import toast from "react-hot-toast";
 import { useMsal } from "@azure/msal-react";
+import useFileUpload from "../../../hooks/useFileUpload";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -82,6 +83,8 @@ const Chatting = ({
     listRef,
     setRelatedFiles
   });
+
+  const { handleUpload } = useFileUpload({ chatId });
 
   const [text, setText] = useState("");
   const [mode, setMode] = useState(chatModes);
@@ -179,6 +182,12 @@ const Chatting = ({
     toast.success("Copied!");
   };
 
+  const onFileUpload = (e) => {
+    const _files = e.target.files;
+
+    handleUpload(_files);
+  };
+
   const onSelectQuestion = (question) => {
     startPrompting(question);
   };
@@ -257,10 +266,12 @@ const Chatting = ({
         </div>
         {chatId && !isAudit && (
           <Input
+            chatId={chatId}
             text={text}
             disabled={disabled}
             onTexting={onTexting}
             onSend={onSend}
+            onFileUpload={onFileUpload}
             replyMessage={replyMessage}
             clearReplyMessage={clearReplyMessage}
             isStreaming={textGenerator?.isStreaming}
