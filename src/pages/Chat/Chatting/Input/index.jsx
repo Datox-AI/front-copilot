@@ -28,6 +28,7 @@ const Input = ({
           style={{ display: "none" }}
           id="attach_file"
           multiple
+          accept=".doc, .docx, .xls, .xlsx, .pdf"
           disabled={isStreaming}
           onChange={onFileUpload}
         />
