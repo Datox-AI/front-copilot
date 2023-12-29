@@ -80,6 +80,8 @@
 
   .contentSection {
     width: 100%;
+    height: calc(100vh - 140px);
+    overflow-y: scroll;
     display: flex;
     flex-direction: column;
 
