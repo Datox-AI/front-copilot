@@ -89,6 +89,19 @@ const Chatting = ({
   const [text, setText] = useState("");
   const [mode, setMode] = useState(chatModes);
   const [selectedMessages, setSelectedMessages] = useState([]);
+  const [isHighlightedMessage, setIsHiglightedMessage] = useState(null);
+
+  const onHighlightMessage = (msg) => setIsHiglightedMessage(msg);
+
+  useEffect(() => {
+    if (!isHighlightedMessage) return;
+
+    const interval = setInterval(() => setIsHiglightedMessage(null), 2000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isHighlightedMessage]);
 
   const pinnedMessages = useMemo(() => {
     if (!data || !data.lists) return [];
@@ -250,11 +263,13 @@ const Chatting = ({
               activeChat={activeChat}
               selectedMessages={selectedMessages}
               isStreaming={textGenerator?.isStreaming}
+              isHighlightedMessage={isHighlightedMessage}
               toggleMessage={toggleMessage}
               refetchMessages={refetchMessages}
               onSelectQuestion={onSelectQuestion}
               clearReplyMessage={clearReplyMessage}
               selectReplyMessage={selectReplyMessage}
+              onHighlightMessage={onHighlightMessage}
             />
           ) : (
             <EmptyMessages

@@ -26,7 +26,9 @@ const Messages = forwardRef(
       isStreaming,
       selectedMessages,
       selectReplyMessage,
-      toggleMessage
+      toggleMessage,
+      onHighlightMessage,
+      isHighlightedMessage
     },
     listRef
   ) => {
@@ -91,6 +93,7 @@ const Messages = forwardRef(
                       isAudit={isAudit}
                       chatId={chatId}
                       refetch={refetchMessages}
+                      isHighlightedMessage={isHighlightedMessage}
                       isBot={message.role === "Assistant"}
                       time={moment(message.created).format("hh:mm A")}
                       onSelectQuestion={onSelectQuestion}
@@ -101,6 +104,7 @@ const Messages = forwardRef(
                       messageId={message.id}
                       isPinned={message.pinned}
                       fullData={message}
+                      onHighlightMessage={onHighlightMessage}
                       author_fullname={author}
                       message={realMessage}
                       files={message.files}

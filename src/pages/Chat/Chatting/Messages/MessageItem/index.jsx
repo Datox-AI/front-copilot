@@ -40,12 +40,15 @@ const MessageItem = ({
   toggleMessage,
   isSelected,
   fullData,
-  showDots
+  showDots,
+  isHighlightedMessage,
+  onHighlightMessage
 }) => {
   const onClickReply = (_id) => {
     document.getElementById("message-" + _id).scrollIntoView({
       block: "start"
     });
+    onHighlightMessage(_id);
   };
 
   return (
@@ -54,7 +57,7 @@ const MessageItem = ({
       onClick={onClick}
       className={classNames(styles.container, {
         [styles.isBot]: isBot,
-        [styles.isSelected]: isSelected
+        [styles.isSelected]: isSelected || isHighlightedMessage === messageId
       })}
     >
       <Box
