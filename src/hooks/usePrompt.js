@@ -9,6 +9,7 @@ import { arrayUniqueByKey, focusOnInput, makeLowerCase } from "../utils";
 import {
   clearFiles,
   createTextGenerator,
+  destroyTextGenerator,
   setTextToGenerator,
   startStreaming,
   stopStreaming
@@ -26,6 +27,12 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
 
   const [questions, setQuestions] = useState([]);
   const [replyMessage, setReplyMessage] = useState(null);
+
+  const scrollToTheEndOfTheChat = useCallback(() => {
+    listRef?.current?.scrollIntoView({
+      block: "end"
+    });
+  }, [listRef]);
 
   const clearReplyMessage = () => setReplyMessage(null);
 
@@ -69,7 +76,6 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   const onText = (text) => {
     dispatch(setTextToGenerator({ chatId, text }));
     scrollToTheEndOfTheChat();
-    // updateLastMessage(text);
   };
 
   const onSearchFiles = (_files) => {
@@ -131,13 +137,15 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
               refetchMessages();
               scrollToTheEndOfTheChat();
 
+              dispatch(destroyTextGenerator({ chatId }));
               return;
             }
 
             if (!isStreaming) {
               refetchMessages();
-              reader.cancel();
               scrollToTheEndOfTheChat();
+              dispatch(destroyTextGenerator({ chatId }));
+              reader.cancel();
 
               return;
             }
@@ -173,7 +181,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
 
       read();
     },
-    [chatId]
+    [chatId, listRef, scrollToTheEndOfTheChat]
   );
 
   const fetchStream = (message) => {
@@ -248,12 +256,6 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
     scrollToTheEndOfTheChat();
     fetchStream(text);
   };
-
-  const scrollToTheEndOfTheChat = useCallback(() => {
-    listRef?.current?.scrollIntoView({
-      block: "end"
-    });
-  }, [listRef]);
 
   return {
     startPrompting,

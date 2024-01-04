@@ -13,7 +13,7 @@ const SelectedMessages = ({
   isLoading
 }) => {
   useHotkeys("esc", () => onCancel(), []);
-  useHotkeys("mod+c", () => onCopy(), []);
+  useHotkeys("mod+c", () => onCopy(), [onCopy, selectedMessages]);
   useHotkeys("mod+d", () => onDelete(), [onDelete]);
 
   return (
