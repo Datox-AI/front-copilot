@@ -122,11 +122,11 @@ export const adminRouter = createBrowserRouter([
             element: <SnowflakeCallback />
           }
         ]
+      },
+      {
+        path: "*",
+        element: <Navigate to="/chat" />
       }
-      // {
-      //   path: "*",
-      //   element: <Navigate to="/chat" />
-      // }
     ]
   }
 ]);
