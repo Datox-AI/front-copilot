@@ -129,15 +129,16 @@ const FilesList = ({ relatedFiles, search }) => {
     initAuth.mutate(
       {
         account_identifier: "kiprdnq-kl02065",
-        client_id: "VDiQUH8NSFtum9KUrPsFC4mW5/U=",
-        client_secret: "7g4ID66PYnIMejUuIy2o9WlFITkg2kIMsW2VIe+FbTc=",
+        client_id: "8Vkzs7JybsAPLS/LOIbKZVSdKhs=",
+        client_secret: "V5kf16P0oGdIq6f+pDolqn8IAMvhijnQhwX1DrzOj7I=",
         token_endpoint:
           "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request",
-        redirect_uri: "http://localhost:3000/integration/2"
+        redirect_uri: "https://copilot.datox.ai/callback/snowflake"
       },
       {
         onSuccess: (res) => {
           console.log(res);
+          window.location.replace(res.authorization_url);
         },
         onError: (err) => {
           console.log(err);
@@ -161,9 +162,9 @@ const FilesList = ({ relatedFiles, search }) => {
       gap="10px"
       marginTop="20px"
     >
-      {/* <Button variant="contained" onClick={onAuth}>
+      <Button variant="contained" onClick={onAuth}>
         Auth
-      </Button> */}
+      </Button>
       {mutatedFiles?.map((file, f) => (
         <FileItem
           name={file.ItemName || file.itemName}
