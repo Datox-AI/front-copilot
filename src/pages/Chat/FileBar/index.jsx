@@ -14,6 +14,7 @@ import { Add, Search } from "@mui/icons-material";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { groupItemsByDate } from "../../../utils/group";
+import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
 
 const MessagesList = ({
   chats,
@@ -115,6 +116,7 @@ const MessagesList = ({
 };
 
 const FilesList = ({ relatedFiles, search }) => {
+  const { initAuth } = useSnowflakeAPI();
   const mutatedFiles = useMemo(() => {
     return relatedFiles.filter((file) =>
       search
@@ -122,6 +124,27 @@ const FilesList = ({ relatedFiles, search }) => {
         : file
     );
   }, [search, relatedFiles]);
+
+  const onAuth = () => {
+    initAuth.mutate(
+      {
+        account_identifier: "kiprdnq-kl02065",
+        client_id: "VDiQUH8NSFtum9KUrPsFC4mW5/U=",
+        client_secret: "7g4ID66PYnIMejUuIy2o9WlFITkg2kIMsW2VIe+FbTc=",
+        token_endpoint:
+          "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request",
+        redirect_uri: "http://localhost:3000/integration/2"
+      },
+      {
+        onSuccess: (res) => {
+          console.log(res);
+        },
+        onError: (err) => {
+          console.log(err);
+        }
+      }
+    );
+  };
 
   if (!relatedFiles || relatedFiles?.length === 0)
     return (
@@ -138,6 +161,9 @@ const FilesList = ({ relatedFiles, search }) => {
       gap="10px"
       marginTop="20px"
     >
+      {/* <Button variant="contained" onClick={onAuth}>
+        Auth
+      </Button> */}
       {mutatedFiles?.map((file, f) => (
         <FileItem
           name={file.ItemName || file.itemName}
@@ -231,14 +257,9 @@ const FileBar = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {/* <TuneRoundedIcon /> */}
         </label>
       </section>
       <section className={styles.contentSection}>
-        {/* <div className={styles.pins}>
-          <h3>Pinned (0)</h3>
-          <p>No pinned objects</p>
-        </div> */}
         <div className={styles.contentList}>
           <Renderer
             chats={chats}

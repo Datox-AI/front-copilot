@@ -62,8 +62,17 @@ const Messages = forwardRef(
               <p className={styles.date}>{block.date}</p>
               <div className={styles.messageList}>
                 {block.messages.map((message, m) => {
+                  const isLastMessage =
+                    messages.length - 1 === b &&
+                    block.messages.length - 1 === m - 1;
+
                   const realMessage =
-                    message.text || (!isStreaming ? errorEmptyMessage : "");
+                    message.text ||
+                    (!isStreaming
+                      ? errorEmptyMessage
+                      : !isLastMessage
+                      ? errorEmptyMessage
+                      : "");
 
                   const realQuestions =
                     b === messages.length - 1 &&
@@ -95,6 +104,7 @@ const Messages = forwardRef(
                       author_fullname={author}
                       message={realMessage}
                       files={message.files}
+                      showDots={!realMessage.trim()}
                       questions={!isAudit && realQuestions}
                       replyMessage={data?.lists?.find(
                         (msg) => msg.id === message.replyTo

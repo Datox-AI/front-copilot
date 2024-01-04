@@ -10,6 +10,7 @@ import { Avatar, Box, Checkbox } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
 import { chatModes } from "../../../../../hooks/useMessages";
 import File from "../../../../../components/File";
+import Dots from "../../../../../components/Dots";
 
 const ReplyMessage = ({ onClickReply, replyMessage }) => {
   return (
@@ -38,7 +39,8 @@ const MessageItem = ({
   onSelectQuestion,
   toggleMessage,
   isSelected,
-  fullData
+  fullData,
+  showDots
 }) => {
   const onClickReply = (_id) => {
     document.getElementById("message-" + _id).scrollIntoView({
@@ -108,6 +110,8 @@ const MessageItem = ({
                 ))}
               </Box>
             )}
+
+            {showDots && <Dots />}
 
             <CustomMarkdown message={message} />
             {questions && questions.length > 0 && (
