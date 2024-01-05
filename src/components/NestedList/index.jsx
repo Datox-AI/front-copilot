@@ -59,7 +59,7 @@ const NestedListItem = ({ listItem, onSelectItem }) => {
             }}
           />
         )}
-        {listItem.name}
+        <span>{listItem.name}</span>
       </button>
 
       {isOpen &&
