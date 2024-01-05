@@ -18,7 +18,7 @@ const SnowflakeCallback = () => {
         .get("callback" + location.search)
         .then((res) => {
           dispatch(setSnowflakeToken(res.access_token));
-          navigate("/");
+          navigate("/integration/2");
         })
         .catch((err) => {
           toast.error(err.data.detail);

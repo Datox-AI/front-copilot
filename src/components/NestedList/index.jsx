@@ -105,7 +105,7 @@ const NestedListContainer = () => {
         client_secret: "V5kf16P0oGdIq6f+pDolqn8IAMvhijnQhwX1DrzOj7I=",
         token_endpoint:
           "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request",
-        redirect_uri: window.location.href
+        redirect_uri: "https://copilot.datox.ai/callback/snowflake"
       },
       {
         onSuccess: (res) => {
