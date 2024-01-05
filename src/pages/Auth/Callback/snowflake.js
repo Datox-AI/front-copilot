@@ -18,11 +18,12 @@ const SnowflakeCallback = () => {
         .get("callback" + location.search)
         .then((res) => {
           dispatch(setSnowflakeToken(res.access_token));
-          navigate("/integration/2");
         })
         .catch((err) => {
           toast.error(err.data.detail);
-          navigate("/");
+        })
+        .finally(() => {
+          navigate("/integration/2");
         });
     };
 
