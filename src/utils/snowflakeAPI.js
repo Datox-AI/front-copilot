@@ -1,19 +1,15 @@
 import axios from "axios";
 import { store } from "../redux/store";
-import { setToken, setUser } from "../redux/auth/authSlice";
+import { setSnowflakeToken } from "../redux/auth/authSlice";
 
 export const snowflakeAPI = axios.create({
-  baseURL: "https://snowflakeintegrationdatox.azurewebsites.net/"
+  baseURL: "https://datoxsnowflakeapi.azurewebsites.net/"
 });
 
 const errorHandler = (error) => {
-  const status = error.response?.status;
-  if (status === 401) {
-    store.dispatch(setToken(null));
-    store.dispatch(setUser(null));
+  // const status = error.response?.status;
 
-    window.location.reload();
-  }
+  store.dispatch(setSnowflakeToken(null));
 
   return Promise.reject(error.response);
 };

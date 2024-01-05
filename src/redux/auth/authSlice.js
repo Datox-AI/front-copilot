@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   token: null,
   user: null,
+  snowflakeToken: null,
   isUnauthorized: false,
   userRoles: []
 };
@@ -24,13 +25,22 @@ const authSlice = createSlice({
     setAuthorized: (state, { payload }) => {
       state.isUnauthorized = payload;
     },
+    setSnowflakeToken: (state, { payload }) => {
+      state.snowflakeToken = payload;
+    },
     setUserRoles: (state, { payload }) => {
       state.userRoles = payload;
     }
   }
 });
 
-export const { setToken, setUser, logout, setAuthorized, setUserRoles } =
-  authSlice.actions;
+export const {
+  setToken,
+  setUser,
+  logout,
+  setAuthorized,
+  setUserRoles,
+  setSnowflakeToken
+} = authSlice.actions;
 
 export default authSlice.reducer;

@@ -1,10 +1,14 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { snowflakeAPI } from "../../../utils/snowflakeAPI";
+import { useDispatch } from "react-redux";
+import { setSnowflakeToken } from "../../../redux/auth/authSlice";
+import toast from "react-hot-toast";
 
 const SnowflakeCallback = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!location.search) return navigate("/");
@@ -13,15 +17,18 @@ const SnowflakeCallback = () => {
       snowflakeAPI
         .get("callback" + location.search)
         .then((res) => {
-          console.log(res);
+          dispatch(setSnowflakeToken(res.access_token));
+          navigate("/");
         })
         .catch((err) => {
-          console.log(err);
+          toast.error(err.data.detail);
+          navigate("/");
         });
     };
 
     fetchToken();
   }, [location]);
+
   return <></>;
 };
 

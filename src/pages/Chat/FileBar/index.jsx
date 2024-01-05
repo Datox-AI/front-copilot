@@ -1,20 +1,18 @@
 import styles from "./style.module.scss";
-import TuneRoundedIcon from "@mui/icons-material/TuneRounded";
 import NewChatPopup from "./NewChatPopup";
-import NestedList from "../../../components/NestedList";
 import ChatItem from "../Chatting/TopChatList/ChatItem";
 import useChatsAPI from "../../../hooks/api/useChatsAPI";
 import DeleteChatPopup from "./DeleteChatPopup";
 import FileItem from "../../../components/FileItem";
 import ChatTypeSelect from "./ChatTypeSelect";
 import ExpandMenu from "../../../components/ExandMenu";
+import NestedListContainer from "../../../components/NestedList";
 
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { groupItemsByDate } from "../../../utils/group";
-import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
 
 const MessagesList = ({
   chats,
@@ -116,7 +114,6 @@ const MessagesList = ({
 };
 
 const FilesList = ({ relatedFiles, search }) => {
-  const { initAuth } = useSnowflakeAPI();
   const mutatedFiles = useMemo(() => {
     return relatedFiles.filter((file) =>
       search
@@ -124,28 +121,6 @@ const FilesList = ({ relatedFiles, search }) => {
         : file
     );
   }, [search, relatedFiles]);
-
-  const onAuth = () => {
-    initAuth.mutate(
-      {
-        account_identifier: "kiprdnq-kl02065",
-        client_id: "8Vkzs7JybsAPLS/LOIbKZVSdKhs=",
-        client_secret: "V5kf16P0oGdIq6f+pDolqn8IAMvhijnQhwX1DrzOj7I=",
-        token_endpoint:
-          "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request",
-        redirect_uri: "https://copilot.datox.ai/callback/snowflake"
-      },
-      {
-        onSuccess: (res) => {
-          console.log(res);
-          window.location.replace(res.authorization_url);
-        },
-        onError: (err) => {
-          console.log(err);
-        }
-      }
-    );
-  };
 
   if (!relatedFiles || relatedFiles?.length === 0)
     return (
@@ -162,9 +137,6 @@ const FilesList = ({ relatedFiles, search }) => {
       gap="10px"
       marginTop="20px"
     >
-      <Button variant="contained" onClick={onAuth}>
-        Auth
-      </Button>
       {mutatedFiles?.map((file, f) => (
         <FileItem
           name={file.ItemName || file.itemName}
@@ -179,7 +151,7 @@ const FilesList = ({ relatedFiles, search }) => {
 const RenderTypes = {
   messages: MessagesList,
   files: FilesList,
-  sql: NestedList
+  sql: NestedListContainer
 };
 
 const FileBar = ({

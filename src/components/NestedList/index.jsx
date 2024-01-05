@@ -3,45 +3,26 @@ import styles from "./style.module.scss";
 import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
 import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
 import classNames from "classnames";
-import useOAuth from "../../hooks/useOAuth";
-import { Button } from "@mui/material";
 
-const _data = [
-  {
-    id: 1,
-    level: 1,
-    name: "Prod_use_cases",
-    children: [
-      {
-        id: 11,
-        level: 2,
-        name: "Alamo"
-      },
-      {
-        id: 12,
-        level: 2,
-        name: "Alpha"
-      },
-      {
-        id: 13,
-        level: 2,
-        name: "Delta",
-        children: [
-          {
-            id: 21,
-            level: 3,
-            name: "View information schema"
-          }
-        ]
-      }
-    ]
-  }
-];
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
+import toast from "react-hot-toast";
 
-const NestedListItem = ({ listItem }) => {
-  const [isOpen, setIsOpen] = useState(true);
+const NestedListItem = ({ listItem, onSelectItem }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  if (!listItem.children || listItem.children.length === 0)
+  const onClick = () => {
+    setIsOpen((prev) => {
+      if (!prev && listItem.children.length === 0) onSelectItem();
+
+      return !prev;
+    });
+  };
+
+  if (
+    (!listItem.children || listItem.children.length === 0) &&
+    listItem.level !== 1
+  )
     return (
       <li
         className={classNames(
@@ -68,30 +49,86 @@ const NestedListItem = ({ listItem }) => {
         <NestListArrowI className={styles.nestedArrow} />
       )}
       <button className={styles.itemMeta}>
-        <ChevronDownI
-          onClick={() => setIsOpen((prev) => !prev)}
-          style={{
-            transform: !isOpen && "rotateZ(-90deg)"
-          }}
-        />
+        {listItem.isFetching ? (
+          <CircularProgress size={14} />
+        ) : (
+          <ChevronDownI
+            onClick={onClick}
+            style={{
+              transform: !isOpen && "rotateZ(-90deg)"
+            }}
+          />
+        )}
         {listItem.name}
       </button>
 
-      {isOpen && <NestedList data={listItem.children} />}
+      {isOpen &&
+        (!listItem.error ? (
+          <NestedList data={listItem.children} />
+        ) : (
+          <button
+            className={styles.itemMeta}
+            style={{
+              color: "red"
+            }}
+          >
+            {listItem.error}
+          </button>
+        ))}
     </li>
   );
 };
 
-const NestedList = ({ data = _data }) => {
+const NestedList = ({ data, onSelectItem }) => {
   return (
-    <>
-      <ul className={styles.nestedList}>
-        {data.map((item, i) => (
-          <NestedListItem key={i} listItem={item} />
-        ))}
-      </ul>
-    </>
+    <ul className={styles.nestedList}>
+      {data.map((item, i) => (
+        <NestedListItem
+          key={i}
+          listItem={item}
+          onSelectItem={() => onSelectItem(item)}
+        />
+      ))}
+    </ul>
   );
 };
 
-export default NestedList;
+const NestedListContainer = () => {
+  const { isConnected, initAuth, snowflakeData, onSelectItem } =
+    useSnowflakeAPI();
+
+  const onAuth = () => {
+    initAuth.mutate(
+      {
+        account_identifier: "kiprdnq-kl02065",
+        client_id: "8Vkzs7JybsAPLS/LOIbKZVSdKhs=",
+        client_secret: "V5kf16P0oGdIq6f+pDolqn8IAMvhijnQhwX1DrzOj7I=",
+        token_endpoint:
+          "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request",
+        redirect_uri: window.location.href
+      },
+      {
+        onSuccess: (res) => {
+          window.location.replace(res.authorization_url);
+        },
+        onError: (err) => {
+          toast.err(err.data.detail);
+        }
+      }
+    );
+  };
+
+  return (
+    <Box display="flex" width="100%" flexDirection="column" my={2}>
+      {!isConnected ? (
+        <Button variant="contained" onClick={onAuth}>
+          Connect
+        </Button>
+      ) : (
+        <NestedList data={snowflakeData} onSelectItem={onSelectItem} />
+      )}
+    </Box>
+  );
+};
+
+export default NestedListContainer;
