@@ -35,7 +35,7 @@ const useSnowflakeAPI = (props) => {
 
   const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
 
-  const setStatusIsFetching = (dbName, status, schemaName) => {
+  const setStatusIsFetching = (dbName, status, schemaName, type) => {
     if (schemaName)
       setSnowflakeData((prev) =>
         prev.map((db) =>
@@ -47,7 +47,13 @@ const useSnowflakeAPI = (props) => {
                     sch.name === schemaName
                       ? {
                           ...sch,
-                          isFetching: status
+                          children: [
+                            ...sch.children.map((tp) =>
+                              tp.name === type
+                                ? { ...tp, isFetching: status }
+                                : tp
+                            )
+                          ]
                         }
                       : sch
                   )
@@ -118,7 +124,21 @@ const useSnowflakeAPI = (props) => {
               ? {
                   ...db,
                   children: [
-                    ...res.schemas.map((sch, sIdx) => normalizer(sch, 2, sIdx))
+                    ...res.schemas.map((sch, sIdx) => ({
+                      ...normalizer(sch, 2, sIdx),
+                      children: [
+                        {
+                          ...normalizer("Views", 3, 1),
+                          schema: normalizer(sch, 2, sIdx),
+                          db: db
+                        },
+                        {
+                          ...normalizer("Tables", 3, 2),
+                          schema: normalizer(sch, 2, sIdx),
+                          db: db
+                        }
+                      ]
+                    }))
                   ]
                 }
               : db
@@ -151,12 +171,18 @@ const useSnowflakeAPI = (props) => {
                       sch.name === schemaName
                         ? {
                             ...sch,
-                            children: [
-                              ...sch.children,
-                              ...res.tables.map((tb, tIdx) =>
-                                normalizer(tb, 3, tIdx)
-                              )
-                            ]
+                            children: sch.children.map((type) =>
+                              type.name === "Tables"
+                                ? {
+                                    ...type,
+                                    children: [
+                                      ...res.tables.map((tb, tIdx) =>
+                                        normalizer(tb, 4, tIdx)
+                                      )
+                                    ]
+                                  }
+                                : type
+                            )
                           }
                         : sch
                     )
@@ -170,7 +196,7 @@ const useSnowflakeAPI = (props) => {
         setError(dbName, err.data.detail, schemaName);
       })
       .finally(() => {
-        setStatusIsFetching(dbName, false, schemaName);
+        setStatusIsFetching(dbName, false, schemaName, "Tables");
       });
 
   const getViews = (dbName, schemaName) =>
@@ -187,16 +213,22 @@ const useSnowflakeAPI = (props) => {
               ? {
                   ...db,
                   children: [
-                    ...db.children.map((sch, sIdx) =>
+                    ...db.children.map((sch) =>
                       sch.name === schemaName
                         ? {
                             ...sch,
-                            children: [
-                              ...sch.children,
-                              ...res.views.map((tb, tIdx) =>
-                                normalizer(tb, 3, tIdx)
-                              )
-                            ]
+                            children: sch.children.map((type) =>
+                              type.name === "Views"
+                                ? {
+                                    ...type,
+                                    children: [
+                                      ...res.views.map((tb, tIdx) =>
+                                        normalizer(tb, 4, tIdx)
+                                      )
+                                    ]
+                                  }
+                                : type
+                            )
                           }
                         : sch
                     )
@@ -210,16 +242,17 @@ const useSnowflakeAPI = (props) => {
         setError(dbName, err.data.detail, schemaName);
       })
       .finally(() => {
-        setStatusIsFetching(dbName, false, schemaName);
+        setStatusIsFetching(dbName, false, schemaName, "Views");
       });
 
-  const onSelectItem = async (item, parent) => {
+  const onSelectItem = async (item) => {
     if (item.level === 1) {
       getSchemas(item.name);
-    } else if (item.level === 2) {
-      setStatusIsFetching(parent.name, true, item.name);
-      await getTables(parent.name, item.name);
-      await getViews(parent.name, item.name);
+    } else if (item.level === 3) {
+      setStatusIsFetching(item.db.name, true, item.schema.name, item.name);
+      if (item.name === "Tables")
+        await getTables(item.db.name, item.schema.name);
+      else await getViews(item.db.name, item.schema.name);
     }
   };
 

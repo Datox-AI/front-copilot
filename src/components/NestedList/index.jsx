@@ -14,8 +14,7 @@ const NestedListItem = ({ listItem, onSelectItem, parent }) => {
   const onClick = () => {
     setIsOpen((prev) => {
       if (!prev && listItem.children.length === 0) {
-        console.log(listItem, parent);
-        if (listItem.level === 2) onSelectItem(listItem, parent);
+        if (listItem.level === 3) onSelectItem(listItem);
         else onSelectItem(listItem);
       }
 
@@ -25,7 +24,7 @@ const NestedListItem = ({ listItem, onSelectItem, parent }) => {
 
   if (
     // (!listItem.children || listItem.children.length === 0) &&
-    listItem.level === 3
+    listItem.level === 4
     // (listItem.level === 2 && listItem.error)
   )
     return (
