@@ -29,7 +29,7 @@ const useSnowflakeAPI = (props) => {
         }
       }),
     {
-      enabled: props?.enableDatabases
+      enabled: props?.enableDatabases && !!snowflakeToken
     }
   );
 
@@ -193,7 +193,7 @@ const useSnowflakeAPI = (props) => {
                             ...sch,
                             children: [
                               ...sch.children,
-                              ...res.tables.map((tb, tIdx) =>
+                              ...res.views.map((tb, tIdx) =>
                                 normalizer(tb, 3, tIdx)
                               )
                             ]
