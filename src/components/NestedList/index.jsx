@@ -8,20 +8,25 @@ import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 
-const NestedListItem = ({ listItem, onSelectItem }) => {
+const NestedListItem = ({ listItem, onSelectItem, parent }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onClick = () => {
     setIsOpen((prev) => {
-      if (!prev && listItem.children.length === 0) onSelectItem();
+      if (!prev && listItem.children.length === 0) {
+        console.log(listItem, parent);
+        if (listItem.level === 2) onSelectItem(listItem, parent);
+        else onSelectItem(listItem);
+      }
 
       return !prev;
     });
   };
 
   if (
-    (!listItem.children || listItem.children.length === 0) &&
-    listItem.level !== 1
+    // (!listItem.children || listItem.children.length === 0) &&
+    listItem.level === 3
+    // (listItem.level === 2 && listItem.error)
   )
     return (
       <li
@@ -34,7 +39,18 @@ const NestedListItem = ({ listItem, onSelectItem }) => {
         {listItem.level !== 1 && (
           <NestListArrowI className={styles.nestedArrow} />
         )}
-        <button className={styles.itemMeta}>{listItem.name}</button>
+        {listItem.error ? (
+          <button
+            className={styles.itemMeta}
+            style={{
+              color: "red"
+            }}
+          >
+            {listItem.error}
+          </button>
+        ) : (
+          <button className={styles.itemMeta}>{listItem.name}</button>
+        )}
       </li>
     );
 
@@ -64,7 +80,11 @@ const NestedListItem = ({ listItem, onSelectItem }) => {
 
       {isOpen &&
         (!listItem.error ? (
-          <NestedList data={listItem.children} />
+          <NestedList
+            data={listItem.children}
+            parent={listItem}
+            onSelectItem={onSelectItem}
+          />
         ) : (
           <button
             className={styles.itemMeta}
@@ -79,14 +99,15 @@ const NestedListItem = ({ listItem, onSelectItem }) => {
   );
 };
 
-const NestedList = ({ data, onSelectItem }) => {
+const NestedList = ({ data, onSelectItem, parent }) => {
   return (
     <ul className={styles.nestedList}>
       {data.map((item, i) => (
         <NestedListItem
           key={i}
+          parent={parent}
           listItem={item}
-          onSelectItem={() => onSelectItem(item)}
+          onSelectItem={onSelectItem}
         />
       ))}
     </ul>

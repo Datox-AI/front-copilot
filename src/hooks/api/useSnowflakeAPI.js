@@ -9,11 +9,13 @@ const normalizer = (item, level, idx) => ({
   level,
   id: idx + 1,
   isFetching: false,
-  error: null
+  error: null,
+  children: []
 });
 
 const useSnowflakeAPI = (props) => {
   const { snowflakeToken } = useSelector((store) => store.auth);
+
   const [snowflakeData, setSnowflakeData] = useState([]);
 
   const isConnected = useMemo(() => !!snowflakeToken, [snowflakeToken]);
@@ -33,29 +35,73 @@ const useSnowflakeAPI = (props) => {
 
   const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
 
-  const setStatusIsFetching = (dbName, status) =>
-    setSnowflakeData((prev) =>
-      prev.map((db) =>
-        db.name === dbName
-          ? {
-              ...db,
-              isFetching: status
-            }
-          : db
-      )
-    );
+  const setStatusIsFetching = (dbName, status, schemaName) => {
+    if (schemaName)
+      setSnowflakeData((prev) =>
+        prev.map((db) =>
+          db.name === dbName
+            ? {
+                ...db,
+                children: [
+                  ...db.children.map((sch) =>
+                    sch.name === schemaName
+                      ? {
+                          ...sch,
+                          isFetching: status
+                        }
+                      : sch
+                  )
+                ]
+              }
+            : db
+        )
+      );
+    else
+      setSnowflakeData((prev) =>
+        prev.map((db) =>
+          db.name === dbName
+            ? {
+                ...db,
+                isFetching: status
+              }
+            : db
+        )
+      );
+  };
 
-  const setError = (dbName, error) =>
-    setSnowflakeData((prev) =>
-      prev.map((db) =>
-        db.name === dbName
-          ? {
-              ...db,
-              error: error
-            }
-          : db
-      )
-    );
+  const setError = (dbName, error, schemaName) => {
+    if (schemaName)
+      setSnowflakeData((prev) =>
+        prev.map((db) =>
+          db.name === dbName
+            ? {
+                ...db,
+                children: [
+                  ...db.children.map((sch) =>
+                    sch.name === schemaName
+                      ? {
+                          ...sch,
+                          error: error
+                        }
+                      : sch
+                  )
+                ]
+              }
+            : db
+        )
+      );
+    else
+      setSnowflakeData((prev) =>
+        prev.map((db) =>
+          db.name === dbName
+            ? {
+                ...db,
+                error: error
+              }
+            : db
+        )
+      );
+  };
 
   const getSchemas = (dbName) => {
     setStatusIsFetching(dbName, true);
@@ -87,10 +133,93 @@ const useSnowflakeAPI = (props) => {
       });
   };
 
-  const onSelectItem = (item) => {
+  const getTables = (dbName, schemaName) =>
+    snowflakeAPI
+      .get(`tables/${dbName}/${schemaName}`, {
+        params: {
+          token: snowflakeToken
+        }
+      })
+      .then((res) => {
+        setSnowflakeData((prev) => [
+          ...prev.map((db) =>
+            db.name === dbName
+              ? {
+                  ...db,
+                  children: [
+                    ...db.children.map((sch) =>
+                      sch.name === schemaName
+                        ? {
+                            ...sch,
+                            children: [
+                              ...sch.children,
+                              ...res.tables.map((tb, tIdx) =>
+                                normalizer(tb, 3, tIdx)
+                              )
+                            ]
+                          }
+                        : sch
+                    )
+                  ]
+                }
+              : db
+          )
+        ]);
+      })
+      .catch((err) => {
+        setError(dbName, err.data.detail, schemaName);
+      })
+      .finally(() => {
+        setStatusIsFetching(dbName, false, schemaName);
+      });
+
+  const getViews = (dbName, schemaName) =>
+    snowflakeAPI
+      .get(`views/${dbName}/${schemaName}`, {
+        params: {
+          token: snowflakeToken
+        }
+      })
+      .then((res) => {
+        setSnowflakeData((prev) => [
+          ...prev.map((db) =>
+            db.name === dbName
+              ? {
+                  ...db,
+                  children: [
+                    ...db.children.map((sch, sIdx) =>
+                      sch.name === schemaName
+                        ? {
+                            ...sch,
+                            children: [
+                              ...sch.children,
+                              ...res.tables.map((tb, tIdx) =>
+                                normalizer(tb, 3, tIdx)
+                              )
+                            ]
+                          }
+                        : sch
+                    )
+                  ]
+                }
+              : db
+          )
+        ]);
+      })
+      .catch((err) => {
+        setError(dbName, err.data.detail, schemaName);
+      })
+      .finally(() => {
+        setStatusIsFetching(dbName, false, schemaName);
+      });
+
+  const onSelectItem = async (item, parent) => {
     if (item.level === 1) {
       getSchemas(item.name);
     } else if (item.level === 2) {
+      setStatusIsFetching(parent.name, true, item.name);
+      await getTables(parent.name, item.name);
+      await getViews(parent.name, item.name);
     }
   };
 
