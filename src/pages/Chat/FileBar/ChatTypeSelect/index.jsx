@@ -7,6 +7,7 @@ import { ReactComponent as ChatIcon } from "../../../../assets/icons/chat.svg";
 import { ReactComponent as SettingsIcon } from "../../../../assets/icons/settins.svg";
 import { NavLink, useLocation } from "react-router-dom";
 import { Box } from "@mui/material";
+import { useSelector } from "react-redux";
 
 const SelectedIcon = () => (
   <svg
@@ -32,6 +33,7 @@ const SelectedIcon = () => (
 
 const ChatTypeSelect = () => {
   const { pathname } = useLocation();
+  const { openedIntegrations } = useSelector((store) => store.integrations);
 
   const ref = useRef();
 
@@ -43,12 +45,15 @@ const ChatTypeSelect = () => {
         icon: <ChatIcon />
       },
       {
-        link: "/integration",
+        link:
+          openedIntegrations?.length > 0
+            ? `/integration/${openedIntegrations[0].id}`
+            : "/integration",
         label: "Connections",
         icon: <SettingsIcon />
       }
     ];
-  }, []);
+  }, [openedIntegrations]);
 
   const selectedType = useMemo(() => {
     if (pathname.includes("chat")) return types[0];

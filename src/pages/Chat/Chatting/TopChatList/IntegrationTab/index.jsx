@@ -16,7 +16,7 @@ const IntegrationTab = ({
     <button
       className={classNames(styles.integrationTab, { [styles.active]: active })}
     >
-      <NavLink to={to}>
+      <NavLink to={`/integration/${integrationId}`}>
         {integrationIcons[iconType]}
         {name}
       </NavLink>
