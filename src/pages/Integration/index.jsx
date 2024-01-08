@@ -56,6 +56,11 @@ const Integration = () => {
         (int) => int.id === Number(integrationId)
       );
 
+      if (!newIntegration) {
+        navigate("/");
+        return;
+      }
+
       dispatch(toggleIntegration({ data: newIntegration }));
       setActiveIntegration(newIntegration);
       return;

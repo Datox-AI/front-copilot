@@ -52,13 +52,13 @@ const TopChatList = ({
       <div className={styles.integrationTabs}>
         {integrations?.map((integration) => (
           <IntegrationTab
-            key={integration.id}
-            integrationId={integration.id}
-            name={integration.name}
-            active={integration.id === activeIntegration?.id}
-            to={integration.to}
+            key={integration?.id}
+            integrationId={integration?.id}
+            name={integration?.name}
+            active={integration?.id === activeIntegration?.id}
+            to={integration?.to}
             onClose={onCloseIntegration}
-            iconType={integration.iconType}
+            iconType={integration?.iconType}
           />
         ))}
       </div>

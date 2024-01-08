@@ -11,6 +11,8 @@ const integrationsSlice = createSlice({
   initialState,
   reducers: {
     toggleIntegration: (state, { payload: { data, isNotDelete = false } }) => {
+      if (!data) return;
+
       if (
         state.openedIntegrations.find(
           (integration) => integration.id === data.id
