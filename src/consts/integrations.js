@@ -16,7 +16,7 @@ export const _integrations = [
   {
     id: 2,
     name: "Snowflake",
-    to: "/integration/2",
+    // to: "/integration/2",
     type: "sql",
     iconType: "snowflake"
   },

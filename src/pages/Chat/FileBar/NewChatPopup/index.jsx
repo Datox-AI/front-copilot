@@ -1,12 +1,14 @@
 import Popup from "../../../../components/Popup";
 import styles from "../style.module.scss";
-import KeyboardArrowRightRoundedIcon from "@mui/icons-material/KeyboardArrowRightRounded";
-import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
+import toast from "react-hot-toast";
 
 import { Search } from "@mui/icons-material";
 import { useMemo, useState } from "react";
-import { ReactComponent as SnowflakeIcon } from "../../../../assets/icons/snowflake.svg";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { Button, TextField } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { toggleIntegrationConfig } from "../../../../redux/integrations/integrationsSlice";
+import { integrationIcons } from "../../../../consts/integrations";
 
 const _integrations = [
   {
@@ -76,112 +78,92 @@ const SelectIntegration = ({ selectIntegration }) => {
 };
 
 const IntegrationForm = ({}) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const { initAuth } = useSnowflakeAPI();
+
+  const [accountIdentifier, setAccountIdentifier] = useState("kiprdnq-kl02065");
+  const [clientId, setClientId] = useState("Ig0pIBW/qO7KzLflWUwlg6MaCdI=");
+  const [clientSecret, setClientSecret] = useState(
+    "Bn7AnJ6L1EcnVyWZlvDfmM8a9xOMeO5rwHw3Xu77A+s="
+  );
+  const [tokenEndpoint, setTokenEndpoint] = useState(
+    "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request"
+  );
+
+  const close = () => dispatch(toggleIntegrationConfig(null));
+
+  const onAuth = () => {
+    initAuth.mutate(
+      {
+        account_identifier: accountIdentifier,
+        client_id: clientId,
+        client_secret: clientSecret,
+        token_endpoint: tokenEndpoint,
+        redirect_uri: "https://copilot.datox.ai/callback/snowflake"
+      },
+      {
+        onSuccess: (res) => {
+          close();
+          window.location.replace(res.authorization_url);
+        },
+        onError: (err) => {
+          toast.err(err.data.detail);
+        }
+      }
+    );
+  };
 
   return (
     <div className={styles.integrationFormContainer}>
       <div className={styles.form}>
         <label className={styles.field}>
-          <span>Server</span>
-          <TextField placeholder="designer.snowflakecomputing.com" />
+          <span>Account Identifier</span>
+          <TextField
+            value={accountIdentifier}
+            onChange={({ target: { value } }) => setAccountIdentifier(value)}
+          />
         </label>
         <label className={styles.field}>
-          <span>Warehouse</span>
-          <TextField placeholder="Designer_figma_warehouse" />
+          <span>Client ID</span>
+          <TextField
+            value={clientId}
+            onChange={({ target: { value } }) => setClientId(value)}
+          />
         </label>
         <label className={styles.field}>
-          <span>Username</span>
-          <TextField placeholder="Write your username" />
+          <span>Client Secret</span>
+          <TextField
+            type="password"
+            value={clientSecret}
+            onChange={({ target: { value } }) => setClientSecret(value)}
+          />
         </label>
         <label className={styles.field}>
-          <span>Password</span>
-          <TextField placeholder="Write your password" type="password" />
+          <span>Token Endpoint</span>
+          <TextField
+            value={tokenEndpoint}
+            onChange={({ target: { value } }) => setTokenEndpoint(value)}
+          />
         </label>
-
-        <Box width="100%">
-          <Typography
-            variant="h4"
-            display="flex"
-            alignItems="center"
-            gap="10px"
-            onClick={() => setIsOpen((prev) => !prev)}
-            style={{
-              width: "auto",
-              cursor: "pointer"
-            }}
-          >
-            Advanced options{" "}
-            {isOpen ? (
-              <KeyboardArrowDownRoundedIcon />
-            ) : (
-              <KeyboardArrowRightRoundedIcon />
-            )}
-          </Typography>
-        </Box>
-
-        {isOpen && (
-          <>
-            <label className={styles.field}>
-              <span>Specify a text value to use as Role name (optional)</span>
-              <TextField placeholder="Write your role name" />
-            </label>
-
-            <label className={styles.field}>
-              <span>Command timeout seconds (optional)</span>
-              <TextField placeholder="123" />
-            </label>
-
-            <label className={styles.field}>
-              <span>Specify a text value to use as Role name (optional)</span>
-              <TextField placeholder="Write your role name" />
-            </label>
-
-            <label className={styles.field}>
-              <span>Command timeout seconds (optional)</span>
-              <TextField placeholder="123" />
-            </label>
-
-            <label className={styles.field}>
-              <span>Connection timeout in seconds (optional)</span>
-              <TextField placeholder="123" />
-            </label>
-
-            <label className={styles.field}>
-              <span>Include relationship columns (optional)</span>
-              <TextField placeholder="123" />
-            </label>
-
-            <label className={styles.field}>
-              <span>Database (optional)</span>
-              <TextField placeholder="Demo_WH" />
-            </label>
-
-            <label
-              className={styles.field}
-              style={{
-                width: "100%"
-              }}
-            >
-              <span>SQL statement (optional, requires database)</span>
-              <textarea rows={4} placeholder="123" />
-            </label>
-          </>
-        )}
       </div>
 
       <div className={styles.footer}>
-        <Button variant="contained">Save</Button>
-        <Button variant="outlined">Cancel</Button>
+        <Button
+          variant="contained"
+          disabled={initAuth.isLoading}
+          onClick={onAuth}
+        >
+          Connect
+        </Button>
+        <Button variant="outlined" onClick={close}>
+          Cancel
+        </Button>
       </div>
     </div>
   );
 };
 
-const NewChatPopup = ({ isOpen, toggle }) => {
-  const [integration, setIntegration] = useState(null);
-
-  const Render = !integration ? SelectIntegration : IntegrationForm;
-
+const NewChatPopup = ({ isOpen, toggle, integration }) => {
   return (
     <Popup
       isOpen={isOpen}
@@ -189,15 +171,15 @@ const NewChatPopup = ({ isOpen, toggle }) => {
       title={
         integration ? (
           <>
-            <SnowflakeIcon />
-            {integration.label}
+            {integrationIcons[integration.iconType]}
+            {integration.name}
           </>
         ) : (
           "Integration"
         )
       }
     >
-      <Render selectIntegration={setIntegration} />
+      <IntegrationForm />
     </Popup>
   );
 };

@@ -8,7 +8,10 @@ import { NavLink, useLocation } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
 import { useRef, useState } from "react";
 import { Search } from "@mui/icons-material";
-import { toggleIntegration } from "../../../redux/integrations/integrationsSlice";
+import {
+  toggleIntegration,
+  toggleIntegrationConfig
+} from "../../../redux/integrations/integrationsSlice";
 
 const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
   const ref = useRef();
@@ -20,7 +23,8 @@ const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
   const [search, setSearch] = useState("");
 
   const onClickIntegration = (integration) => {
-    dispatch(toggleIntegration({ data: integration, isNotDelete: true }));
+    if (!integration.to) dispatch(toggleIntegrationConfig(integration));
+    else dispatch(toggleIntegration({ data: integration, isNotDelete: true }));
   };
 
   useOutsideClick(ref, () => setIsOpen(false));
@@ -78,7 +82,9 @@ const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
                       className={pathname.includes(item.to) && styles.active}
                       onClick={() => onClickIntegration(item)}
                     >
-                      <NavLink to={item.to}>{item.name}</NavLink>
+                      <NavLink to={item.to ? item.to : "#"}>
+                        {item.name}
+                      </NavLink>
                     </li>
                   ))}
               </ul>

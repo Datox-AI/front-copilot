@@ -9,15 +9,20 @@ import { useMemo, useState } from "react";
 import { stringAvatar } from "../../../utils";
 import { ReactComponent as RightArrowIcon } from "../../../assets/icons/arrow-right.svg";
 import { useMsal } from "@azure/msal-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import NewChatPopup from "../../../pages/Chat/FileBar/NewChatPopup";
+import { toggleIntegrationConfig } from "../../../redux/integrations/integrationsSlice";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
+  const dispatch = useDispatch();
+
   const { instance, accounts } = useMsal();
   const { userRoles } = useSelector((store) => store.auth);
+  const { integrationConfig } = useSelector((store) => store.integrations);
 
-  const [selectedIntegration, setSelectedIntegration] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
+
+  const closeIntegrationPopup = () => dispatch(toggleIntegrationConfig(null));
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -87,7 +92,11 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
         </Box>
       </main>
 
-      <NewChatPopup isOpen={!!selectedIntegration} />
+      <NewChatPopup
+        isOpen={!!integrationConfig}
+        toggle={closeIntegrationPopup}
+        integration={integrationConfig}
+      />
 
       <Popover
         id={id}

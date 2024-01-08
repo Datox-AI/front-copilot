@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 import { _integrations } from "../../consts/integrations";
 
 const initialState = {
-  openedIntegrations: []
+  openedIntegrations: [],
+  integrationConfig: null
 };
 
 const integrationsSlice = createSlice({
@@ -27,10 +28,14 @@ const integrationsSlice = createSlice({
           (integration) => integration.id !== data.id
         );
       else state.openedIntegrations = [...state.openedIntegrations, data];
+    },
+    toggleIntegrationConfig: (state, { payload }) => {
+      state.integrationConfig = payload;
     }
   }
 });
 
-export const { toggleIntegration } = integrationsSlice.actions;
+export const { toggleIntegration, toggleIntegrationConfig } =
+  integrationsSlice.actions;
 
 export default integrationsSlice.reducer;

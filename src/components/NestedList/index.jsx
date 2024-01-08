@@ -117,8 +117,8 @@ const NestedListContainer = () => {
     initAuth.mutate(
       {
         account_identifier: "kiprdnq-kl02065",
-        client_id: "8Vkzs7JybsAPLS/LOIbKZVSdKhs=",
-        client_secret: "V5kf16P0oGdIq6f+pDolqn8IAMvhijnQhwX1DrzOj7I=",
+        client_id: "Ig0pIBW/qO7KzLflWUwlg6MaCdI=",
+        client_secret: "Bn7AnJ6L1EcnVyWZlvDfmM8a9xOMeO5rwHw3Xu77A+s=",
         token_endpoint:
           "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request",
         redirect_uri: "https://copilot.datox.ai/callback/snowflake"
