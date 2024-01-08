@@ -47,7 +47,8 @@ const Chat = ({ isAudit }) => {
         isAudit={isAudit}
         hideNewChatBtn={isAudit}
         title="Chat"
-      />
+      />{" "}
+      hey
       <Outlet
         context={{
           chats: chats,
