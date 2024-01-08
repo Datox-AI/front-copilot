@@ -47,7 +47,7 @@ const ChatTypeSelect = () => {
       {
         link:
           openedIntegrations?.length > 0
-            ? `/integration/${openedIntegrations[0].id}`
+            ? `/integration/${openedIntegrations?.[0]?.id}`
             : "/integration",
         label: "Connections",
         icon: <SettingsIcon />
