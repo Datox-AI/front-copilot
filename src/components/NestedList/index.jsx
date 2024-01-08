@@ -22,11 +22,7 @@ const NestedListItem = ({ listItem, onSelectItem, parent }) => {
     });
   };
 
-  if (
-    // (!listItem.children || listItem.children.length === 0) &&
-    listItem.level === 4
-    // (listItem.level === 2 && listItem.error)
-  )
+  if (listItem.level === 4)
     return (
       <li
         className={classNames(
