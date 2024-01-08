@@ -31,6 +31,7 @@ jobs:
           api_location: ""
           output_location: "build"
           app_build_command: "CI=false && yarn build"
+          production_branch: "main"
         env:
           REACT_APP_MSAL_REDIRECT_URI: https://copilot.datox.ai/
           REACT_APP_MSAL_CLIENT_ID: 4b27aceb-ba01-4d7e-bb3b-bc114c8d1726
@@ -57,6 +58,7 @@ jobs:
           api_location: ""
           output_location: "build"
           app_build_command: "CI=false && yarn build"
+          production_branch: "main"
         env:
           REACT_APP_MSAL_REDIRECT_URI: https://copilot.datox.ai/
           REACT_APP_MSAL_CLIENT_ID: 4b27aceb-ba01-4d7e-bb3b-bc114c8d1726
