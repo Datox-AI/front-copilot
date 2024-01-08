@@ -10,11 +10,13 @@ import { stringAvatar } from "../../../utils";
 import { ReactComponent as RightArrowIcon } from "../../../assets/icons/arrow-right.svg";
 import { useMsal } from "@azure/msal-react";
 import { useSelector } from "react-redux";
+import NewChatPopup from "../../../pages/Chat/FileBar/NewChatPopup";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
   const { instance, accounts } = useMsal();
   const { userRoles } = useSelector((store) => store.auth);
 
+  const [selectedIntegration, setSelectedIntegration] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -84,6 +86,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
           </Button>
         </Box>
       </main>
+
+      <NewChatPopup isOpen={!!selectedIntegration} />
+
       <Popover
         id={id}
         open={open}

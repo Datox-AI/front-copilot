@@ -1,6 +1,7 @@
 import styles from "../style.module.scss";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 import useOutsideClick from "../../../hooks/useOutsideClick";
+import classNames from "classnames";
 
 import { useDispatch } from "react-redux";
 import { NavLink, useLocation } from "react-router-dom";
@@ -8,11 +9,11 @@ import { Box, Typography } from "@mui/material";
 import { useRef, useState } from "react";
 import { Search } from "@mui/icons-material";
 import { toggleIntegration } from "../../../redux/integrations/integrationsSlice";
-import classNames from "classnames";
 
 const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
-  const dispatch = useDispatch();
   const ref = useRef();
+  const dispatch = useDispatch();
+
   const { pathname } = useLocation();
 
   const [isOpen, setIsOpen] = useState(false);
