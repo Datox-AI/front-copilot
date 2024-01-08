@@ -40,10 +40,12 @@ const TopChatList = ({
     });
   }, [deletableChatId]);
 
-  const filteredChats = useMemo(
-    () => chats?.filter((chat) => chat.type === "FileSearch"),
-    [chats]
-  );
+  const filteredChats = useMemo(() => {
+    if (activeIntegration.name === "Snowflake")
+      return chats?.filter((chat) => chat.type === "Analytics");
+
+    return chats?.filter((chat) => chat.type === "FileSearch");
+  }, [chats, activeIntegration]);
 
   return (
     <div className={styles.topChatList}>
