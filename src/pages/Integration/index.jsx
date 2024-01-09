@@ -43,9 +43,10 @@ const Integration = () => {
       toast.error("No integrations has been opened yet");
       return;
     }
-    if (openedIntegrations.length === 0) return;
-    if (!activeIntegration && openedIntegrations.length === 0)
-      return navigate("/chat");
+    // TODO: check properly integraton page
+    // if (openedIntegrations.length === 0) return;
+    // if (!activeIntegration && openedIntegrations.length === 0)
+    //   return navigate("/chat");
 
     const _integration = openedIntegrations?.find(
       (inte) => inte.id === Number(integrationId)
