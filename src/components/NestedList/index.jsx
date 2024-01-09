@@ -7,6 +7,13 @@ import classNames from "classnames";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+import {
+  SNOWFLAKE_REDIRECT_URL,
+  SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
+  SNOWFLAKE_TEST_CLIENT_ID,
+  SNOWFLAKE_TEST_CLIENT_SECRET,
+  SNOWFLAKE_TEST_TOKEN_ENDPOINT
+} from "../../consts/snowflake";
 
 const NestedListItem = ({ listItem, onSelectItem, parent }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -116,12 +123,11 @@ const NestedListContainer = () => {
   const onAuth = () => {
     initAuth.mutate(
       {
-        account_identifier: "kiprdnq-kl02065",
-        client_id: "Ig0pIBW/qO7KzLflWUwlg6MaCdI=",
-        client_secret: "Bn7AnJ6L1EcnVyWZlvDfmM8a9xOMeO5rwHw3Xu77A+s=",
-        token_endpoint:
-          "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request",
-        redirect_uri: "https://copilot.datox.ai/callback/snowflake"
+        account_identifier: SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
+        client_id: SNOWFLAKE_TEST_CLIENT_ID,
+        client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
+        token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
+        redirect_uri: SNOWFLAKE_REDIRECT_URL
       },
       {
         onSuccess: (res) => {
