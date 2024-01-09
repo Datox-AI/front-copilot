@@ -41,7 +41,7 @@ const TopChatList = ({
   }, [deletableChatId]);
 
   const filteredChats = useMemo(() => {
-    if (activeIntegration.name === "Snowflake")
+    if (activeIntegration?.name === "Snowflake")
       return chats?.filter((chat) => chat.type === "Analytics");
 
     return chats?.filter((chat) => chat.type === "FileSearch");
