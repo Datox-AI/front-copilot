@@ -33,10 +33,14 @@ jobs:
           app_build_command: "CI=false && yarn build"
           production_branch: "main"
         env:
-          REACT_APP_MSAL_REDIRECT_URI: https://copilot.datox.ai/
+          REACT_APP_MSAL_REDIRECT_URI: https://copilot.datox.ai/callback/snowflake
           REACT_APP_MSAL_CLIENT_ID: 4b27aceb-ba01-4d7e-bb3b-bc114c8d1726
           REACT_APP_BASE_API_URL: https://copilotwebapi.azurewebsites.net/
           REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=
+          REACT_APP_SNOWFLAKE_REDIRECT_URL: https://ashy-wave-0c6d0ea0f-dev.eastus2.4.azurestaticapps.net/callback/snowflake
+          REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: Ig0pIBW/qO7KzLflWUwlg6MaCdI=
+          REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: Bn7AnJ6L1EcnVyWZlvDfmM8a9xOMeO5rwHw3Xu77A+s=
+          REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request
 
   build_and_deploy_dev_job:
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
@@ -63,7 +67,11 @@ jobs:
           REACT_APP_MSAL_REDIRECT_URI: https://ashy-wave-0c6d0ea0f-dev.eastus2.4.azurestaticapps.net/
           REACT_APP_MSAL_CLIENT_ID: 4b27aceb-ba01-4d7e-bb3b-bc114c8d1726
           REACT_APP_BASE_API_URL: https://copilotwebapi.azurewebsites.net/
-          REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=
+          REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER=kiprdnq-kl02065
+          REACT_APP_SNOWFLAKE_REDIRECT_URL: https://ashy-wave-0c6d0ea0f-dev.eastus2.4.azurestaticapps.net/callback/snowflake
+          REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: WUtf0ptjoNDAK6AmMO0bPvLYI7U=
+          REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: c4lZcRl6QKjHpw3setIAimzAn+gHWHhZ7Ye7lGi+e6U=
+          REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

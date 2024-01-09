@@ -9,6 +9,13 @@ import { Button, TextField } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { toggleIntegrationConfig } from "../../../../redux/integrations/integrationsSlice";
 import { integrationIcons } from "../../../../consts/integrations";
+import {
+  SNOWFLAKE_REDIRECT_URL,
+  SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
+  SNOWFLAKE_TEST_CLIENT_ID,
+  SNOWFLAKE_TEST_CLIENT_SECRET,
+  SNOWFLAKE_TEST_TOKEN_ENDPOINT
+} from "../../../../consts/snowflake";
 
 const _integrations = [
   {
@@ -81,13 +88,15 @@ const IntegrationForm = ({}) => {
   const dispatch = useDispatch();
   const { initAuth } = useSnowflakeAPI();
 
-  const [accountIdentifier, setAccountIdentifier] = useState("kiprdnq-kl02065");
-  const [clientId, setClientId] = useState("Ig0pIBW/qO7KzLflWUwlg6MaCdI=");
+  const [accountIdentifier, setAccountIdentifier] = useState(
+    SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER
+  );
+  const [clientId, setClientId] = useState(SNOWFLAKE_TEST_CLIENT_ID);
   const [clientSecret, setClientSecret] = useState(
-    "Bn7AnJ6L1EcnVyWZlvDfmM8a9xOMeO5rwHw3Xu77A+s="
+    SNOWFLAKE_TEST_CLIENT_SECRET
   );
   const [tokenEndpoint, setTokenEndpoint] = useState(
-    "https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request"
+    SNOWFLAKE_TEST_TOKEN_ENDPOINT
   );
 
   const close = () => dispatch(toggleIntegrationConfig(null));
@@ -99,7 +108,7 @@ const IntegrationForm = ({}) => {
         client_id: clientId,
         client_secret: clientSecret,
         token_endpoint: tokenEndpoint,
-        redirect_uri: "https://copilot.datox.ai/callback/snowflake"
+        redirect_uri: SNOWFLAKE_REDIRECT_URL
       },
       {
         onSuccess: (res) => {
