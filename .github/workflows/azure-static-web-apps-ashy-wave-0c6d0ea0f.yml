@@ -69,8 +69,8 @@ jobs:
           REACT_APP_BASE_API_URL: https://copilotwebapi.azurewebsites.net/
           REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER=kiprdnq-kl02065
           REACT_APP_SNOWFLAKE_REDIRECT_URL: https://ashy-wave-0c6d0ea0f-dev.eastus2.4.azurestaticapps.net/callback/snowflake
-          REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: WUtf0ptjoNDAK6AmMO0bPvLYI7U=
-          REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: c4lZcRl6QKjHpw3setIAimzAn+gHWHhZ7Ye7lGi+e6U=
+          REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: WSwFhZu9xJy4ARSTK8VfdjfpnGE=
+          REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: V1EhFELmMPFQe2kwUSNFt4u5263wz2iTquVGjSCn7m8=
           REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request
 
   close_pull_request_job:
