@@ -80,7 +80,7 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
         <ul>
           {data?.lists
             ?.filter((user) =>
-              user.displayName.toLowerCase().includes(search.toLowerCase())
+              user?.displayName?.toLowerCase().includes(search?.toLowerCase())
             )
             ?.map((user, u) => {
               const foundUser =
@@ -96,9 +96,9 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
                     gap="10px"
                   >
                     <Avatar
-                      {...stringAvatar(user.displayName)}
+                      {...stringAvatar(user?.displayName || "DATOX U")}
                       sx={{
-                        ...stringAvatar(user.displayName).sx,
+                        ...stringAvatar(user?.displayName || "DATOX U").sx,
                         height: 32,
                         width: 32,
                         fontSize: 14
