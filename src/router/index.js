@@ -50,6 +50,15 @@ export const userRouter = createBrowserRouter([
         ]
       },
       {
+        path: "callback",
+        children: [
+          {
+            path: "snowflake",
+            element: <SnowflakeCallback />
+          }
+        ]
+      },
+      {
         path: "*",
         element: <Navigate to="/chat" />
       }
