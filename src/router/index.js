@@ -7,6 +7,8 @@ import FallbackPage from "../components/FallbackPage";
 import Users from "../pages/Users";
 import Audit from "../pages/Audit";
 import SnowflakeCallback from "../pages/Auth/Callback/snowflake";
+import SnowflakeConfig from "../pages/Configs/Snowflake";
+import SnowflakeConfigAdd from "../pages/Configs/Snowflake/add";
 
 export const userRouter = createBrowserRouter([
   {
@@ -126,6 +128,28 @@ export const adminRouter = createBrowserRouter([
       {
         path: "*",
         element: <Navigate to="/chat" />
+      },
+      {
+        path: "configs",
+        children: [
+          {
+            path: "snowflake",
+            children: [
+              {
+                index: true,
+                element: <SnowflakeConfig />
+              },
+              {
+                path: "add",
+                element: <SnowflakeConfigAdd />
+              },
+              {
+                path: ":id",
+                element: <SnowflakeConfigAdd />
+              }
+            ]
+          }
+        ]
       }
     ]
   }

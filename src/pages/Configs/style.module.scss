@@ -1,0 +1,24 @@
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 150px;
+
+  .btn {
+    margin-top: 8px;
+    width: 140px;
+    height: 34px;
+    color: black;
+  }
+
+  .form {
+    padding: 30px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0px 1px 2px 0px rgba(114, 126, 151, 0.1),
+      0px 4px 4px 0px rgba(114, 126, 151, 0.09),
+      0px 8px 5px 0px rgba(114, 126, 151, 0.05),
+      0px 15px 6px 0px rgba(114, 126, 151, 0.01),
+      0px 23px 7px 0px rgba(114, 126, 151, 0);
+  }
+}

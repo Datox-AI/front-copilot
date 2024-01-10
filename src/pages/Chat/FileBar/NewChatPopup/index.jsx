@@ -84,7 +84,7 @@ const SelectIntegration = ({ selectIntegration }) => {
   );
 };
 
-const IntegrationForm = ({}) => {
+export const IntegrationForm = ({}) => {
   const dispatch = useDispatch();
   const { initAuth } = useSnowflakeAPI();
 

@@ -23,8 +23,9 @@ const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
   const [search, setSearch] = useState("");
 
   const onClickIntegration = (integration) => {
-    if (!integration.to) dispatch(toggleIntegrationConfig(integration));
-    else dispatch(toggleIntegration({ data: integration, isNotDelete: true }));
+    // if (!integration.to) dispatch(toggleIntegrationConfig(integration));
+    // else
+    dispatch(toggleIntegration({ data: integration, isNotDelete: true }));
   };
 
   useOutsideClick(ref, () => setIsOpen(false));
@@ -82,7 +83,7 @@ const MenuItem = ({ to, label, icon, list, isSidebarOpen }) => {
                       className={pathname.includes(item.to) && styles.active}
                       onClick={() => onClickIntegration(item)}
                     >
-                      <NavLink to={item.to ? item.to : "#"}>
+                      <NavLink to={item.configUrl ? item.configUrl : item.to}>
                         {item.name}
                       </NavLink>
                     </li>
