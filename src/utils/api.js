@@ -1,9 +1,10 @@
 import axios from "axios";
 import { store } from "../redux/store";
 import { setToken, setUser } from "../redux/auth/authSlice";
+import { BASE_API_URL } from "../config/request";
 
 export const request = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL
+  baseURL: BASE_API_URL
 });
 
 const errorHandler = (error) => {
