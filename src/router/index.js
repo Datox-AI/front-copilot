@@ -59,6 +59,28 @@ export const userRouter = createBrowserRouter([
         ]
       },
       {
+        path: "configs",
+        children: [
+          {
+            path: "snowflake",
+            children: [
+              {
+                index: true,
+                element: <SnowflakeConfig />
+              },
+              {
+                path: "add",
+                element: <SnowflakeConfigAdd />
+              },
+              {
+                path: ":id",
+                element: <SnowflakeConfigAdd />
+              }
+            ]
+          }
+        ]
+      },
+      {
         path: "*",
         element: <Navigate to="/chat" />
       }
