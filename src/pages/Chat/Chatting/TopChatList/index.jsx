@@ -7,6 +7,7 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import DeleteChatPopup from "../../FileBar/DeleteChatPopup";
+import PopoverMenu from "../../../../components/PopoverMenu";
 
 const TopChatList = ({
   integrations,
@@ -47,6 +48,20 @@ const TopChatList = ({
     return chats?.filter((chat) => chat.type === "FileSearch");
   }, [chats, activeIntegration]);
 
+  const moreIntegrations = useMemo(
+    () => [
+      {
+        title: "Snowflake",
+        onClick: () => navigate("/configs/snowflake")
+      },
+      {
+        title: "Sharepoint",
+        onClick: () => navigate("/integration/3")
+      }
+    ],
+    []
+  );
+
   return (
     <div className={styles.topChatList}>
       <div className={styles.integrationTabs}>
@@ -61,6 +76,20 @@ const TopChatList = ({
             iconType={integration?.iconType}
           />
         ))}
+        <PopoverMenu
+          mainIcon={<AddRoundedIcon className={styles.more} />}
+          data={moreIntegrations}
+        />
+        {/* <button
+          style={{
+            background: "none",
+            outline: "none",
+            border: "none",
+            marginTop: 3
+          }}
+        >
+          <AddRoundedIcon />
+        </button> */}
       </div>
 
       <div className={styles.chatList}>
