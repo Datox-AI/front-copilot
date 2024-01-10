@@ -18,7 +18,8 @@ export const _integrations = [
     name: "Snowflake",
     // to: "/integration/2",
     type: "sql",
-    iconType: "snowflake"
+    iconType: "snowflake",
+    configUrl: "/configs/snowflake"
   },
   {
     id: 3,
