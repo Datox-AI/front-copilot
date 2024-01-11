@@ -47,7 +47,7 @@ const Messages = forwardRef(
     };
 
     return (
-      <div className={styles.messages}>
+      <div className={styles.messages} id="messages-list">
         {isLoading ? (
           <div className={styles.block}>
             <div className={styles.messageList} ref={listRef}>
