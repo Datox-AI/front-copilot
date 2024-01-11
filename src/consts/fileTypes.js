@@ -5,8 +5,12 @@ import file from "../assets/icons/file.png";
 
 export const fileTypes = {
   word: word,
+  WORD: word,
   pdf: pdf,
+  PDF: pdf,
   excel: excel,
+  EXCEL: excel,
+  xlsx: excel,
   xlsx: excel,
   "application/pdf": pdf,
   "application/docx": word,
