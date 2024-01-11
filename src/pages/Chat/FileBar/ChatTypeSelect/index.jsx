@@ -5,9 +5,10 @@ import useOutsideClick from "../../../../hooks/useOutsideClick";
 import { useMemo, useRef, useState } from "react";
 import { ReactComponent as ChatIcon } from "../../../../assets/icons/chat.svg";
 import { ReactComponent as SettingsIcon } from "../../../../assets/icons/settins.svg";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
+import { SelectIntegrations } from "../../../../components/Popups/SelectIntegrations";
 
 const SelectedIcon = () => (
   <svg
@@ -32,6 +33,7 @@ const SelectedIcon = () => (
 );
 
 const ChatTypeSelect = () => {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { openedIntegrations } = useSelector((store) => store.integrations);
 
@@ -62,39 +64,53 @@ const ChatTypeSelect = () => {
   }, [pathname]);
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenPopup, setIsOpenPopup] = useState(false);
+
+  const onSelectIntegration = (type) => {
+    if (type.link !== "/chat" && openedIntegrations.length === 0)
+      return setIsOpenPopup(true);
+
+    navigate(type.link);
+  };
 
   useOutsideClick(ref, () => setIsOpen(false));
 
   return (
-    <div className={styles.typeSelect} ref={ref}>
-      <h3
-        onClick={() => setIsOpen((prev) => !prev)}
-        className={isOpen && styles.active}
-      >
-        {selectedType.label}{" "}
-        <ArrowForwardIosRoundedIcon
-          style={{
-            transform: isOpen && "rotateZ(90deg)"
-          }}
-        />
-      </h3>
-      {isOpen && (
-        <ul>
-          {types.map((type, t) => (
-            <li key={t}>
-              <NavLink to={type.link}>
-                <Box display="flex" alignItems="center" gap="10px">
-                  {type.icon}
-                  {type.label}
-                </Box>
+    <>
+      <SelectIntegrations
+        isOpen={isOpenPopup}
+        toggle={() => setIsOpenPopup((prev) => !prev)}
+      />
+      <div className={styles.typeSelect} ref={ref}>
+        <h3
+          onClick={() => setIsOpen((prev) => !prev)}
+          className={isOpen && styles.active}
+        >
+          {selectedType.label}{" "}
+          <ArrowForwardIosRoundedIcon
+            style={{
+              transform: isOpen && "rotateZ(90deg)"
+            }}
+          />
+        </h3>
+        {isOpen && (
+          <ul>
+            {types.map((type, t) => (
+              <li key={t} onClick={() => onSelectIntegration(type)}>
+                <NavLink to="#">
+                  <Box display="flex" alignItems="center" gap="10px">
+                    {type.icon}
+                    {type.label}
+                  </Box>
 
-                {selectedType.link === type.link && <SelectedIcon />}
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+                  {selectedType.link === type.link && <SelectedIcon />}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </>
   );
 };
 
