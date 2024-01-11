@@ -12,6 +12,7 @@ import { ReactComponent as TickIcon } from "../../../../../../assets/icons/tick.
 import { ReactComponent as TrashIcon } from "../../../../../../assets/icons/trash.svg";
 import { Box, CircularProgress } from "@mui/material";
 import { copyNavigator } from "../../../../../../utils";
+import { useEffect, useRef, useState } from "react";
 
 const MoreCommands = ({
   refetch,
@@ -23,7 +24,30 @@ const MoreCommands = ({
   toggleMessage,
   onReply
 }) => {
+  const ref = useRef();
+
+  const [leftPosition, setLeftPosition] = useState("0");
+  const [bottomPosition, setBottomPosition] = useState("-152px");
+
   const { pinMutation, deleteMutation } = useMessagesAPI({});
+
+  useEffect(() => {
+    document.getElementById("messages-list").addEventListener("scroll", () => {
+      var distanceToRight =
+        window.innerWidth - ref.current?.getBoundingClientRect().right;
+      var distanceToBottom =
+        window.innerHeight - ref.current?.getBoundingClientRect().bottom;
+      console.log(distanceToBottom, distanceToRight);
+
+      if (distanceToBottom < 200) {
+        setBottomPosition(0);
+      }
+
+      if (distanceToRight < 200) {
+        setLeftPosition("-140px");
+      }
+    });
+  }, [ref.current]);
 
   const handleDeleteMessage = () => {
     if (deleteMutation.isLoading) return;
@@ -63,14 +87,21 @@ const MoreCommands = ({
   };
 
   return (
-    <button className={classNames(styles.more)}>
+    <button className={classNames(styles.more)} ref={ref}>
       <Box display="flex" alignItems="center" gap="10px">
         {isPinned && <PinnedIcon className={styles.pin_icon} />}
         <MoreHorizIcon className={styles.more_icon} />
       </Box>
 
       <div className={styles.command_context}>
-        <ul className={styles.commands}>
+        <ul
+          className={styles.commands}
+          style={{
+            top: "auto",
+            left: leftPosition,
+            bottom: bottomPosition
+          }}
+        >
           <li className={styles.command} onClick={onReply}>
             <ReplyIcon />
             Reply
