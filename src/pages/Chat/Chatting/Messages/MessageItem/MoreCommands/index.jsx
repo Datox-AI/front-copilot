@@ -37,7 +37,6 @@ const MoreCommands = ({
         window.innerWidth - ref.current?.getBoundingClientRect().right;
       var distanceToBottom =
         window.innerHeight - ref.current?.getBoundingClientRect().bottom;
-      console.log(distanceToBottom, distanceToRight);
 
       if (distanceToBottom < 200) {
         setBottomPosition(0);
