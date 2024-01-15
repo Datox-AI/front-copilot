@@ -18,6 +18,7 @@ import SelectedMessages from "./SelectedMessages";
 import toast from "react-hot-toast";
 import { useMsal } from "@azure/msal-react";
 import useFileUpload from "../../../hooks/useFileUpload";
+import { Outlet } from "react-router-dom";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -206,94 +207,98 @@ const Chatting = ({
   };
 
   return (
-    <div className={styles.chattingContainer}>
-      {!isChat && !isAudit && (
-        <TopChatList
-          chats={chats}
-          integrations={integrations}
-          activeChat={activeChat}
-          activeIntegration={activeIntegration}
-          handleSelectChat={handleSelectChat}
-          handleSelectIntegration={handleSelectIntegration}
-          onCloseIntegration={onCloseIntegration}
-          refetch={refetch}
-        />
-      )}
-
-      {!isAudit && (
-        <>
-          <SelectedMessages
-            selectedMessages={selectedMessages}
-            onCancel={clearAllSelectedMessages}
-            onDelete={deleteAllSelectedMessages}
-            onCopy={handleCopySelectedMessages}
-            isLoading={deleteMutation.isLoading}
+    <>
+      <div className={styles.chattingContainer}>
+        {!isChat && !isAudit && (
+          <TopChatList
+            chats={chats}
+            integrations={integrations}
+            activeChat={activeChat}
+            activeIntegration={activeIntegration}
+            handleSelectChat={handleSelectChat}
+            handleSelectIntegration={handleSelectIntegration}
+            onCloseIntegration={onCloseIntegration}
+            refetch={refetch}
           />
+        )}
 
-          <PinnedMessages
-            pinnedMessages={pinnedMessages}
-            chatId={chatId}
-            refetch={refetchMessages}
-          />
-        </>
-      )}
-      <div className={styles.chatting}>
-        <div
-          className={classNames(styles.messages, {
-            [styles.hasChats]: !isChat && !isAudit,
-            [styles.hasIntegrations]: !isChat && !isAudit,
-            [styles.hasPinnedMessages]: pinnedMessages?.length > 0 && !isAudit,
-            [styles.hasSelectedMessages]:
-              selectedMessages.length > 0 && !isAudit,
-            [styles.isAudit]: isAudit
-          })}
-        >
-          {data?.lists?.length > 0 || isLoading ? (
-            <Messages
-              ref={listRef}
-              data={data}
-              mode={mode}
-              files={files}
-              isAudit={isAudit}
-              chatId={chatId}
-              refetch={refetch}
-              replyMessage={replyMessage}
-              isLoading={isLoading}
-              questions={questions}
-              activeChat={activeChat}
+        {!isAudit && (
+          <>
+            <SelectedMessages
               selectedMessages={selectedMessages}
-              isStreaming={textGenerator?.isStreaming}
-              isHighlightedMessage={isHighlightedMessage}
-              toggleMessage={toggleMessage}
-              refetchMessages={refetchMessages}
-              onSelectQuestion={onSelectQuestion}
-              clearReplyMessage={clearReplyMessage}
-              selectReplyMessage={selectReplyMessage}
-              onHighlightMessage={onHighlightMessage}
+              onCancel={clearAllSelectedMessages}
+              onDelete={deleteAllSelectedMessages}
+              onCopy={handleCopySelectedMessages}
+              isLoading={deleteMutation.isLoading}
             />
-          ) : (
-            <EmptyMessages
-              hasChats={chats?.length > 0 || !isChat}
-              hasIntegrations={integrations?.length > 0}
-              isChat={isChat}
+
+            <PinnedMessages
+              pinnedMessages={pinnedMessages}
+              chatId={chatId}
+              refetch={refetchMessages}
+            />
+          </>
+        )}
+        <div className={styles.chatting}>
+          <div
+            className={classNames(styles.messages, {
+              [styles.hasChats]: !isChat && !isAudit,
+              [styles.hasIntegrations]: !isChat && !isAudit,
+              [styles.hasPinnedMessages]:
+                pinnedMessages?.length > 0 && !isAudit,
+              [styles.hasSelectedMessages]:
+                selectedMessages.length > 0 && !isAudit,
+              [styles.isAudit]: isAudit
+            })}
+          >
+            {data?.lists?.length > 0 || isLoading ? (
+              <Messages
+                ref={listRef}
+                data={data}
+                mode={mode}
+                files={files}
+                isAudit={isAudit}
+                chatId={chatId}
+                refetch={refetch}
+                replyMessage={replyMessage}
+                isLoading={isLoading}
+                questions={questions}
+                activeChat={activeChat}
+                selectedMessages={selectedMessages}
+                isStreaming={textGenerator?.isStreaming}
+                isHighlightedMessage={isHighlightedMessage}
+                toggleMessage={toggleMessage}
+                refetchMessages={refetchMessages}
+                onSelectQuestion={onSelectQuestion}
+                clearReplyMessage={clearReplyMessage}
+                selectReplyMessage={selectReplyMessage}
+                onHighlightMessage={onHighlightMessage}
+              />
+            ) : (
+              <EmptyMessages
+                hasChats={chats?.length > 0 || !isChat}
+                hasIntegrations={integrations?.length > 0}
+                isChat={isChat}
+              />
+            )}
+          </div>
+          {chatId && !isAudit && (
+            <Input
+              chatId={chatId}
+              text={text}
+              disabled={disabled}
+              onTexting={onTexting}
+              onSend={onSend}
+              onFileUpload={onFileUpload}
+              replyMessage={replyMessage}
+              clearReplyMessage={clearReplyMessage}
+              isStreaming={textGenerator?.isStreaming}
             />
           )}
         </div>
-        {chatId && !isAudit && (
-          <Input
-            chatId={chatId}
-            text={text}
-            disabled={disabled}
-            onTexting={onTexting}
-            onSend={onSend}
-            onFileUpload={onFileUpload}
-            replyMessage={replyMessage}
-            clearReplyMessage={clearReplyMessage}
-            isStreaming={textGenerator?.isStreaming}
-          />
-        )}
       </div>
-    </div>
+      <Outlet />
+    </>
   );
 };
 

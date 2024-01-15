@@ -8,7 +8,17 @@
   .nestedItem {
     position: relative;
     width: 100%;
-    padding: 0 8px;
+
+    &.level4 {
+      .itemMeta {
+        justify-content: space-between;
+      }
+
+      &:hover {
+        background-color: #f3f6fc;
+        border-radius: 5px;
+      }
+    }
 
     &.child {
       &::before {
@@ -32,7 +42,6 @@
 
     .itemMeta {
       height: 33px;
-      width: 100%;
       display: flex;
       align-items: center;
       color: #616161;
@@ -45,17 +54,29 @@
       border: none;
       outline: none;
       text-align: left;
+      width: 100%;
 
       span {
-        width: 87%;
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
+        display: inline-block;
+        width: 80%;
+        color: #616161;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+      }
+
+      li[class*="command"] {
+        svg {
+          path {
+            stroke: none !important;
+          }
+        }
       }
 
       svg {
         cursor: pointer;
+        color: #000;
       }
     }
 
@@ -78,6 +99,7 @@
     &.level4 {
       margin-left: 22px;
       width: calc(100% - 22px);
+      padding: 0 5px;
     }
     &.level5 {
       margin-left: 22px;

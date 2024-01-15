@@ -1,12 +1,16 @@
-import { useState } from "react";
 import styles from "./style.module.scss";
-import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
-import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
 import classNames from "classnames";
-
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import PopoverMenu from "../PopoverMenu";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+
+import { ReactComponent as MoreVertI } from "../../assets/icons/vertical-dots.svg";
+import { useMemo, useState } from "react";
+import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
+import { ReactComponent as ColumnsI } from "../../assets/icons/columns.svg";
+import { ReactComponent as DataPreviewI } from "../../assets/icons/data-preview.svg";
+import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
+import { Box, Button, CircularProgress } from "@mui/material";
 import {
   SNOWFLAKE_REDIRECT_URL,
   SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
@@ -15,8 +19,21 @@ import {
   SNOWFLAKE_TEST_TOKEN_ENDPOINT
 } from "../../consts/snowflake";
 
-const NestedListItem = ({ listItem, onSelectItem, parent }) => {
+const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
   const [isOpen, setIsOpen] = useState(false);
+
+  const popoverMenu = useMemo(() => {
+    return [
+      {
+        icon: ColumnsI,
+        title: <span>Columns</span>
+      },
+      {
+        icon: DataPreviewI,
+        title: <span>Data Preview</span>
+      }
+    ];
+  }, [listItem]);
 
   const onClick = () => {
     setIsOpen((prev) => {
@@ -37,6 +54,10 @@ const NestedListItem = ({ listItem, onSelectItem, parent }) => {
           styles["level" + listItem.level],
           styles.child
         )}
+        style={{
+          position: "relative",
+          zIndex
+        }}
       >
         {listItem.level !== 1 && (
           <NestListArrowI className={styles.nestedArrow} />
@@ -51,7 +72,10 @@ const NestedListItem = ({ listItem, onSelectItem, parent }) => {
             {listItem.error}
           </button>
         ) : (
-          <button className={styles.itemMeta}>{listItem.name}</button>
+          <button className={styles.itemMeta}>
+            <span>{listItem.name}</span>
+            <PopoverMenu mainIcon={<MoreVertI />} data={popoverMenu} />
+          </button>
         )}
       </li>
     );
@@ -110,6 +134,7 @@ const NestedList = ({ data, onSelectItem, parent }) => {
           parent={parent}
           listItem={item}
           onSelectItem={onSelectItem}
+          zIndex={data.length - i}
         />
       ))}
     </ul>

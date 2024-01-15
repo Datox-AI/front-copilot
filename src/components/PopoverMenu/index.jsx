@@ -23,7 +23,13 @@ const _data = [
 const PopoverMenu = ({ data = _data, mainIcon = <MoreHorizIcon /> }) => {
   return (
     <button className={classNames(styles.more)}>
-      <Box display="flex" alignItems="center" gap="10px">
+      <Box
+        display="flex"
+        alignItems="center"
+        gap="10px"
+        position="relative"
+        zIndex={1}
+      >
         {mainIcon}
       </Box>
 
