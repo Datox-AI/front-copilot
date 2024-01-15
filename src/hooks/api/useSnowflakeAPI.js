@@ -12,10 +12,9 @@ const normalizer = (item, level, idx) => ({
   error: null,
   children: []
 });
-const snowflakeToken =
-  "ver:1-hint:31546534879242-ETMsDgAAAY0M1JM8ABRBRVMvQ0JDL1BLQ1M1UGFkZGluZwEAABAAEH5SrLsv1G+Cy2CaIgig2IoAAABQKMzBzE2Wvw1GlzU7MYonTpdgr9tilTQoU5U6vZESx47d7LX1rOGtthEQjDeA1v+9nVn/Kojce+m3cXAH/r1xVVe6UpI7JNruDYvR15F5juwAFOSOuD+aVXt6NyLJld9sJysfA6++";
+
 const useSnowflakeAPI = (props) => {
-  const { _snowflakeToken } = useSelector((store) => store.auth);
+  const { snowflakeToken } = useSelector((store) => store.auth);
 
   const [snowflakeData, setSnowflakeData] = useState([]);
 
