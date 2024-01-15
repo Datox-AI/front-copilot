@@ -10,8 +10,8 @@ import PinnedMessages from "./PinnedMessages";
 import SelectedMessages from "./SelectedMessages";
 import useChatting from "../../../hooks/useChatting";
 
-import { createRef } from "react";
 import { useSelector } from "react-redux";
+import { createRef } from "react";
 import { Outlet } from "react-router-dom";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 
@@ -195,8 +195,8 @@ const Chatting = ({
             />
           )}
         </div>
+        <Outlet />
       </div>
-      <Outlet />
     </>
   );
 };

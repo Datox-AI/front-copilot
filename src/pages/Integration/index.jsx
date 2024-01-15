@@ -85,12 +85,23 @@ const Integration = () => {
   const handleSelectChat = (integration) => setActiveChat(integration);
 
   useEffect(() => {
-    if (!chatId || !data) return;
+    if (!chatId && !data) return;
+
+    if (integrationId && data?.lists?.length > 0) {
+      const mutatedData = data.lists.filter(
+        (chat) =>
+          chat.type ===
+          (activeIntegration.type === "sql" ? "Analytics" : "FileSearch")
+      );
+
+      if (!chatId || !mutatedData.find((chat) => chatId === chat.id))
+        navigate(`/integration/${integrationId}/${mutatedData[0].id}`);
+    }
 
     const foundChat = data?.lists?.find((chat) => chat.id === chatId);
 
     handleSelectChat(foundChat);
-  }, [chatId, data?.lists]);
+  }, [chatId, data, integrationId, activeIntegration]);
 
   if (!integrationId) return <Navigate to="../" />;
 

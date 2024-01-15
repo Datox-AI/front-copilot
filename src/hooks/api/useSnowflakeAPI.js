@@ -2,7 +2,6 @@ import { useMutation, useQuery } from "react-query";
 import { snowflakeAPI } from "../../utils/snowflakeAPI";
 import { useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
 
 const normalizer = (item, level, idx) => ({
   name: item,

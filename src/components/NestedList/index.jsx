@@ -18,22 +18,31 @@ import {
   SNOWFLAKE_TEST_CLIENT_SECRET,
   SNOWFLAKE_TEST_TOKEN_ENDPOINT
 } from "../../consts/snowflake";
+import { useNavigate, useParams } from "react-router-dom";
 
 const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
+  const { chatId } = useParams();
+
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const popoverMenu = useMemo(() => {
     return [
       {
         icon: ColumnsI,
-        title: <span>Columns</span>
+        title: <span>Columns</span>,
+        onClick: () =>
+          navigate(`/integration/2/${chatId}/columns/${listItem.name}`)
       },
       {
         icon: DataPreviewI,
-        title: <span>Data Preview</span>
+        title: <span>Data Preview</span>,
+        onClick: () =>
+          navigate(`/integration/2/${chatId}/preview/${listItem.name}`)
       }
     ];
-  }, [listItem]);
+  }, [listItem, chatId]);
 
   const onClick = () => {
     setIsOpen((prev) => {

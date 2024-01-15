@@ -9,6 +9,8 @@ import Audit from "../pages/Audit";
 import SnowflakeCallback from "../pages/Auth/Callback/snowflake";
 import SnowflakeConfig from "../pages/Configs/Snowflake";
 import SnowflakeConfigAdd from "../pages/Configs/Snowflake/add";
+import ColumnsTable from "../pages/Integration/ColumnDetails/Columns";
+import PreviewData from "../pages/Integration/ColumnDetails/PreviewData";
 
 export const userRouter = createBrowserRouter([
   {
@@ -43,7 +45,26 @@ export const userRouter = createBrowserRouter([
             children: [
               {
                 path: ":chatId",
-                element: <></>
+                children: [
+                  {
+                    path: "columns",
+                    children: [
+                      {
+                        path: ":columnName",
+                        element: <ColumnsTable />
+                      }
+                    ]
+                  },
+                  {
+                    path: "preview",
+                    children: [
+                      {
+                        path: ":columnName",
+                        element: <PreviewData />
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           }
@@ -121,7 +142,26 @@ export const adminRouter = createBrowserRouter([
             children: [
               {
                 path: ":chatId",
-                element: <></>
+                children: [
+                  {
+                    path: "columns",
+                    children: [
+                      {
+                        path: ":columnName",
+                        element: <ColumnsTable />
+                      }
+                    ]
+                  },
+                  {
+                    path: "preview",
+                    children: [
+                      {
+                        path: ":columnName",
+                        element: <PreviewData />
+                      }
+                    ]
+                  }
+                ]
               }
             ]
           }
