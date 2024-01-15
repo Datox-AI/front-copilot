@@ -1,28 +1,33 @@
+import toast from "react-hot-toast";
 import useFileUpload from "./useFileUpload";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { arrayUniqueByKey } from "../utils";
 import { useDispatch } from "react-redux";
 import { chatModes } from "./useMessages";
-import useMessagesAPI from "./api/useMessagesAPI";
-import toast from "react-hot-toast";
+import { useMsal } from "@azure/msal-react";
+import { stopStreaming } from "../redux/chat/chatSlice";
 
-const useChatting = ({ chatId, data, startPrompting }) => {
+const useChatting = ({
+  data,
+  isChat,
+  chatId,
+  isLoading,
+  textGenerator,
+  deleteMutation,
+  startPrompting,
+  setRelatedFiles,
+  refetchMessages
+}) => {
   const dispatch = useDispatch();
 
+  const { accounts } = useMsal();
   const { handleUpload } = useFileUpload({ chatId });
 
   const [text, setText] = useState("");
   const [mode, setMode] = useState(chatModes);
   const [selectedMessages, setSelectedMessages] = useState([]);
   const [isHighlightedMessage, setIsHiglightedMessage] = useState(null);
-
-  const {
-    data,
-    refetch: refetchMessages,
-    isLoading,
-    deleteMutation
-  } = useMessagesAPI({ chatId });
 
   const onHighlightMessage = (msg) => setIsHiglightedMessage(msg);
 
@@ -136,6 +141,28 @@ const useChatting = ({ chatId, data, startPrompting }) => {
 
   const onSelectQuestion = (question) => {
     startPrompting(question);
+  };
+
+  return {
+    data,
+    mode,
+    text,
+    disabled,
+    isLoading,
+    deleteMutation,
+    pinnedMessages,
+    selectedMessages,
+    isHighlightedMessage,
+    onSend,
+    onTexting,
+    onFileUpload,
+    toggleMessage,
+    refetchMessages,
+    onSelectQuestion,
+    onHighlightMessage,
+    clearAllSelectedMessages,
+    deleteAllSelectedMessages,
+    handleCopySelectedMessages
   };
 };
 

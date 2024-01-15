@@ -6,19 +6,14 @@ import classNames from "classnames";
 import useMessagesAPI from "../../../hooks/api/useMessagesAPI";
 import usePrompt from "../../../hooks/usePrompt";
 import searchFileIcon from "../../../assets/icons/search-files.png";
-
-import { stopStreaming } from "../../../redux/chat/chatSlice";
-import { arrayUniqueByKey } from "../../../utils";
-import { useDispatch, useSelector } from "react-redux";
-import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
-import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 import PinnedMessages from "./PinnedMessages";
-import { chatModes } from "../../../hooks/useMessages";
 import SelectedMessages from "./SelectedMessages";
-import toast from "react-hot-toast";
-import { useMsal } from "@azure/msal-react";
-import useFileUpload from "../../../hooks/useFileUpload";
+import useChatting from "../../../hooks/useChatting";
+
+import { createRef } from "react";
+import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
+import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -56,9 +51,6 @@ const Chatting = ({
   isAudit
 }) => {
   const listRef = createRef();
-  const dispatch = useDispatch();
-
-  const { accounts } = useMsal();
 
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
@@ -85,126 +77,33 @@ const Chatting = ({
     setRelatedFiles
   });
 
-  const { handleUpload } = useFileUpload({ chatId });
-
-  const [text, setText] = useState("");
-  const [mode, setMode] = useState(chatModes);
-  const [selectedMessages, setSelectedMessages] = useState([]);
-  const [isHighlightedMessage, setIsHiglightedMessage] = useState(null);
-
-  const onHighlightMessage = (msg) => setIsHiglightedMessage(msg);
-
-  useEffect(() => {
-    if (!isHighlightedMessage) return;
-
-    const interval = setInterval(() => setIsHiglightedMessage(null), 2000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isHighlightedMessage]);
-
-  const pinnedMessages = useMemo(() => {
-    if (!data || !data.lists) return [];
-
-    return data.lists.filter((message) => message.pinned);
-  }, [data]);
-
-  const clearAllSelectedMessages = () => {
-    setSelectedMessages([]);
-  };
-
-  const deleteAllSelectedMessages = () => {
-    deleteMutation.mutate(
-      {
-        chatId,
-        body: [...selectedMessages]
-      },
-      {
-        onSuccess: () => {
-          refetchMessages();
-          setSelectedMessages([]);
-        },
-        onError: (err) => {
-          toast.error(err.data?.title);
-        }
-      }
-    );
-  };
-
-  const toggleMessage = (messageId) => {
-    if (selectedMessages.includes(messageId))
-      setSelectedMessages((prev) =>
-        prev.filter((msgId) => msgId !== messageId)
-      );
-    else setSelectedMessages((prev) => [...prev, messageId]);
-  };
-
-  const disabled = useMemo(() => !text, [text]);
-
-  useEffect(() => {
-    if (selectedMessages.length === 0) return setMode(chatModes.CHAT);
-
-    return setMode(chatModes.SELECT);
-  }, [selectedMessages]);
-
-  useEffect(() => {
-    if (isChat || !data || !data.lists) return;
-
-    const _files = [];
-
-    data.lists
-      ?.filter((message) => message.searchFiles?.length > 0)
-      ?.forEach((message) =>
-        message.searchFiles?.map((file) => _files.push(file))
-      );
-
-    setRelatedFiles((prev) => arrayUniqueByKey([...prev, ..._files]));
-  }, [data]);
-
-  const onTexting = (e) => {
-    setText(e.target.value);
-  };
-
-  const onSend = useCallback(
-    (e) => {
-      e.preventDefault();
-      setText("");
-
-      if (textGenerator?.isStreaming) dispatch(stopStreaming({ chatId }));
-      else startPrompting(text);
-    },
-    [textGenerator, text, chatId]
-  );
-
-  const handleCopySelectedMessages = async () => {
-    if (!selectedMessages || selectedMessages.length === 0) return;
-
-    let copyMarkdown = "";
-    data?.lists?.forEach((message) => {
-      if (selectedMessages.includes(message.id)) {
-        copyMarkdown += `– ${
-          message.role === "Assistant"
-            ? "Datox Copilot"
-            : "User: " + accounts?.[0]?.name
-        }\nMessage: ${message.text}\n\n`;
-      }
-    });
-
-    await navigator.clipboard.writeText(copyMarkdown);
-
-    toast.success("Copied!");
-  };
-
-  const onFileUpload = (e) => {
-    const _files = e.target.files;
-
-    handleUpload(_files);
-  };
-
-  const onSelectQuestion = (question) => {
-    startPrompting(question);
-  };
+  const {
+    mode,
+    text,
+    disabled,
+    pinnedMessages,
+    selectedMessages,
+    isHighlightedMessage,
+    onSend,
+    onTexting,
+    onFileUpload,
+    toggleMessage,
+    onSelectQuestion,
+    onHighlightMessage,
+    clearAllSelectedMessages,
+    deleteAllSelectedMessages,
+    handleCopySelectedMessages
+  } = useChatting({
+    data,
+    isChat,
+    chatId,
+    isLoading,
+    textGenerator,
+    deleteMutation,
+    setRelatedFiles,
+    startPrompting,
+    refetchMessages
+  });
 
   return (
     <>
