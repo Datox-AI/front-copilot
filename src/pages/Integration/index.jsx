@@ -95,7 +95,7 @@ const Integration = () => {
   useEffect(() => {
     if (!chatId && !data) return;
 
-    const mutatedData = data.lists.filter(
+    const mutatedData = data?.lists?.filter(
       (chat) =>
         chat.type ===
         (activeIntegration.type === "sql" ? "Analytics" : "FileSearch")

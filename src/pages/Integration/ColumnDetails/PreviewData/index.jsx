@@ -19,12 +19,18 @@ const PreviewData = () => {
   const cols = useMemo(
     () =>
       previewData?.data_preview?.length > 0
-        ? Object.keys(previewData?.data_preview?.[0]).map((name) =>
-            normalizeColumn(name, name === "type")
-          )
+        ? Object.keys(previewData?.data_preview?.[0]).map((name) => ({
+            ...normalizeColumn(name, name === "type"),
+            props: {
+              style: {
+                minWidth: "25%"
+              }
+            }
+          }))
         : [],
     [previewData?.data_preview]
   );
+
   return (
     <ColumnDetails>
       <Table
