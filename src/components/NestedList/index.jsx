@@ -16,7 +16,8 @@ import {
   SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
   SNOWFLAKE_TEST_CLIENT_ID,
   SNOWFLAKE_TEST_CLIENT_SECRET,
-  SNOWFLAKE_TEST_TOKEN_ENDPOINT
+  SNOWFLAKE_TEST_TOKEN_ENDPOINT,
+  SNOWFLAKE_TEST_WAREHOUSE
 } from "../../consts/snowflake";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -33,13 +34,23 @@ const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
         icon: ColumnsI,
         title: <span>Columns</span>,
         onClick: () =>
-          navigate(`/integration/2/${chatId}/columns/${listItem.name}`)
+          navigate(`/integration/2/${chatId}/columns/${listItem.name}`, {
+            state: {
+              dbName: listItem.db.name,
+              schemaName: listItem.schema.name.name
+            }
+          })
       },
       {
         icon: DataPreviewI,
         title: <span>Data Preview</span>,
         onClick: () =>
-          navigate(`/integration/2/${chatId}/preview/${listItem.name}`)
+          navigate(`/integration/2/${chatId}/preview/${listItem.name}`, {
+            state: {
+              dbName: listItem.db.name,
+              schemaName: listItem.schema.name.name
+            }
+          })
       }
     ];
   }, [listItem, chatId]);
@@ -161,7 +172,8 @@ const NestedListContainer = () => {
         client_id: SNOWFLAKE_TEST_CLIENT_ID,
         client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
         token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
-        redirect_uri: SNOWFLAKE_REDIRECT_URL
+        redirect_uri: SNOWFLAKE_REDIRECT_URL,
+        manual_warehouse: SNOWFLAKE_TEST_WAREHOUSE
       },
       {
         onSuccess: (res) => {

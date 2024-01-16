@@ -1,6 +1,19 @@
+import { Box, CircularProgress } from "@mui/material";
 import styles from "./style.module.scss";
 
-const Table = ({ columns, data }) => {
+const Table = ({ columns, data, isLoading }) => {
+  if (isLoading)
+    return (
+      <Box
+        width="100%"
+        display="flex"
+        height={250}
+        alignItems="center"
+        justifyContent="center"
+      >
+        <CircularProgress />
+      </Box>
+    );
   return (
     <table className={styles.table}>
       <thead>

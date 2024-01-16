@@ -32,6 +32,70 @@ const useSnowflakeAPI = (props) => {
     }
   );
 
+  const {
+    data: columns,
+    isLoading: isLoadingColumns,
+    refetch: refetchColumns
+  } = useQuery(
+    [
+      "GET_COLUMNS",
+      props?.database,
+      props?.schema,
+      props?.table || props?.view
+    ],
+    () =>
+      snowflakeAPI(
+        `columns/${props?.database}/${props?.schema}/${
+          props?.table || props?.view
+        }`,
+        {
+          params: {
+            token: snowflakeToken
+          }
+        }
+      ),
+    {
+      enabled:
+        !!props?.enableColumns &&
+        !!props?.database &&
+        !!props?.schema &&
+        !!(props?.table || props?.view) &&
+        !!snowflakeToken
+    }
+  );
+
+  const {
+    data: previewData,
+    isLoading: isLoadingPreviewData,
+    refetch: refetchPreviewData
+  } = useQuery(
+    [
+      "GET_PREVIEW_DATA",
+      props?.database,
+      props?.schema,
+      props?.table || props?.view
+    ],
+    () =>
+      snowflakeAPI(
+        `preview_data/${props?.database}/${props?.schema}/${
+          props?.table || props?.view
+        }`,
+        {
+          params: {
+            token: snowflakeToken
+          }
+        }
+      ),
+    {
+      enabled:
+        !!props?.enablePreviewData &&
+        !!props?.database &&
+        !!props?.schema &&
+        !!(props?.table || props?.view) &&
+        !!snowflakeToken
+    }
+  );
+
   const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
 
   const setStatusIsFetching = (dbName, status, schemaName, type) => {
@@ -166,7 +230,7 @@ const useSnowflakeAPI = (props) => {
               ? {
                   ...db,
                   children: [
-                    ...db.children.map((sch) =>
+                    ...db.children.map((sch, sIdx) =>
                       sch.name === schemaName
                         ? {
                             ...sch,
@@ -175,9 +239,11 @@ const useSnowflakeAPI = (props) => {
                                 ? {
                                     ...type,
                                     children: [
-                                      ...res.tables.map((tb, tIdx) =>
-                                        normalizer(tb, 4, tIdx)
-                                      )
+                                      ...res.tables.map((tb, tIdx) => ({
+                                        ...normalizer(tb, 4, tIdx),
+                                        schema: normalizer(sch, 2, sIdx),
+                                        db: db
+                                      }))
                                     ]
                                   }
                                 : type
@@ -212,7 +278,7 @@ const useSnowflakeAPI = (props) => {
               ? {
                   ...db,
                   children: [
-                    ...db.children.map((sch) =>
+                    ...db.children.map((sch, sIdx) =>
                       sch.name === schemaName
                         ? {
                             ...sch,
@@ -221,9 +287,11 @@ const useSnowflakeAPI = (props) => {
                                 ? {
                                     ...type,
                                     children: [
-                                      ...res.views.map((tb, tIdx) =>
-                                        normalizer(tb, 4, tIdx)
-                                      )
+                                      ...res.views.map((tb, tIdx) => ({
+                                        ...normalizer(tb, 4, tIdx),
+                                        schema: normalizer(sch, 2, sIdx),
+                                        db: db
+                                      }))
                                     ]
                                   }
                                 : type
@@ -266,7 +334,19 @@ const useSnowflakeAPI = (props) => {
     ]);
   }, [databases]);
 
-  return { isConnected, initAuth, databases, snowflakeData, onSelectItem };
+  return {
+    isConnected,
+    initAuth,
+    databases,
+    snowflakeData,
+    columns,
+    isLoadingColumns,
+    previewData,
+    isLoadingPreviewData,
+    refetchPreviewData,
+    refetchColumns,
+    onSelectItem
+  };
 };
 
 export default useSnowflakeAPI;

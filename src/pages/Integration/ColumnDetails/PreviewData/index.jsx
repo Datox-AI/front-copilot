@@ -1,85 +1,37 @@
+import { useLocation, useParams } from "react-router-dom";
 import ColumnDetails from "..";
 import Table from "../../../../components/Table";
-
-const _columns = [
-  {
-    name: "Investment Type",
-    key: "investment_type"
-  },
-  {
-    name: "Macro Asset Type Code",
-    key: "macro_asset_type_code"
-  },
-  {
-    name: "Macro Asset Type",
-    key: "macro_asset_type"
-  },
-  {
-    name: "Asset Type Code",
-    key: "asset_type_code"
-  },
-  {
-    name: "Asset Type",
-    key: "asset_type"
-  }
-];
-
-const _data = [
-  {
-    investment_type: "Corporate Bonds",
-    macro_asset_type_code: "Sec",
-    macro_asset_type: "Securities",
-    asset_type_code: "SEC_CPI",
-    asset_type: "Corporate bonds issued by financial institutions"
-  },
-  {
-    investment_type: "Corporate Bonds",
-    macro_asset_type_code: "Sec",
-    macro_asset_type: "Securities",
-    asset_type_code: "SEC_CPI",
-    asset_type: "Corporate bonds issued by financial institutions"
-  },
-  {
-    investment_type: "Corporate Bonds",
-    macro_asset_type_code: "Sec",
-    macro_asset_type: "Securities",
-    asset_type_code: "SEC_CPI",
-    asset_type: "Corporate bonds issued by financial institutions"
-  },
-  {
-    investment_type: "Corporate Bonds",
-    macro_asset_type_code: "Sec",
-    macro_asset_type: "Securities",
-    asset_type_code: "SEC_CPI",
-    asset_type: "Corporate bonds issued by financial institutions"
-  },
-  {
-    investment_type: "Corporate Bonds",
-    macro_asset_type_code: "Sec",
-    macro_asset_type: "Securities",
-    asset_type_code: "SEC_CPI",
-    asset_type: "Corporate bonds issued by financial institutions"
-  },
-  {
-    investment_type: "Corporate Bonds",
-    macro_asset_type_code: "Sec",
-    macro_asset_type: "Securities",
-    asset_type_code: "SEC_CPI",
-    asset_type: "Corporate bonds issued by financial institutions"
-  },
-  {
-    investment_type: "Corporate Bonds",
-    macro_asset_type_code: "Sec",
-    macro_asset_type: "Securities",
-    asset_type_code: "SEC_CPI",
-    asset_type: "Corporate bonds issued by financial institutions"
-  }
-];
+import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
+import { useMemo } from "react";
+import { normalizeColumn } from "../Columns";
 
 const PreviewData = () => {
+  const location = useLocation();
+  const { columnName } = useParams();
+
+  const { previewData, isLoadingPreviewData } = useSnowflakeAPI({
+    database: location.state?.dbName,
+    schema: location.state?.schemaName,
+    table: columnName,
+    enablePreviewData: true
+  });
+
+  const cols = useMemo(
+    () =>
+      previewData?.data_preview?.length > 0
+        ? Object.keys(previewData?.data_preview?.[0]).map((name) =>
+            normalizeColumn(name, name === "type")
+          )
+        : [],
+    [previewData?.data_preview]
+  );
   return (
     <ColumnDetails>
-      <Table columns={_columns} data={_data} />
+      <Table
+        columns={cols}
+        data={previewData?.data_preview || []}
+        isLoading={isLoadingPreviewData}
+      />
     </ColumnDetails>
   );
 };

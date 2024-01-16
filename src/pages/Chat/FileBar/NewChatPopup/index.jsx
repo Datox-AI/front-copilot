@@ -14,7 +14,8 @@ import {
   SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
   SNOWFLAKE_TEST_CLIENT_ID,
   SNOWFLAKE_TEST_CLIENT_SECRET,
-  SNOWFLAKE_TEST_TOKEN_ENDPOINT
+  SNOWFLAKE_TEST_TOKEN_ENDPOINT,
+  SNOWFLAKE_TEST_WAREHOUSE
 } from "../../../../consts/snowflake";
 
 const _integrations = [
@@ -98,6 +99,9 @@ export const IntegrationForm = ({}) => {
   const [tokenEndpoint, setTokenEndpoint] = useState(
     SNOWFLAKE_TEST_TOKEN_ENDPOINT
   );
+  const [manualWarehouse, setManualWarehouse] = useState(
+    SNOWFLAKE_TEST_WAREHOUSE
+  );
 
   const close = () => dispatch(toggleIntegrationConfig(null));
 
@@ -108,7 +112,8 @@ export const IntegrationForm = ({}) => {
         client_id: clientId,
         client_secret: clientSecret,
         token_endpoint: tokenEndpoint,
-        redirect_uri: SNOWFLAKE_REDIRECT_URL
+        redirect_uri: SNOWFLAKE_REDIRECT_URL,
+        manual_warehouse: manualWarehouse
       },
       {
         onSuccess: (res) => {
@@ -152,6 +157,14 @@ export const IntegrationForm = ({}) => {
           <TextField
             value={tokenEndpoint}
             onChange={({ target: { value } }) => setTokenEndpoint(value)}
+          />
+        </label>
+
+        <label className={styles.field}>
+          <span>Warehouse</span>
+          <TextField
+            value={manualWarehouse}
+            onChange={({ target: { value } }) => setManualWarehouse(value)}
           />
         </label>
       </div>

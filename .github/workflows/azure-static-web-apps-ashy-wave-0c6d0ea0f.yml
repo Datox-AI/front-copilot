@@ -42,6 +42,7 @@ jobs:
           REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: Ig0pIBW/qO7KzLflWUwlg6MaCdI=
           REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: Bn7AnJ6L1EcnVyWZlvDfmM8a9xOMeO5rwHw3Xu77A+s=
           REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request
+          REACT_APP_SNOWFLAKE_TEST_WAREHOUSE: COMPUTE_WH
 
   build_and_deploy_dev_job:
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
@@ -74,6 +75,7 @@ jobs:
           REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: WSwFhZu9xJy4ARSTK8VfdjfpnGE=
           REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: V1EhFELmMPFQe2kwUSNFt4u5263wz2iTquVGjSCn7m8=
           REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request
+          REACT_APP_SNOWFLAKE_TEST_WAREHOUSE: COMPUTE_WH
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

@@ -3,7 +3,7 @@ import { store } from "../redux/store";
 import { setSnowflakeToken } from "../redux/auth/authSlice";
 
 export const snowflakeAPI = axios.create({
-  baseURL: "https://datoxsnowflakeapi.azurewebsites.net/"
+  baseURL: "https://snowflakedatox.azurewebsites.net/"
 });
 
 const errorHandler = (error) => {
