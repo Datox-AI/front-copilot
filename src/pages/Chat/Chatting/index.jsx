@@ -48,7 +48,8 @@ const Chatting = ({
   chatId,
   refetch,
   setRelatedFiles,
-  isAudit
+  isAudit,
+  columnName
 }) => {
   const listRef = createRef();
 
@@ -174,11 +175,13 @@ const Chatting = ({
                 onHighlightMessage={onHighlightMessage}
               />
             ) : (
-              <EmptyMessages
-                hasChats={chats?.length > 0 || !isChat}
-                hasIntegrations={integrations?.length > 0}
-                isChat={isChat}
-              />
+              !columnName && (
+                <EmptyMessages
+                  hasChats={chats?.length > 0 || !isChat}
+                  hasIntegrations={integrations?.length > 0}
+                  isChat={isChat}
+                />
+              )
             )}
           </div>
           {chatId && !isAudit && (

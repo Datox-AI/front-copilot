@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import Chatting from ".";
-import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+  useOutletContext,
+  useParams
+} from "react-router-dom";
 
 const ChattingContainer = ({}) => {
   const { pathname } = useLocation();
+  const { columnName } = useParams();
 
   const {
     integrations,
@@ -32,6 +38,7 @@ const ChattingContainer = ({}) => {
       isChat={pathname.includes("chat")}
       chatId={chatId}
       refetch={refetch}
+      columnName={columnName}
       setRelatedFiles={setRelatedFiles}
       isAudit={isAudit}
     />
