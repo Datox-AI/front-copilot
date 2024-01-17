@@ -1,7 +1,12 @@
 import { useMutation, useQuery } from "react-query";
 import { snowflakeAPI } from "../../utils/snowflakeAPI";
-import { useSelector } from "react-redux";
-import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  onToggleItem,
+  setSnowflakeData,
+  setStatusIsFetching
+} from "../../redux/integrations/integrationsSlice";
 
 const normalizer = (item, level, idx) => ({
   name: item,
@@ -9,13 +14,17 @@ const normalizer = (item, level, idx) => ({
   id: idx + 1,
   isFetching: false,
   error: null,
+  open: false,
   children: []
 });
 
 const useSnowflakeAPI = (props) => {
   const { snowflakeToken } = useSelector((store) => store.auth);
+  const dispatch = useDispatch();
 
-  const [snowflakeData, setSnowflakeData] = useState([]);
+  const snowflakeData = useSelector(
+    (store) => store.integrations.snowflake.data
+  );
 
   const isConnected = useMemo(() => !!snowflakeToken, [snowflakeToken]);
 
@@ -98,82 +107,49 @@ const useSnowflakeAPI = (props) => {
 
   const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
 
-  const setStatusIsFetching = (dbName, status, schemaName, type) => {
-    if (schemaName)
-      setSnowflakeData((prev) =>
-        prev.map((db) =>
-          db.name === dbName
-            ? {
-                ...db,
-                children: [
-                  ...db.children.map((sch) =>
-                    sch.name === schemaName
-                      ? {
-                          ...sch,
-                          children: [
-                            ...sch.children.map((tp) =>
-                              tp.name === type
-                                ? { ...tp, isFetching: status }
-                                : tp
-                            )
-                          ]
-                        }
-                      : sch
-                  )
-                ]
-              }
-            : db
-        )
-      );
-    else
-      setSnowflakeData((prev) =>
-        prev.map((db) =>
-          db.name === dbName
-            ? {
-                ...db,
-                isFetching: status
-              }
-            : db
-        )
-      );
-  };
-
-  const setError = (dbName, error, schemaName) => {
-    if (schemaName)
-      setSnowflakeData((prev) =>
-        prev.map((db) =>
-          db.name === dbName
-            ? {
-                ...db,
-                children: [
-                  ...db.children.map((sch) =>
-                    sch.name === schemaName
-                      ? {
-                          ...sch,
-                          error: error
-                        }
-                      : sch
-                  )
-                ]
-              }
-            : db
-        )
-      );
-    else
-      setSnowflakeData((prev) =>
-        prev.map((db) =>
-          db.name === dbName
-            ? {
-                ...db,
-                error: error
-              }
-            : db
-        )
-      );
-  };
+  const setError = useCallback(
+    (dbName, error, schemaName) => {
+      if (schemaName)
+        dispatch(
+          setSnowflakeData(
+            snowflakeData.map((db) =>
+              db.name === dbName
+                ? {
+                    ...db,
+                    children: [
+                      ...db.children.map((sch) =>
+                        sch.name === schemaName
+                          ? {
+                              ...sch,
+                              error: error
+                            }
+                          : sch
+                      )
+                    ]
+                  }
+                : db
+            )
+          )
+        );
+      else
+        dispatch(
+          setSnowflakeData(
+            snowflakeData.map((db) =>
+              db.name === dbName
+                ? {
+                    ...db,
+                    error: error
+                  }
+                : db
+            )
+          )
+        );
+    },
+    [snowflakeData]
+  );
 
   const getSchemas = (dbName) => {
-    setStatusIsFetching(dbName, true);
+    dispatch(setStatusIsFetching({ itemName: dbName, status: true }));
     snowflakeAPI
       .get("schemas/" + dbName, {
         params: {
@@ -181,38 +157,46 @@ const useSnowflakeAPI = (props) => {
         }
       })
       .then((res) => {
-        setSnowflakeData((prev) => [
-          ...prev.map((db) =>
-            db.name === dbName
-              ? {
-                  ...db,
-                  children: [
-                    ...res.schemas.map((sch, sIdx) => ({
-                      ...normalizer(sch, 2, sIdx),
-                      children: [
-                        {
-                          ...normalizer("Views", 3, 1),
-                          schema: normalizer(sch, 2, sIdx),
-                          db: db
-                        },
-                        {
-                          ...normalizer("Tables", 3, 2),
-                          schema: normalizer(sch, 2, sIdx),
-                          db: db
-                        }
-                      ]
-                    }))
-                  ]
-                }
-              : db
-          )
-        ]);
+        console.log(res, dbName);
+        const mutatedData = snowflakeData.map((db) =>
+          db.name === dbName
+            ? {
+                ...db,
+                children: [
+                  ...res.schemas.map((sch, sIdx) => ({
+                    ...normalizer(sch, 2, sIdx),
+                    db: db,
+                    children: [
+                      {
+                        ...normalizer("Views", 3, 1),
+                        schema: normalizer(sch, 2, sIdx),
+                        db: db
+                      },
+                      {
+                        ...normalizer("Tables", 3, 2),
+                        schema: normalizer(sch, 2, sIdx),
+                        db: db
+                      }
+                    ]
+                  }))
+                ]
+              }
+            : db
+        );
+
+        dispatch(setSnowflakeData([...mutatedData]));
       })
       .catch((err) => {
         setError(dbName, err.data.detail);
       })
       .finally(() => {
-        setStatusIsFetching(dbName, false);
+        dispatch(setStatusIsFetching({ itemName: dbName, status: false }));
+        dispatch(
+          onToggleItem({
+            itemName: dbName,
+            status: true
+          })
+        );
       });
   };
 
@@ -224,44 +208,55 @@ const useSnowflakeAPI = (props) => {
         }
       })
       .then((res) => {
-        setSnowflakeData((prev) => [
-          ...prev.map((db) =>
-            db.name === dbName
-              ? {
-                  ...db,
-                  children: [
-                    ...db.children.map((sch, sIdx) =>
-                      sch.name === schemaName
-                        ? {
-                            ...sch,
-                            children: sch.children.map((type) =>
-                              type.name === "Tables"
-                                ? {
-                                    ...type,
-                                    children: [
-                                      ...res.tables.map((tb, tIdx) => ({
-                                        ...normalizer(tb, 4, tIdx),
-                                        schema: normalizer(sch, 2, sIdx),
-                                        db: db
-                                      }))
-                                    ]
-                                  }
-                                : type
-                            )
-                          }
-                        : sch
-                    )
-                  ]
-                }
-              : db
-          )
-        ]);
+        dispatch(
+          setSnowflakeData([
+            ...snowflakeData.map((db) =>
+              db.name === dbName
+                ? {
+                    ...db,
+                    children: [
+                      ...db.children.map((sch, sIdx) =>
+                        sch.name === schemaName
+                          ? {
+                              ...sch,
+                              children: sch.children.map((type) =>
+                                type.name === "Tables"
+                                  ? {
+                                      ...type,
+                                      children: [
+                                        ...res.tables.map((tb, tIdx) => ({
+                                          ...normalizer(tb, 4, tIdx),
+                                          schema: normalizer(sch, 2, sIdx),
+                                          db: db
+                                        }))
+                                      ]
+                                    }
+                                  : type
+                              )
+                            }
+                          : sch
+                      )
+                    ]
+                  }
+                : db
+            )
+          ])
+        );
       })
       .catch((err) => {
         setError(dbName, err.data.detail, schemaName);
       })
       .finally(() => {
-        setStatusIsFetching(dbName, false, schemaName, "Tables");
+        dispatch(
+          setStatusIsFetching({ itemName: "Tables", status: false, dbName })
+        );
+        dispatch(
+          onToggleItem({
+            itemName: "Tables",
+            status: true,
+            dbName
+          })
+        );
       });
 
   const getViews = (dbName, schemaName) =>
@@ -272,51 +267,70 @@ const useSnowflakeAPI = (props) => {
         }
       })
       .then((res) => {
-        setSnowflakeData((prev) => [
-          ...prev.map((db) =>
-            db.name === dbName
-              ? {
-                  ...db,
-                  children: [
-                    ...db.children.map((sch, sIdx) =>
-                      sch.name === schemaName
-                        ? {
-                            ...sch,
-                            children: sch.children.map((type) =>
-                              type.name === "Views"
-                                ? {
-                                    ...type,
-                                    children: [
-                                      ...res.views.map((tb, tIdx) => ({
-                                        ...normalizer(tb, 4, tIdx),
-                                        schema: normalizer(sch, 2, sIdx),
-                                        db: db
-                                      }))
-                                    ]
-                                  }
-                                : type
-                            )
-                          }
-                        : sch
-                    )
-                  ]
-                }
-              : db
-          )
-        ]);
+        dispatch(
+          setSnowflakeData([
+            ...snowflakeData.map((db) =>
+              db.name === dbName
+                ? {
+                    ...db,
+                    children: [
+                      ...db.children.map((sch, sIdx) =>
+                        sch.name === schemaName
+                          ? {
+                              ...sch,
+                              children: sch.children.map((type) =>
+                                type.name === "Views"
+                                  ? {
+                                      ...type,
+                                      children: [
+                                        ...res.views.map((tb, tIdx) => ({
+                                          ...normalizer(tb, 4, tIdx),
+                                          schema: normalizer(sch, 2, sIdx),
+                                          db: db
+                                        }))
+                                      ]
+                                    }
+                                  : type
+                              )
+                            }
+                          : sch
+                      )
+                    ]
+                  }
+                : db
+            )
+          ])
+        );
       })
       .catch((err) => {
         setError(dbName, err.data.detail, schemaName);
       })
       .finally(() => {
-        setStatusIsFetching(dbName, false, schemaName, "Views");
+        dispatch(
+          setStatusIsFetching({ itemName: "Views", status: false, dbName })
+        );
+
+        dispatch(
+          onToggleItem({
+            itemName: "Views",
+            status: true,
+            dbName
+          })
+        );
       });
 
   const onSelectItem = async (item) => {
     if (item.level === 1) {
       getSchemas(item.name);
     } else if (item.level === 3) {
-      setStatusIsFetching(item.db.name, true, item.schema.name, item.name);
+      dispatch(
+        setStatusIsFetching({
+          itemName: item.name,
+          status: true,
+          dbName: item?.db?.name
+        })
+      );
+
       if (item.name === "Tables")
         await getTables(item.db.name, item.schema.name);
       else await getViews(item.db.name, item.schema.name);
@@ -324,15 +338,17 @@ const useSnowflakeAPI = (props) => {
   };
 
   useEffect(() => {
-    if (!databases) return;
+    if (!databases || snowflakeData.length > 0) return;
 
-    setSnowflakeData([
-      ...databases?.databases?.map((db, idx) => ({
-        ...normalizer(db, 1, idx),
-        children: []
-      }))
-    ]);
-  }, [databases]);
+    dispatch(
+      setSnowflakeData([
+        ...databases?.databases?.map((db, idx) => ({
+          ...normalizer(db, 1, idx),
+          children: []
+        }))
+      ])
+    );
+  }, [databases, snowflakeData]);
 
   return {
     isConnected,

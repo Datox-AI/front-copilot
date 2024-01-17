@@ -1,9 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { _integrations } from "../../consts/integrations";
+import { findAndChangeField } from "../../utils/group";
 
 const initialState = {
   openedIntegrations: [],
-  integrationConfig: null
+  integrationConfig: null,
+  snowflake: {
+    data: []
+  }
 };
 
 const integrationsSlice = createSlice({
@@ -31,13 +35,44 @@ const integrationsSlice = createSlice({
         );
       else state.openedIntegrations = [...state.openedIntegrations, data];
     },
+
     toggleIntegrationConfig: (state, { payload }) => {
       state.integrationConfig = payload;
+    },
+
+    setSnowflakeData: (state, { payload }) => {
+      console.log(payload);
+      state.snowflake.data = payload;
+    },
+
+    setStatusIsFetching: (state, { payload: { status, itemName, dbName } }) => {
+      findAndChangeField(
+        state.snowflake.data,
+        itemName,
+        dbName,
+        "isFetching",
+        status
+      );
+    },
+
+    onToggleItem: (state, { payload: { itemName, status, dbName } }) => {
+      findAndChangeField(
+        state.snowflake.data,
+        itemName,
+        dbName,
+        "open",
+        status
+      );
     }
   }
 });
 
-export const { toggleIntegration, toggleIntegrationConfig } =
-  integrationsSlice.actions;
+export const {
+  toggleIntegration,
+  toggleIntegrationConfig,
+  setSnowflakeData,
+  setStatusIsFetching,
+  onToggleItem
+} = integrationsSlice.actions;
 
 export default integrationsSlice.reducer;

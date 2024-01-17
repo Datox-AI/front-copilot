@@ -8,7 +8,7 @@
   padding: 15px 0 0 0;
 
   &::-webkit-scrollbar {
-    width: 3px;
+    width: 7px;
   }
 
   &::-webkit-scrollbar-track {
@@ -17,9 +17,8 @@
 
   &::-webkit-scrollbar-thumb {
     background-color: darkgrey;
-    outline: 1px solid slategrey;
     border-radius: 8px;
-    width: 2px;
+    width: 4px;
   }
 
   .block {

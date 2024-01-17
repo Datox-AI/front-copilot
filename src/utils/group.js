@@ -47,3 +47,36 @@ export const groupItemsByDate = (data, key = "created") => {
 
   return groupArrays;
 };
+
+export function findAndChangeField(
+  list,
+  targetName,
+  uniqueIdentifier,
+  fieldName,
+  newValue
+) {
+  for (const item of list) {
+    if (
+      item.name === targetName &&
+      (!item?.db || item?.db?.name === uniqueIdentifier)
+    ) {
+      item[fieldName] = newValue;
+      return true; // Indicate that the change was made
+    }
+
+    if (item.children && item.children.length > 0) {
+      const found = findAndChangeField(
+        item.children,
+        targetName,
+        uniqueIdentifier,
+        fieldName,
+        newValue
+      );
+      if (found) {
+        return true; // Indicate that the change was made
+      }
+    }
+  }
+
+  return false; // Indicate that no matching object was found
+}

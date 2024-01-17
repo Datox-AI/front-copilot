@@ -17,6 +17,7 @@ import {
   SNOWFLAKE_TEST_TOKEN_ENDPOINT,
   SNOWFLAKE_TEST_WAREHOUSE
 } from "../../../../consts/snowflake";
+import { useNavigate } from "react-router-dom";
 
 const _integrations = [
   {
@@ -87,6 +88,8 @@ const SelectIntegration = ({ selectIntegration }) => {
 
 export const IntegrationForm = ({}) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { initAuth } = useSnowflakeAPI();
 
   const [accountIdentifier, setAccountIdentifier] = useState(
@@ -103,7 +106,10 @@ export const IntegrationForm = ({}) => {
     SNOWFLAKE_TEST_WAREHOUSE
   );
 
-  const close = () => dispatch(toggleIntegrationConfig(null));
+  const close = () => {
+    dispatch(toggleIntegrationConfig(null));
+    navigate("../");
+  };
 
   const onAuth = () => {
     initAuth.mutate(

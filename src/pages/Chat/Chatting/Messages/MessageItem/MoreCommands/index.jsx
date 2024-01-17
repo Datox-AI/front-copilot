@@ -12,7 +12,7 @@ import { ReactComponent as TickIcon } from "../../../../../../assets/icons/tick.
 import { ReactComponent as TrashIcon } from "../../../../../../assets/icons/trash.svg";
 import { Box, CircularProgress } from "@mui/material";
 import { copyNavigator } from "../../../../../../utils";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const MoreCommands = ({
   refetch,
@@ -31,21 +31,30 @@ const MoreCommands = ({
 
   const { pinMutation, deleteMutation } = useMessagesAPI({});
 
+  const replaceMoreMenu = useCallback(() => {
+    var distanceToRight =
+      window.innerWidth - ref.current?.getBoundingClientRect().right;
+    var distanceToBottom =
+      window.innerHeight - ref.current?.getBoundingClientRect().bottom;
+
+    if (distanceToBottom < 200) setBottomPosition(0);
+    else setBottomPosition("-152px");
+
+    if (distanceToRight < 200) setLeftPosition("-140px");
+    else setLeftPosition("0");
+  }, [
+    ref.current?.getBoundingClientRect().right,
+    ref.current?.getBoundingClientRect().bottom,
+    window.innerHeight,
+    window.innerWidth
+  ]);
+
   useEffect(() => {
-    document.getElementById("messages-list").addEventListener("scroll", () => {
-      var distanceToRight =
-        window.innerWidth - ref.current?.getBoundingClientRect().right;
-      var distanceToBottom =
-        window.innerHeight - ref.current?.getBoundingClientRect().bottom;
+    document
+      .getElementById("messages-list")
+      .addEventListener("scroll", () => replaceMoreMenu());
 
-      if (distanceToBottom < 200) {
-        setBottomPosition(0);
-      }
-
-      if (distanceToRight < 200) {
-        setLeftPosition("-140px");
-      }
-    });
+    replaceMoreMenu();
   }, [ref.current]);
 
   const handleDeleteMessage = () => {
@@ -98,7 +107,8 @@ const MoreCommands = ({
           style={{
             top: "auto",
             left: leftPosition,
-            bottom: bottomPosition
+            bottom: bottomPosition,
+            width: 160
           }}
         >
           <li className={styles.command} onClick={onReply}>

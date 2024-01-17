@@ -85,6 +85,32 @@
     display: flex;
     flex-direction: column;
 
+    &::-webkit-scrollbar {
+      width: 7px;
+      transition: 0.4s ease-in-out all;
+      position: absolute;
+    }
+
+    &:hover {
+      scrollbar-width: thin; /* For Firefox */
+      scrollbar-color: #888 #f0f0f0; /* For Firefox */
+
+      &::-webkit-scrollbar {
+        width: 7px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: darkgrey;
+        // outline: 1px solid slategrey;
+        border-radius: 8px;
+        width: 2px;
+      }
+    }
+
     .pins {
       display: flex;
       flex-direction: column;
