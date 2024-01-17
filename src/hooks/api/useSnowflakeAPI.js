@@ -12,8 +12,11 @@ const normalizer = (item, level, idx) => ({
   children: []
 });
 
+const snowflakeToken =
+  "ver:1-hint:31546534879242-ETMsDgAAAY0ShujqABRBRVMvQ0JDL1BLQ1M1UGFkZGluZwEAABAAEBk6KyuDOSuQnmXisy3sJTwAAABQHiaPxFAxBiXrijkW465LjNU2F757pWj8R8F6X3lnuKI+YVNF6J+8C7yZaTzpgDoUCQ0YH9oHhqFfQnmZ9RHwJqIg9+5iRytgacOYUHlb8gIAFCp+hoQnT8/v/9knuI11QOFWtFba";
+
 const useSnowflakeAPI = (props) => {
-  const { snowflakeToken } = useSelector((store) => store.auth);
+  const { _snowflakeToken } = useSelector((store) => store.auth);
 
   const [snowflakeData, setSnowflakeData] = useState([]);
 
@@ -94,6 +97,12 @@ const useSnowflakeAPI = (props) => {
         !!(props?.table || props?.view) &&
         !!snowflakeToken
     }
+  );
+
+  const { mutate } = useMutation(({ db_name, schema_name }) =>
+    snowflakeAPI.post(
+      `select_schema?token=${snowflakeToken}&db_name=${db_name}&schema_name=${schema_name}`
+    )
   );
 
   const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
@@ -189,18 +198,7 @@ const useSnowflakeAPI = (props) => {
                   children: [
                     ...res.schemas.map((sch, sIdx) => ({
                       ...normalizer(sch, 2, sIdx),
-                      children: [
-                        {
-                          ...normalizer("Views", 3, 1),
-                          schema: normalizer(sch, 2, sIdx),
-                          db: db
-                        },
-                        {
-                          ...normalizer("Tables", 3, 2),
-                          schema: normalizer(sch, 2, sIdx),
-                          db: db
-                        }
-                      ]
+                      db: db
                     }))
                   ]
                 }
@@ -312,9 +310,41 @@ const useSnowflakeAPI = (props) => {
         setStatusIsFetching(dbName, false, schemaName, "Views");
       });
 
+  // children: [
+  //   {
+  //     ...normalizer("Views", 3, 1),
+  //     schema: normalizer(sch, 2, sIdx),
+  //     db: db
+  //   },
+  //   {
+  //     ...normalizer("Tables", 3, 2),
+  //     schema: normalizer(sch, 2, sIdx),
+  //     db: db
+  //   }
+  // ]
+
+  const checkSelectedSchema = (schemaName, dbName) => {
+    mutate(
+      { db_name: dbName, schema_name: schemaName },
+      {
+        onSuccess: (res) => {
+          console.log(res);
+          setStatusIsFetching(dbName, false, null, schemaName);
+        },
+        onError: (err) => {
+          console.log(err);
+          setStatusIsFetching(dbName, false, null, schemaName);
+        }
+      }
+    );
+  };
+
   const onSelectItem = async (item) => {
     if (item.level === 1) {
       getSchemas(item.name);
+    } else if (item.level === 2) {
+      setStatusIsFetching(item.db.name, true, null, item.name);
+      checkSelectedSchema(item.name, item.db.name);
     } else if (item.level === 3) {
       setStatusIsFetching(item.db.name, true, item.schema.name, item.name);
       if (item.name === "Tables")
