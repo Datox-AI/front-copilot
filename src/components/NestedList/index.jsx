@@ -20,13 +20,16 @@ import {
   SNOWFLAKE_TEST_WAREHOUSE
 } from "../../consts/snowflake";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { onToggleItem } from "../../redux/integrations/integrationsSlice";
 
 const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
   const { chatId } = useParams();
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [isOpen, setIsOpen] = useState(false);
+  const isOpen = listItem.open;
 
   const popoverMenu = useMemo(() => {
     return [
@@ -56,14 +59,18 @@ const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
   }, [listItem, chatId]);
 
   const onClick = () => {
-    setIsOpen((prev) => {
-      if (!prev && listItem.children.length === 0) {
-        if (listItem.level === 3) onSelectItem(listItem);
-        else onSelectItem(listItem);
-      }
+    if (!listItem.open && listItem.children.length === 0) {
+      if (listItem.level === 3) onSelectItem(listItem);
+      else onSelectItem(listItem);
+    }
 
-      return !prev;
-    });
+    dispatch(
+      onToggleItem({
+        itemName: listItem.name,
+        status: !listItem.open,
+        dbName: listItem?.db?.name
+      })
+    );
   };
 
   if (listItem.level === 4)

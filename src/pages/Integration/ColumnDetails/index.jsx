@@ -19,9 +19,10 @@ const ColumnDetails = ({ children }) => {
       if (isDragging) {
         const deltaY = startY.current - e.clientY; // Adjust the calculation here
         const newHeight = height + deltaY;
+        startY.current = e.clientY;
+
         setIsOpen(newHeight !== 0);
         setHeight(newHeight);
-        startY.current = e.clientY;
       }
     };
 
@@ -70,7 +71,7 @@ const ColumnDetails = ({ children }) => {
         style={{
           height: `${height}px`,
           resize: "vertical",
-          overflow: "hidden"
+          overflow: "scroll"
         }}
       >
         {children}
