@@ -15,6 +15,7 @@ import {
 } from "../../../consts/snowflake";
 import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+import OnboardingSnowflake from "../../../components/OnboardingIntegration/Snowflake";
 
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
@@ -44,6 +45,8 @@ const SnowflakeConfig = () => {
       }
     );
   };
+
+  return <OnboardingSnowflake />;
 
   return (
     <div className={styles.container}>
