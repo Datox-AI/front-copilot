@@ -11,7 +11,7 @@ import SelectedMessages from "./SelectedMessages";
 import useChatting from "../../../hooks/useChatting";
 
 import { useSelector } from "react-redux";
-import { createRef } from "react";
+import { createRef, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 
@@ -52,6 +52,8 @@ const Chatting = ({
   columnName
 }) => {
   const listRef = createRef();
+
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
@@ -136,6 +138,8 @@ const Chatting = ({
               pinnedMessages={pinnedMessages}
               chatId={chatId}
               refetch={refetchMessages}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
             />
           </>
         )}
@@ -148,7 +152,8 @@ const Chatting = ({
                 pinnedMessages?.length > 0 && !isAudit,
               [styles.hasSelectedMessages]:
                 selectedMessages.length > 0 && !isAudit,
-              [styles.isAudit]: isAudit
+              [styles.isAudit]: isAudit,
+              [styles.isExpanded]: !isCollapsed
             })}
           >
             {data?.lists?.length > 0 || isLoading ? (

@@ -39,6 +39,11 @@
         // height of pinned container: 30px
         height: calc(100vh - 90px);
         max-height: calc(100vh - 90px);
+
+        &.isExpanded {
+          height: calc(100vh - 210px);
+          max-height: calc(100vh - 210px);
+        }
       }
 
       &.hasSelectedMessages {
@@ -50,6 +55,11 @@
       &.hasPinnedMessages.hasSelectedMessages {
         height: calc(100vh - 148px);
         max-height: calc(100vh - 148px);
+
+        &.isExpanded {
+          height: calc(100vh - 268px);
+          max-height: calc(100vh - 268px);
+        }
       }
 
       &.hasChats.hasIntegrations {
@@ -58,10 +68,26 @@
         max-height: calc(100vh - 146px);
       }
 
+      &.hasChats.hasIntegrations.hasPinnedMessages {
+        // height of chat & integration & pinned messages: 66 + 81 + 58 - 20
+        height: calc(100vh - 168px);
+        max-height: calc(100vh - 168px);
+
+        &.isExpanded {
+          height: calc(100vh - 288px);
+          max-height: calc(100vh - 288px);
+        }
+      }
+
       &.hasChats.hasIntegrations.hasPinnedMessages.hasSelectedMessages {
         // height of chat & integration & pinned messages & selected messages: 174px
-        height: calc(100vh - 234px);
-        max-height: calc(100vh - 234px);
+        height: calc(100vh - 223px);
+        max-height: calc(100vh - 223px);
+
+        &.isExpanded {
+          height: calc(100vh - 343px);
+          max-height: calc(100vh - 343px);
+        }
       }
     }
 
