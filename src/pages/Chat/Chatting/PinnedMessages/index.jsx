@@ -13,10 +13,14 @@ import PopoverMenu from "../../../../components/PopoverMenu";
 import useMessagesAPI from "../../../../hooks/api/useMessagesAPI";
 import toast from "react-hot-toast";
 
-const PinnedMessages = ({ pinnedMessages, chatId, refetch }) => {
+const PinnedMessages = ({
+  pinnedMessages,
+  chatId,
+  refetch,
+  isCollapsed,
+  setIsCollapsed
+}) => {
   const { pinMutation } = useMessagesAPI({});
-
-  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const commands = useMemo(() => {
     return [
