@@ -1,11 +1,13 @@
 import styles from "../style.module.scss";
-import ConfigWrapper from "../../../components/ConfigWrapper";
 
 import { IntegrationForm } from "../../Chat/FileBar/NewChatPopup";
 import { Box, Typography } from "@mui/material";
 import { integrationIcons } from "../../../consts/integrations";
+import { useLocation } from "react-router-dom";
 
 const SnowflakeConfigAdd = () => {
+  const location = useLocation();
+
   return (
     <div className={styles.container}>
       <div className={styles.form}>
@@ -27,9 +29,13 @@ const SnowflakeConfigAdd = () => {
             </Typography>
           </Box>
         </Box>
-        {/* <ConfigWrapper> */}
-        <IntegrationForm />
-        {/* </ConfigWrapper> */}
+
+        <IntegrationForm
+          initAccountIdentifier={location.state?.accountIdentifier}
+          initClientId={location.state?.clientId}
+          initClientSecret={location.state?.clientSecret}
+          initOauthTokenEndpoint={location.state?.accountIdentifier}
+        />
       </div>
     </div>
   );

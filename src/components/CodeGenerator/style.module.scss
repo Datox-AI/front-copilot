@@ -1,0 +1,55 @@
+.codeGenerator {
+  width: 100%;
+  border-radius: 10px;
+  background: #f3f6fc;
+  padding: 12px 12px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  .content {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .editIcon {
+      path {
+        stroke: #ff3232;
+      }
+    }
+
+    .input {
+      border-radius: 5px;
+      border: 1px solid #c4c4c4;
+      background: #fff;
+      border-radius: 4px;
+      width: 120px;
+      display: flex;
+      justify-content: flex-start;
+
+      input {
+        width: calc(100% - 25px);
+      }
+
+      svg {
+        cursor: pointer;
+        width: 25px;
+        height: 25px;
+      }
+    }
+  }
+
+  .action {
+    button {
+      height: 38px;
+      width: 98px;
+      background-color: #8887d1;
+    }
+  }
+}
+
+.newLine {
+  width: 100%;
+  text-align: left;
+}

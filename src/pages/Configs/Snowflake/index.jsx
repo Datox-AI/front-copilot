@@ -2,7 +2,11 @@ import ConfigWrapper from "../../../components/ConfigWrapper";
 import styles from "../style.module.scss";
 import ConfigCard from "../../../components/ConfigCard";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
+import toast from "react-hot-toast";
+import OnboardingSnowflake from "../../../components/OnboardingIntegration/Snowflake";
 
+import { useSelector } from "react-redux";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -13,12 +17,13 @@ import {
   SNOWFLAKE_TEST_TOKEN_ENDPOINT,
   SNOWFLAKE_TEST_WAREHOUSE
 } from "../../../consts/snowflake";
-import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
-import toast from "react-hot-toast";
 
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
   const { initAuth } = useSnowflakeAPI();
+  const { skipOnboarding } = useSelector(
+    (store) => store.integrations.snowflake
+  );
 
   const onEdit = () => {
     navigate("/configs/snowflake/123");
@@ -45,6 +50,8 @@ const SnowflakeConfig = () => {
     );
   };
 
+  if (!skipOnboarding) return <OnboardingSnowflake />;
+
   return (
     <div className={styles.container}>
       <ConfigWrapper>
@@ -52,7 +59,7 @@ const SnowflakeConfig = () => {
           <ConfigCard onEdit={onEdit} onSignIn={onSignIn} />
           <Button
             className={styles.btn}
-            onClick={() => navigate("/configs/snowflake/123")}
+            onClick={() => navigate("/configs/snowflake/create")}
           >
             <AddRoundedIcon /> Add Account
           </Button>

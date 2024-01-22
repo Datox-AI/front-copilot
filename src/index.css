@@ -178,3 +178,11 @@ code {
 .MuiSelect-select svg path {
   stroke: #616161;
 }
+
+svg.Mui-active circle {
+  fill: #434ae9 !important;
+}
+
+svg.Mui-active text {
+  fill: #fff !important;
+}
