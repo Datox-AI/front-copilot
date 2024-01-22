@@ -13,6 +13,10 @@
     background-color: #e6f2ff;
   }
 
+  &.isHighlighted {
+    background-color: #c3e0ff;
+  }
+
   &.isBot {
     flex-direction: row;
 

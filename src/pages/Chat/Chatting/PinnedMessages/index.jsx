@@ -12,6 +12,7 @@ import classNames from "classnames";
 import PopoverMenu from "../../../../components/PopoverMenu";
 import useMessagesAPI from "../../../../hooks/api/useMessagesAPI";
 import toast from "react-hot-toast";
+import { ChevronLeft } from "@mui/icons-material";
 
 const PinnedMessages = ({
   pinnedMessages,
@@ -89,6 +90,18 @@ const PinnedMessages = ({
           <span>{pinnedMessages?.[pinnedMessages.length - 1]?.text}</span>{" "}
           <PopoverMenu mainIcon={<VerticalDotsIcon />} data={commands} />
         </li>
+        {!isCollapsed && (
+          <li>
+            <ChevronLeft
+              onClick={() => setIsCollapsed((prev) => !prev)}
+              style={{
+                transform: "rotateZ(90deg)",
+                margin: "0 auto",
+                cursor: "pointer"
+              }}
+            />
+          </li>
+        )}
       </ul>
     </div>
   );
