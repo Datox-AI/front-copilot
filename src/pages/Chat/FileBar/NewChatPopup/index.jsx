@@ -3,8 +3,7 @@ import styles from "../style.module.scss";
 import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 
-import { Search } from "@mui/icons-material";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { toggleIntegrationConfig } from "../../../../redux/integrations/integrationsSlice";
@@ -19,91 +18,31 @@ import {
 } from "../../../../consts/snowflake";
 import { useNavigate } from "react-router-dom";
 
-const _integrations = [
-  {
-    name: "amazon",
-    label: "Amazon Redshift"
-  },
-  {
-    name: "server",
-    label: "Server"
-  },
-  {
-    name: "snowflake",
-    label: "Snowflake"
-  },
-  {
-    name: "microsoft",
-    label: "Microsoft SQL"
-  },
-  {
-    name: "bloomberg",
-    label: "Bloomberg"
-  },
-  {
-    name: "gdrive",
-    label: "Google Drive"
-  },
-  {
-    name: "dropbox",
-    label: "Dropbox"
-  }
-];
-
-const SelectIntegration = ({ selectIntegration }) => {
-  const [value, setValue] = useState("");
-
-  const mutatedIntegrations = useMemo(
-    () =>
-      !value
-        ? _integrations
-        : _integrations.filter((integr) =>
-            integr.label.toLowerCase().includes(value.toLowerCase())
-          ),
-    [value]
-  );
-
-  return (
-    <div className={styles.selectIntegrationPopup}>
-      <label htmlFor="search-integrations">
-        <Search />
-        <input
-          placeholder="Search"
-          id="search-integrations"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-      </label>
-
-      <ul>
-        {mutatedIntegrations.map((integr) => (
-          <li key={integr.name} onClick={() => selectIntegration(integr)}>
-            {integr.label}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export const IntegrationForm = ({}) => {
+export const IntegrationForm = ({
+  initAccountIdentifier,
+  initClientId,
+  initClientSecret,
+  initOauthTokenEndpoint
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { initAuth } = useSnowflakeAPI();
 
   const [accountIdentifier, setAccountIdentifier] = useState(
-    SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER
+    initAccountIdentifier || SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER
   );
-  const [clientId, setClientId] = useState(SNOWFLAKE_TEST_CLIENT_ID);
+  const [clientId, setClientId] = useState(
+    initClientId || SNOWFLAKE_TEST_CLIENT_ID
+  );
   const [clientSecret, setClientSecret] = useState(
-    SNOWFLAKE_TEST_CLIENT_SECRET
+    initClientSecret || SNOWFLAKE_TEST_CLIENT_SECRET
   );
   const [tokenEndpoint, setTokenEndpoint] = useState(
-    SNOWFLAKE_TEST_TOKEN_ENDPOINT
+    initOauthTokenEndpoint || SNOWFLAKE_TEST_TOKEN_ENDPOINT
   );
   const [manualWarehouse, setManualWarehouse] = useState(
-    SNOWFLAKE_TEST_WAREHOUSE
+    initAccountIdentifier ? "" : SNOWFLAKE_TEST_WAREHOUSE
   );
 
   const close = () => {
@@ -127,6 +66,8 @@ export const IntegrationForm = ({}) => {
           window.location.replace(res.authorization_url);
         },
         onError: (err) => {
+          console.log(err);
+
           toast.err(err.data.detail);
         }
       }

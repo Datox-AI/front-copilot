@@ -6,6 +6,7 @@ const initialState = {
   openedIntegrations: [],
   integrationConfig: null,
   snowflake: {
+    skipOnboarding: false,
     data: []
   }
 };
@@ -63,16 +64,20 @@ const integrationsSlice = createSlice({
         "open",
         status
       );
+    },
+    toggleSkipOnboarding: (state) => {
+      state.snowflake.skipOnboarding = !state.snowflake.skipOnboarding;
     }
   }
 });
 
 export const {
-  toggleIntegration,
-  toggleIntegrationConfig,
+  onToggleItem,
   setSnowflakeData,
+  toggleIntegration,
   setStatusIsFetching,
-  onToggleItem
+  toggleSkipOnboarding,
+  toggleIntegrationConfig
 } = integrationsSlice.actions;
 
 export default integrationsSlice.reducer;

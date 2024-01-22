@@ -10,7 +10,8 @@ export default function OnboardingStepContainer({
   steps,
   activeStep,
   onNext,
-  onPrevious
+  onPrevious,
+  extra
 }) {
   return (
     <div className={styles.container}>
@@ -27,7 +28,7 @@ export default function OnboardingStepContainer({
         <div className={styles.content}>
           <div className={styles.header}>
             <h2>{title}</h2>
-            <p>{description}</p>
+            <p dangerouslySetInnerHTML={{ __html: description }} />
           </div>
           <div className={styles.body}>{children}</div>
           <div className={styles.footer}>
@@ -46,6 +47,7 @@ export default function OnboardingStepContainer({
               Next
             </Button>
           </div>
+          {extra}
         </div>
       </div>
     </div>

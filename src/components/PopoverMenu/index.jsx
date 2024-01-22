@@ -20,7 +20,11 @@ const _data = [
   }
 ];
 
-const PopoverMenu = ({ data = _data, mainIcon = <MoreHorizIcon /> }) => {
+const PopoverMenu = ({
+  data = _data,
+  mainIcon = <MoreHorizIcon />,
+  position = "bottom" | "top"
+}) => {
   return (
     <button className={classNames(styles.more)}>
       <Box
@@ -34,7 +38,13 @@ const PopoverMenu = ({ data = _data, mainIcon = <MoreHorizIcon /> }) => {
       </Box>
 
       <div className={styles.command_context}>
-        <ul className={styles.commands}>
+        <ul
+          className={styles.commands}
+          style={{
+            top: position === "bottom" ? "calc(100% + 40px)" : "auto",
+            bottom: position === "top" ? "calc(100% + 40px)" : "auto"
+          }}
+        >
           {data.map((item, i) => (
             <li className={styles.command} key={i} onClick={item.onClick}>
               {item.icon && <item.icon {...item.iconProps} />}
