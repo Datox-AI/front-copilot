@@ -144,18 +144,7 @@ const Chatting = ({
           </>
         )}
         <div className={styles.chatting}>
-          <div
-            className={classNames(styles.messages, {
-              [styles.hasChats]: !isChat && !isAudit,
-              [styles.hasIntegrations]: !isChat && !isAudit,
-              [styles.hasPinnedMessages]:
-                pinnedMessages?.length > 0 && !isAudit,
-              [styles.hasSelectedMessages]:
-                selectedMessages.length > 0 && !isAudit,
-              [styles.isAudit]: isAudit,
-              [styles.isExpanded]: !isCollapsed
-            })}
-          >
+          <div className={styles.messages}>
             {data?.lists?.length > 0 || isLoading ? (
               <Messages
                 ref={listRef}

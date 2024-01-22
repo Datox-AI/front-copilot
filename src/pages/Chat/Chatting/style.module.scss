@@ -9,86 +9,15 @@
     width: 100%;
     display: flex;
     flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
 
     overflow: hidden;
     padding: 0 0 20px;
 
     .messages {
-      height: calc(100vh - 60px);
-      max-height: calc(100vh - 60px);
-      transition: 0.4s ease-in-out all;
-
-      &.isAudit {
-        height: 100vh;
-        max-height: 100vh;
-      }
-
-      &.hasIntegrations {
-        // height of integration container: 66px
-        height: calc(100vh - 126px);
-        max-height: calc(100vh - 126px);
-      }
-
-      &.hasChats {
-        // height of chat container: 81px
-        height: calc(100vh - 141px);
-        max-height: calc(100vh - 141px);
-      }
-
-      &.hasPinnedMessages {
-        // height of pinned container: 30px
-        height: calc(100vh - 90px);
-        max-height: calc(100vh - 90px);
-
-        &.isExpanded {
-          height: calc(100vh - 210px);
-          max-height: calc(100vh - 210px);
-        }
-      }
-
-      &.hasSelectedMessages {
-        // height of pinned container: 58px
-        height: calc(100vh - 118px);
-        max-height: calc(100vh - 118px);
-      }
-
-      &.hasPinnedMessages.hasSelectedMessages {
-        height: calc(100vh - 148px);
-        max-height: calc(100vh - 148px);
-
-        &.isExpanded {
-          height: calc(100vh - 268px);
-          max-height: calc(100vh - 268px);
-        }
-      }
-
-      &.hasChats.hasIntegrations {
-        // height of chat & integration containers: 86px
-        height: calc(100vh - 146px);
-        max-height: calc(100vh - 146px);
-      }
-
-      &.hasChats.hasIntegrations.hasPinnedMessages {
-        // height of chat & integration & pinned messages: 66 + 81 + 58 - 20
-        height: calc(100vh - 168px);
-        max-height: calc(100vh - 168px);
-
-        &.isExpanded {
-          height: calc(100vh - 288px);
-          max-height: calc(100vh - 288px);
-        }
-      }
-
-      &.hasChats.hasIntegrations.hasPinnedMessages.hasSelectedMessages {
-        // height of chat & integration & pinned messages & selected messages: 174px
-        height: calc(100vh - 223px);
-        max-height: calc(100vh - 223px);
-
-        &.isExpanded {
-          height: calc(100vh - 343px);
-          max-height: calc(100vh - 343px);
-        }
-      }
+      overflow-y: scroll;
+      flex: 1;
     }
 
     .emptyMessages {
