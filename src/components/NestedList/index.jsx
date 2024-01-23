@@ -60,7 +60,7 @@ const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
 
   const onClick = () => {
     if (!listItem.open && listItem.children.length === 0) {
-      if (listItem.level === 3) onSelectItem(listItem);
+      if (listItem.level === 3 || listItem.level === 2) onSelectItem(listItem);
       else onSelectItem(listItem);
     }
 

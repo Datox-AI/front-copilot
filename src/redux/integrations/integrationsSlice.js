@@ -42,7 +42,6 @@ const integrationsSlice = createSlice({
     },
 
     setSnowflakeData: (state, { payload }) => {
-      console.log(payload);
       state.snowflake.data = payload;
     },
 

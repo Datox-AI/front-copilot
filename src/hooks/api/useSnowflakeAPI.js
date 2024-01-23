@@ -157,7 +157,6 @@ const useSnowflakeAPI = (props) => {
         }
       })
       .then((res) => {
-        console.log(res, dbName);
         const mutatedData = snowflakeData.map((db) =>
           db.name === dbName
             ? {
@@ -165,19 +164,7 @@ const useSnowflakeAPI = (props) => {
                 children: [
                   ...res.schemas.map((sch, sIdx) => ({
                     ...normalizer(sch, 2, sIdx),
-                    db: db,
-                    children: [
-                      {
-                        ...normalizer("Views", 3, 1),
-                        schema: normalizer(sch, 2, sIdx),
-                        db: db
-                      },
-                      {
-                        ...normalizer("Tables", 3, 2),
-                        schema: normalizer(sch, 2, sIdx),
-                        db: db
-                      }
-                    ]
+                    db: db
                   }))
                 ]
               }
@@ -199,6 +186,69 @@ const useSnowflakeAPI = (props) => {
         );
       });
   };
+
+  const checkSchema = (dbName, schemaName) =>
+    snowflakeAPI
+      .get("select_schema", {
+        params: {
+          token: snowflakeToken,
+          db_name: dbName,
+          schema_name: schemaName
+        }
+      })
+      .then((res) => {
+        const mutatedData = snowflakeData.map((db) =>
+          db.name === dbName
+            ? {
+                ...db,
+                children: [
+                  ...db.children.map((sch, sIdx) =>
+                    sch.name === schemaName
+                      ? {
+                          ...sch,
+                          open: true,
+                          error:
+                            !res.views &&
+                            !res.tables &&
+                            "No tables and views exist",
+                          children: [
+                            res.views
+                              ? {
+                                  ...normalizer("Views", 3, 1),
+                                  schema: sch,
+                                  db: db
+                                }
+                              : null,
+                            res.tables
+                              ? {
+                                  ...normalizer("Tables", 3, 2),
+                                  schema: sch,
+                                  db: db
+                                }
+                              : null
+                          ].filter((col) => col)
+                        }
+                      : sch
+                  )
+                ]
+              }
+            : db
+        );
+
+        dispatch(setSnowflakeData([...mutatedData]));
+      })
+      .finally(() => {
+        dispatch(
+          setStatusIsFetching({ itemName: schemaName, status: false, dbName })
+        );
+        dispatch(
+          onToggleItem({
+            itemName: schemaName,
+            status: true,
+            dbName
+          })
+        );
+      });
 
   const getTables = (dbName, schemaName) =>
     snowflakeAPI
@@ -320,20 +370,34 @@ const useSnowflakeAPI = (props) => {
       });
 
   const onSelectItem = async (item) => {
-    if (item.level === 1) {
-      getSchemas(item.name);
-    } else if (item.level === 3) {
-      dispatch(
-        setStatusIsFetching({
-          itemName: item.name,
-          status: true,
-          dbName: item?.db?.name
-        })
-      );
+    switch (item.level) {
+      case 1:
+        return getSchemas(item.name);
+      case 2:
+        dispatch(
+          setStatusIsFetching({
+            itemName: item.name,
+            status: true,
+            dbName: item?.db?.name
+          })
+        );
 
-      if (item.name === "Tables")
-        await getTables(item.db.name, item.schema.name);
-      else await getViews(item.db.name, item.schema.name);
+        checkSchema(item?.db?.name, item.name);
+        return;
+      case 3:
+        dispatch(
+          setStatusIsFetching({
+            itemName: item.name,
+            status: true,
+            dbName: item?.db?.name
+          })
+        );
+
+        if (item.name === "Tables")
+          await getTables(item.db.name, item.schema.name);
+        else await getViews(item.db.name, item.schema.name);
+      default:
+        return;
     }
   };
 
