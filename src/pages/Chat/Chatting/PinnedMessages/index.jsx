@@ -93,7 +93,7 @@ const PinnedMessages = ({
           <PinIcon />{" "}
           <span key={"pinnedM_" + isCollapsed}>
             {pinnedMessages?.[pinnedMessages.length - 1]?.text}
-          </span>{" "}
+          </span>
           <PopoverMenu mainIcon={<VerticalDotsIcon />} data={commands} />
         </li>
         {!isCollapsed && (
