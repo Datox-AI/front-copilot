@@ -22,7 +22,8 @@ const ColumnDetails = ({ children }) => {
         startY.current = e.clientY;
 
         setIsOpen(newHeight !== 0);
-        setHeight(newHeight);
+
+        if (newHeight <= 600) setHeight(newHeight);
       }
     };
 
