@@ -17,5 +17,6 @@ export const msalConfig = {
 };
 
 export const loginRequest = {
-  scopes: ["api://aeec21ea-2bcc-43b1-afb0-4aaad8f8de26/api.access"]
+  // scopes: ["api://aeec21ea-2bcc-43b1-afb0-4aaad8f8de26/api.access"]
+  scopes: ["api://bfa83ea3-f6bf-4f47-824a-1522a51276ca/user_impersonation"]
 };
