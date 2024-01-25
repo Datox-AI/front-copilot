@@ -13,6 +13,7 @@ import { ReactComponent as TrashIcon } from "../../../../../../assets/icons/tras
 import { Box, CircularProgress } from "@mui/material";
 import { copyNavigator } from "../../../../../../utils";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useClickAway } from "@uidotdev/usehooks";
 
 const MoreCommands = ({
   refetch,
@@ -26,10 +27,17 @@ const MoreCommands = ({
 }) => {
   const ref = useRef();
 
+  const [isOpened, setIsOpened] = useState(false);
   const [leftPosition, setLeftPosition] = useState("0");
   const [bottomPosition, setBottomPosition] = useState("-152px");
 
   const { pinMutation, deleteMutation } = useMessagesAPI({});
+
+  const toggle = () => setIsOpened((prev) => !prev);
+
+  const commandsRef = useClickAway(() => {
+    setIsOpened(false);
+  });
 
   const replaceMoreMenu = useCallback(() => {
     var distanceToRight =
@@ -96,60 +104,69 @@ const MoreCommands = ({
 
   return (
     <button className={classNames(styles.more)} ref={ref}>
-      <Box display="flex" alignItems="center" gap="10px">
-        {isPinned && <PinnedIcon className={styles.pin_icon} />}
-        <MoreHorizIcon className={styles.more_icon} />
-      </Box>
+      <div ref={commandsRef}>
+        <Box display="flex" alignItems="center" gap="10px">
+          {isPinned && <PinnedIcon className={styles.pin_icon} />}
+          <MoreHorizIcon
+            className={classNames(styles.more_icon, {
+              [styles.isOpened]: isOpened
+            })}
+            onClick={toggle}
+          />
+        </Box>
 
-      <div className={styles.command_context}>
-        <ul
-          className={styles.commands}
-          style={{
-            top: "auto",
-            left: leftPosition,
-            bottom: bottomPosition,
-            width: 160
-          }}
-        >
-          <li className={styles.command} onClick={onReply}>
-            <ReplyIcon />
-            Reply
-          </li>
-          <li className={styles.command} onClick={handleTogglePin}>
-            {pinMutation.isLoading ? (
-              <CircularProgress size={14} />
-            ) : isPinned ? (
-              <PinnedIcon />
-            ) : (
-              <PinIcon />
-            )}
-            {isPinned ? "Unpin" : "Pin"}
-          </li>
-          <li
-            className={styles.command}
-            onClick={() => copyNavigator(message?.text)}
-          >
-            <CopyIcon />
-            Copy
-          </li>
-          <li className={styles.command} onClick={toggleMessage}>
-            <TickIcon />
-            {isSelected ? "Unselect" : "Select"}
-          </li>
-          <li className={styles.command} onClick={handleDeleteMessage}>
-            {deleteMutation.isLoading ? (
-              <>
-                <CircularProgress size={14} />
-                Deleting...
-              </>
-            ) : (
-              <>
-                <TrashIcon />
-                Delete
-              </>
-            )}
-          </li>
-        </ul>
+        {isOpened && (
+          <div className={styles.command_context}>
+            <ul
+              className={styles.commands}
+              style={{
+                top: "auto",
+                left: leftPosition,
+                bottom: bottomPosition,
+                width: 160
+              }}
+            >
+              <li className={styles.command} onClick={onReply}>
+                <ReplyIcon />
+                Reply
+              </li>
+              <li className={styles.command} onClick={handleTogglePin}>
+                {pinMutation.isLoading ? (
+                  <CircularProgress size={14} />
+                ) : isPinned ? (
+                  <PinnedIcon />
+                ) : (
+                  <PinIcon />
+                )}
+                {isPinned ? "Unpin" : "Pin"}
+              </li>
+              <li
+                className={styles.command}
+                onClick={() => copyNavigator(message?.text)}
+              >
+                <CopyIcon />
+                Copy
+              </li>
+              <li className={styles.command} onClick={toggleMessage}>
+                <TickIcon />
+                {isSelected ? "Unselect" : "Select"}
+              </li>
+              <li className={styles.command} onClick={handleDeleteMessage}>
+                {deleteMutation.isLoading ? (
+                  <>
+                    <CircularProgress size={14} />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <TrashIcon />
+                    Delete
+                  </>
+                )}
+              </li>
+            </ul>
+          </div>
+        )}
       </div>
     </button>
   );
