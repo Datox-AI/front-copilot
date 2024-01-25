@@ -125,7 +125,10 @@ const MoreCommands = ({
             )}
             {isPinned ? "Unpin" : "Pin"}
           </li>
-          <li className={styles.command} onClick={() => copyNavigator(message)}>
+          <li
+            className={styles.command}
+            onClick={() => copyNavigator(message?.text)}
+          >
             <CopyIcon />
             Copy
           </li>
