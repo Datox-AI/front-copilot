@@ -97,8 +97,8 @@ const Integration = () => {
 
     const mutatedData = data?.lists?.filter(
       (chat) =>
-        chat.type ===
-        (activeIntegration.type === "sql" ? "Analytics" : "FileSearch")
+        chat?.type ===
+        (activeIntegration?.type === "sql" ? "Analytics" : "FileSearch")
     );
 
     const foundChat = mutatedData?.find((chat) => chat.id === chatId);

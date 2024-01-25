@@ -32,7 +32,7 @@ const ConfigWrapper = ({ children }) => {
           </div>
 
           <CloseRoundedIcon
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/chat")}
             style={{
               cursor: "pointer",
               fontSize: 30
