@@ -1,10 +1,15 @@
 .typeSelect {
   position: relative;
+  width: 100%;
 
-  h3 {
-    width: 130px;
-    font-size: 14px;
-    line-height: 20px;
+  .btn {
+    // width: 130px;
+    background-color: transparent;
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    font-size: 12px;
+    line-height: 18px;
     font-weight: 500;
     padding: 4.5px 10px;
     border-radius: 5px;

@@ -6,7 +6,7 @@ export const BASE_API_URL = process.env.REACT_APP_BASE_API_URL;
 export const COPILOT_API_KEY = process.env.REACT_APP_COPILOT_API_KEY;
 
 export const request = axios.create({
-  baseURL: BASE_API_URL
+  baseURL: "https://newcopilotwebapi.azurewebsites.net" || BASE_API_URL
 });
 
 const errorHandler = (error) => {
@@ -18,7 +18,7 @@ const errorHandler = (error) => {
 
   return Promise.reject(error.response);
 };
-
+console.log(BASE_API_URL);
 request.interceptors?.request.use(
   (config) => {
     const token = store.getState()?.auth?.token;
@@ -29,7 +29,7 @@ request.interceptors?.request.use(
 
     if (config.headers["Content-Type"] !== "multipart/form-data")
       config.headers.set("Content-Type", "application/json");
-    config.headers.set("ApiKey", COPILOT_API_KEY);
+    // config.headers.set("ApiKey", COPILOT_API_KEY);
 
     return config;
   },

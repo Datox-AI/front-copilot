@@ -23,7 +23,7 @@ const useChatsAPI = ({ isGetUsers = false, userId, chatId }) => {
   );
 
   const createChat = useMutation((type) =>
-    request.post("/api/chats", { type })
+    request.post("/api/chats/", { type })
   );
 
   const updateChat = useMutation((data) =>

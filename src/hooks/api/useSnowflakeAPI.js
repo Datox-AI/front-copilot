@@ -41,6 +41,19 @@ const useSnowflakeAPI = (props) => {
     }
   );
 
+  const { data: schemas } = useQuery(
+    ["GET_SCHEMAS", props?.database],
+    () =>
+      snowflakeAPI.get("schemas/" + props?.database, {
+        params: {
+          token: snowflakeToken
+        }
+      }),
+    {
+      enabled: props?.database && !!snowflakeToken
+    }
+  );
+
   const {
     data: columns,
     isLoading: isLoadingColumns,
@@ -418,6 +431,7 @@ const useSnowflakeAPI = (props) => {
     isConnected,
     initAuth,
     databases,
+    schemas,
     snowflakeData,
     columns,
     isLoadingColumns,
