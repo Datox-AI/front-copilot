@@ -74,7 +74,7 @@ jobs:
           REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER: FIZOAJF-XY77892
           REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: JpplZAhbA0qaTUD4VjYYNMm/8Do=
           REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: twhicB4QxZFlZ5h8F1BBJvKtRHHGGKV8m0iEdhGpVOw=
-          REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://hc47250.uae-north.azure.snowflakecomputing.com/oauth/token-request
+          REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://bq20682.uae-north.azure.snowflakecomputing.com/oauth/token-request
           REACT_APP_SNOWFLAKE_TEST_WAREHOUSE: TEST_WH
 
   close_pull_request_job:
