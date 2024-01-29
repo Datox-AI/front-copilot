@@ -5,8 +5,6 @@ import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 import OnboardingSnowflake from "../../../components/OnboardingIntegration/Snowflake";
-
-import { useSelector } from "react-redux";
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,12 +16,14 @@ import {
   SNOWFLAKE_TEST_WAREHOUSE
 } from "../../../consts/snowflake";
 
+
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
   const { initAuth } = useSnowflakeAPI();
   const { skipOnboarding } = useSelector(
     (store) => store.integrations.snowflake
   );
+
 
   const onEdit = () => {
     navigate("/configs/snowflake/123");

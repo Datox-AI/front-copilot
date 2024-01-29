@@ -3,6 +3,13 @@ import classNames from "classnames";
 import PopoverMenu from "../PopoverMenu";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+import {
+  SNOWFLAKE_REDIRECT_URL,
+  SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
+  SNOWFLAKE_TEST_CLIENT_ID,
+  SNOWFLAKE_TEST_CLIENT_SECRET,
+  SNOWFLAKE_TEST_TOKEN_ENDPOINT
+} from "../../consts/snowflake";
 
 import { ReactComponent as MoreVertI } from "../../assets/icons/vertical-dots.svg";
 import { useMemo, useState } from "react";
