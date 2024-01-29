@@ -15,7 +15,7 @@ import {
   SNOWFLAKE_TEST_TOKEN_ENDPOINT,
   SNOWFLAKE_TEST_WAREHOUSE
 } from "../../../consts/snowflake";
-
+import { useSelector } from "react-redux";
 
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
@@ -23,7 +23,6 @@ const SnowflakeConfig = () => {
   const { skipOnboarding } = useSelector(
     (store) => store.integrations.snowflake
   );
-
 
   const onEdit = () => {
     navigate("/configs/snowflake/123");
