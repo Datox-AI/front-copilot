@@ -34,8 +34,6 @@ const errorHandler = async (error) => {
     if (!!res) return originalRequest;
   }
 
-  store.dispatch(setSnowflakeToken(null));
-
   return Promise.reject(error.response);
 };
 
