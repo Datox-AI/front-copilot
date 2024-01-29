@@ -6,18 +6,14 @@ import classNames from "classnames";
 import useMessagesAPI from "../../../hooks/api/useMessagesAPI";
 import usePrompt from "../../../hooks/usePrompt";
 import searchFileIcon from "../../../assets/icons/search-files.png";
-
-import { stopStreaming } from "../../../redux/chat/chatSlice";
-import { arrayUniqueByKey } from "../../../utils";
-import { useDispatch, useSelector } from "react-redux";
-import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
-import { createRef, useCallback, useEffect, useMemo, useState } from "react";
 import PinnedMessages from "./PinnedMessages";
-import { chatModes } from "../../../hooks/useMessages";
 import SelectedMessages from "./SelectedMessages";
-import toast from "react-hot-toast";
-import { useMsal } from "@azure/msal-react";
-import useFileUpload from "../../../hooks/useFileUpload";
+import useChatting from "../../../hooks/useChatting";
+
+import { useSelector } from "react-redux";
+import { createRef, useState } from "react";
+import { Outlet } from "react-router-dom";
+import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 
 const EmptyMessages = ({ hasChats, hasIntegrations, isChat }) => (
   <div
@@ -52,12 +48,12 @@ const Chatting = ({
   chatId,
   refetch,
   setRelatedFiles,
-  isAudit
+  isAudit,
+  columnName
 }) => {
   const listRef = createRef();
-  const dispatch = useDispatch();
 
-  const { accounts } = useMsal();
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
@@ -84,216 +80,121 @@ const Chatting = ({
     setRelatedFiles
   });
 
-  const { handleUpload } = useFileUpload({ chatId });
-
-  const [text, setText] = useState("");
-  const [mode, setMode] = useState(chatModes);
-  const [selectedMessages, setSelectedMessages] = useState([]);
-  const [isHighlightedMessage, setIsHiglightedMessage] = useState(null);
-
-  const onHighlightMessage = (msg) => setIsHiglightedMessage(msg);
-
-  useEffect(() => {
-    if (!isHighlightedMessage) return;
-
-    const interval = setInterval(() => setIsHiglightedMessage(null), 2000);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isHighlightedMessage]);
-
-  const pinnedMessages = useMemo(() => {
-    if (!data || !data.lists) return [];
-
-    return data.lists.filter((message) => message.pinned);
-  }, [data]);
-
-  const clearAllSelectedMessages = () => {
-    setSelectedMessages([]);
-  };
-
-  const deleteAllSelectedMessages = () => {
-    deleteMutation.mutate(
-      {
-        chatId,
-        body: [...selectedMessages]
-      },
-      {
-        onSuccess: () => {
-          refetchMessages();
-          setSelectedMessages([]);
-        },
-        onError: (err) => {
-          toast.error(err.data?.title);
-        }
-      }
-    );
-  };
-
-  const toggleMessage = (messageId) => {
-    if (selectedMessages.includes(messageId))
-      setSelectedMessages((prev) =>
-        prev.filter((msgId) => msgId !== messageId)
-      );
-    else setSelectedMessages((prev) => [...prev, messageId]);
-  };
-
-  const disabled = useMemo(() => !text, [text]);
-
-  useEffect(() => {
-    if (selectedMessages.length === 0) return setMode(chatModes.CHAT);
-
-    return setMode(chatModes.SELECT);
-  }, [selectedMessages]);
-
-  useEffect(() => {
-    if (isChat || !data || !data.lists) return;
-
-    const _files = [];
-
-    data.lists
-      ?.filter((message) => message.searchFiles?.length > 0)
-      ?.forEach((message) =>
-        message.searchFiles?.map((file) => _files.push(file))
-      );
-
-    setRelatedFiles((prev) => arrayUniqueByKey([...prev, ..._files]));
-  }, [data]);
-
-  const onTexting = (e) => {
-    setText(e.target.value);
-  };
-
-  const onSend = useCallback(
-    (e) => {
-      e.preventDefault();
-      setText("");
-
-      if (textGenerator?.isStreaming) dispatch(stopStreaming({ chatId }));
-      else startPrompting(text);
-    },
-    [textGenerator, text, chatId]
-  );
-
-  const handleCopySelectedMessages = async () => {
-    if (!selectedMessages || selectedMessages.length === 0) return;
-
-    let copyMarkdown = "";
-    data?.lists?.forEach((message) => {
-      if (selectedMessages.includes(message.id)) {
-        copyMarkdown += `– ${
-          message.role === "Assistant"
-            ? "Datox Copilot"
-            : "User: " + accounts?.[0]?.name
-        }\nMessage: ${message.text}\n\n`;
-      }
-    });
-
-    await navigator.clipboard.writeText(copyMarkdown);
-
-    toast.success("Copied!");
-  };
-
-  const onFileUpload = (e) => {
-    const _files = e.target.files;
-
-    handleUpload(_files);
-  };
-
-  const onSelectQuestion = (question) => {
-    startPrompting(question);
-  };
+  const {
+    mode,
+    text,
+    disabled,
+    pinnedMessages,
+    selectedMessages,
+    isHighlightedMessage,
+    onSend,
+    onTexting,
+    onFileUpload,
+    toggleMessage,
+    onSelectQuestion,
+    onHighlightMessage,
+    clearAllSelectedMessages,
+    deleteAllSelectedMessages,
+    handleCopySelectedMessages
+  } = useChatting({
+    data,
+    isChat,
+    chatId,
+    isLoading,
+    textGenerator,
+    deleteMutation,
+    setRelatedFiles,
+    startPrompting,
+    refetchMessages
+  });
 
   return (
-    <div className={styles.chattingContainer}>
-      {!isChat && !isAudit && (
-        <TopChatList
-          chats={chats}
-          integrations={integrations}
-          activeChat={activeChat}
-          activeIntegration={activeIntegration}
-          handleSelectChat={handleSelectChat}
-          handleSelectIntegration={handleSelectIntegration}
-          onCloseIntegration={onCloseIntegration}
-          refetch={refetch}
-        />
-      )}
-
-      {!isAudit && (
-        <>
-          <SelectedMessages
-            selectedMessages={selectedMessages}
-            onCancel={clearAllSelectedMessages}
-            onDelete={deleteAllSelectedMessages}
-            onCopy={handleCopySelectedMessages}
-            isLoading={deleteMutation.isLoading}
+    <>
+      <div className={styles.chattingContainer}>
+        {!isChat && !isAudit && (
+          <TopChatList
+            chats={chats}
+            integrations={integrations}
+            activeChat={activeChat}
+            activeIntegration={activeIntegration}
+            handleSelectChat={handleSelectChat}
+            handleSelectIntegration={handleSelectIntegration}
+            onCloseIntegration={onCloseIntegration}
+            refetch={refetch}
           />
+        )}
 
-          <PinnedMessages
-            pinnedMessages={pinnedMessages}
-            chatId={chatId}
-            refetch={refetchMessages}
-          />
-        </>
-      )}
-      <div className={styles.chatting}>
-        <div
-          className={classNames(styles.messages, {
-            [styles.hasChats]: !isChat && !isAudit,
-            [styles.hasIntegrations]: !isChat && !isAudit,
-            [styles.hasPinnedMessages]: pinnedMessages?.length > 0 && !isAudit,
-            [styles.hasSelectedMessages]:
-              selectedMessages.length > 0 && !isAudit,
-            [styles.isAudit]: isAudit
-          })}
-        >
-          {data?.lists?.length > 0 || isLoading ? (
-            <Messages
-              ref={listRef}
-              data={data}
-              mode={mode}
-              files={files}
-              isAudit={isAudit}
-              chatId={chatId}
-              refetch={refetch}
-              replyMessage={replyMessage}
-              isLoading={isLoading}
-              questions={questions}
-              activeChat={activeChat}
+        {!isAudit && (
+          <>
+            <SelectedMessages
               selectedMessages={selectedMessages}
-              isStreaming={textGenerator?.isStreaming}
-              isHighlightedMessage={isHighlightedMessage}
-              toggleMessage={toggleMessage}
-              refetchMessages={refetchMessages}
-              onSelectQuestion={onSelectQuestion}
-              clearReplyMessage={clearReplyMessage}
-              selectReplyMessage={selectReplyMessage}
-              onHighlightMessage={onHighlightMessage}
+              onCancel={clearAllSelectedMessages}
+              onDelete={deleteAllSelectedMessages}
+              onCopy={handleCopySelectedMessages}
+              isLoading={deleteMutation.isLoading}
             />
-          ) : (
-            <EmptyMessages
-              hasChats={chats?.length > 0 || !isChat}
-              hasIntegrations={integrations?.length > 0}
-              isChat={isChat}
+
+            <PinnedMessages
+              pinnedMessages={pinnedMessages}
+              chatId={chatId}
+              refetch={refetchMessages}
+              isCollapsed={isCollapsed}
+              setIsCollapsed={setIsCollapsed}
+            />
+          </>
+        )}
+        <div className={styles.chatting}>
+          <div className={styles.messages}>
+            {data?.lists?.length > 0 || isLoading ? (
+              <Messages
+                ref={listRef}
+                data={data}
+                mode={mode}
+                files={files}
+                isAudit={isAudit}
+                chatId={chatId}
+                refetch={refetch}
+                replyMessage={replyMessage}
+                isLoading={isLoading}
+                questions={questions}
+                activeChat={activeChat}
+                selectedMessages={selectedMessages}
+                isStreaming={textGenerator?.isStreaming}
+                isHighlightedMessage={isHighlightedMessage}
+                toggleMessage={toggleMessage}
+                refetchMessages={refetchMessages}
+                onSelectQuestion={onSelectQuestion}
+                clearReplyMessage={clearReplyMessage}
+                selectReplyMessage={selectReplyMessage}
+                onHighlightMessage={onHighlightMessage}
+              />
+            ) : (
+              !columnName && (
+                <EmptyMessages
+                  hasChats={chats?.length > 0 || !isChat}
+                  hasIntegrations={integrations?.length > 0}
+                  isChat={isChat}
+                />
+              )
+            )}
+          </div>
+          {chatId && !isAudit && (
+            <Input
+              chatId={chatId}
+              text={text}
+              disabled={disabled}
+              onTexting={onTexting}
+              onSend={onSend}
+              onFileUpload={onFileUpload}
+              replyMessage={replyMessage}
+              clearReplyMessage={clearReplyMessage}
+              isStreaming={textGenerator?.isStreaming}
             />
           )}
         </div>
-        {chatId && !isAudit && (
-          <Input
-            chatId={chatId}
-            text={text}
-            disabled={disabled}
-            onTexting={onTexting}
-            onSend={onSend}
-            onFileUpload={onFileUpload}
-            replyMessage={replyMessage}
-            clearReplyMessage={clearReplyMessage}
-            isStreaming={textGenerator?.isStreaming}
-          />
-        )}
+        <Outlet />
       </div>
-    </div>
+    </>
   );
 };
 

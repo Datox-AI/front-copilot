@@ -1,32 +1,76 @@
-import { useState } from "react";
 import styles from "./style.module.scss";
-import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
-import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
 import classNames from "classnames";
-
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import PopoverMenu from "../PopoverMenu";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+
+import { ReactComponent as MoreVertI } from "../../assets/icons/vertical-dots.svg";
+import { useMemo, useState } from "react";
+import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
+import { ReactComponent as ColumnsI } from "../../assets/icons/columns.svg";
+import { ReactComponent as DataPreviewI } from "../../assets/icons/data-preview.svg";
+import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
+import { Box, Button, CircularProgress } from "@mui/material";
 import {
   SNOWFLAKE_REDIRECT_URL,
   SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
   SNOWFLAKE_TEST_CLIENT_ID,
   SNOWFLAKE_TEST_CLIENT_SECRET,
-  SNOWFLAKE_TEST_TOKEN_ENDPOINT
+  SNOWFLAKE_TEST_TOKEN_ENDPOINT,
+  SNOWFLAKE_TEST_WAREHOUSE
 } from "../../consts/snowflake";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { onToggleItem } from "../../redux/integrations/integrationsSlice";
 
-const NestedListItem = ({ listItem, onSelectItem, parent }) => {
-  const [isOpen, setIsOpen] = useState(false);
+const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
+  const { chatId } = useParams();
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const isOpen = listItem.open;
+
+  const popoverMenu = useMemo(() => {
+    return [
+      {
+        icon: ColumnsI,
+        title: <span>Columns</span>,
+        onClick: () =>
+          navigate(`/integration/2/${chatId}/columns/${listItem.name}`, {
+            state: {
+              dbName: listItem.db.name,
+              schemaName: listItem.schema.name.name
+            }
+          })
+      },
+      {
+        icon: DataPreviewI,
+        title: <span>Data Preview</span>,
+        onClick: () =>
+          navigate(`/integration/2/${chatId}/preview/${listItem.name}`, {
+            state: {
+              dbName: listItem.db.name,
+              schemaName: listItem.schema.name.name
+            }
+          })
+      }
+    ];
+  }, [listItem, chatId]);
 
   const onClick = () => {
-    setIsOpen((prev) => {
-      if (!prev && listItem.children.length === 0) {
-        if (listItem.level === 3) onSelectItem(listItem);
-        else onSelectItem(listItem);
-      }
+    if (!listItem.open && listItem.children.length === 0) {
+      if (listItem.level === 3 || listItem.level === 2) onSelectItem(listItem);
+      else onSelectItem(listItem);
+    }
 
-      return !prev;
-    });
+    dispatch(
+      onToggleItem({
+        itemName: listItem.name,
+        status: !listItem.open,
+        dbName: listItem?.db?.name
+      })
+    );
   };
 
   if (listItem.level === 4)
@@ -37,6 +81,10 @@ const NestedListItem = ({ listItem, onSelectItem, parent }) => {
           styles["level" + listItem.level],
           styles.child
         )}
+        style={{
+          position: "relative",
+          zIndex
+        }}
       >
         {listItem.level !== 1 && (
           <NestListArrowI className={styles.nestedArrow} />
@@ -51,7 +99,10 @@ const NestedListItem = ({ listItem, onSelectItem, parent }) => {
             {listItem.error}
           </button>
         ) : (
-          <button className={styles.itemMeta}>{listItem.name}</button>
+          <button className={styles.itemMeta}>
+            <span>{listItem.name}</span>
+            <PopoverMenu mainIcon={<MoreVertI />} data={popoverMenu} />
+          </button>
         )}
       </li>
     );
@@ -110,6 +161,7 @@ const NestedList = ({ data, onSelectItem, parent }) => {
           parent={parent}
           listItem={item}
           onSelectItem={onSelectItem}
+          zIndex={data.length - i}
         />
       ))}
     </ul>
@@ -127,7 +179,8 @@ const NestedListContainer = () => {
         client_id: SNOWFLAKE_TEST_CLIENT_ID,
         client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
         token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
-        redirect_uri: SNOWFLAKE_REDIRECT_URL
+        redirect_uri: SNOWFLAKE_REDIRECT_URL,
+        manual_warehouse: SNOWFLAKE_TEST_WAREHOUSE
       },
       {
         onSuccess: (res) => {

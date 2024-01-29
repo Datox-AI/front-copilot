@@ -57,7 +57,8 @@ const MessageItem = ({
       onClick={onClick}
       className={classNames(styles.container, {
         [styles.isBot]: isBot,
-        [styles.isSelected]: isSelected || isHighlightedMessage === messageId
+        [styles.isSelected]: isSelected,
+        [styles.isHighlighted]: isHighlightedMessage === messageId
       })}
     >
       <Box

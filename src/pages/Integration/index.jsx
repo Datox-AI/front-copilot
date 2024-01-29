@@ -3,13 +3,20 @@ import useChatsAPI from "../../hooks/api/useChatsAPI";
 
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
+import {
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams
+} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
 import { _integrations } from "../../consts/integrations";
 import toast from "react-hot-toast";
 
 const Integration = () => {
+  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -40,7 +47,8 @@ const Integration = () => {
 
   useEffect(() => {
     if (!integrationId) {
-      toast.error("No integrations has been opened yet");
+      navigate(openedIntegrations?.[0].id);
+      setActiveIntegration(openedIntegrations?.[0]);
       return;
     }
     // TODO: check properly integraton page
@@ -85,12 +93,22 @@ const Integration = () => {
   const handleSelectChat = (integration) => setActiveChat(integration);
 
   useEffect(() => {
-    if (!chatId || !data) return;
+    if (!chatId && !data) return;
 
-    const foundChat = data?.lists?.find((chat) => chat.id === chatId);
+    const mutatedData = data?.lists?.filter(
+      (chat) =>
+        chat?.type ===
+        (activeIntegration?.type === "sql" ? "Analytics" : "FileSearch")
+    );
+
+    const foundChat = mutatedData?.find((chat) => chat.id === chatId);
+
+    if (integrationId && mutatedData?.length > 0 && (!chatId || !foundChat)) {
+      navigate(`/integration/${integrationId}/${mutatedData[0]?.id || ""}`);
+    }
 
     handleSelectChat(foundChat);
-  }, [chatId, data?.lists]);
+  }, [chatId, data, integrationId, activeIntegration]);
 
   if (!integrationId) return <Navigate to="../" />;
 

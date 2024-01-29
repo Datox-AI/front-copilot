@@ -23,10 +23,13 @@ const TopChatList = ({
   const [deletableChatId, setDeletableChatId] = useState(null);
 
   const onCreate = () => {
-    createChat.mutate("FileSearch", {
+    const chatType =
+      activeIntegration?.type === "sql" ? "Analytics" : "FileSearch";
+
+    createChat.mutate(chatType, {
       onSuccess: (res) => {
-        navigate(res.id);
         refetch();
+        navigate(res.id);
       }
     });
   };
