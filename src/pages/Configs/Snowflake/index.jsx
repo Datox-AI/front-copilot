@@ -37,7 +37,7 @@ const SnowflakeConfig = () => {
         client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
         token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
         redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        manual_warehouse: SNOWFLAKE_TEST_WAREHOUSE
+        warehouse: SNOWFLAKE_TEST_WAREHOUSE
       },
       {
         onSuccess: (res) => {
