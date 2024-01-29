@@ -2,7 +2,10 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { snowflakeAPI } from "../../../utils/snowflakeAPI";
 import { useDispatch } from "react-redux";
-import { setSnowflakeToken } from "../../../redux/auth/authSlice";
+import {
+  setSnowflakeRefreshToken,
+  setSnowflakeToken
+} from "../../../redux/auth/authSlice";
 import toast from "react-hot-toast";
 
 const SnowflakeCallback = () => {
@@ -18,6 +21,7 @@ const SnowflakeCallback = () => {
         .get("callback" + location.search)
         .then((res) => {
           dispatch(setSnowflakeToken(res.access_token));
+          dispatch(setSnowflakeRefreshToken(res.refresh_token));
         })
         .catch((err) => {
           toast.error(err.data.detail);

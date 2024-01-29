@@ -58,7 +58,7 @@ export const IntegrationForm = ({
         client_secret: clientSecret,
         token_endpoint: tokenEndpoint,
         redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        manual_warehouse: manualWarehouse
+        warehouse: manualWarehouse
       },
       {
         onSuccess: (res) => {
