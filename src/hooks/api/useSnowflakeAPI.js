@@ -26,18 +26,21 @@ const useSnowflakeAPI = (props) => {
     (store) => store.integrations.snowflake.data
   );
 
-  const isConnected = useMemo(() => !!snowflakeToken, [snowflakeToken]);
+  const isConnected = useMemo(
+    () => !!snowflakeToken?.access,
+    [snowflakeToken?.access]
+  );
 
   const { data: databases } = useQuery(
     ["GET_DATABASES"],
     () =>
       snowflakeAPI.get("databases", {
         params: {
-          token: snowflakeToken
+          token: snowflakeToken?.access
         }
       }),
     {
-      enabled: props?.enableDatabases && !!snowflakeToken
+      enabled: props?.enableDatabases && !!snowflakeToken?.access
     }
   );
 
@@ -59,7 +62,7 @@ const useSnowflakeAPI = (props) => {
         }`,
         {
           params: {
-            token: snowflakeToken
+            token: snowflakeToken?.access
           }
         }
       ),
@@ -69,7 +72,7 @@ const useSnowflakeAPI = (props) => {
         !!props?.database &&
         !!props?.schema &&
         !!(props?.table || props?.view) &&
-        !!snowflakeToken
+        !!snowflakeToken?.access
     }
   );
 
@@ -91,7 +94,7 @@ const useSnowflakeAPI = (props) => {
         }`,
         {
           params: {
-            token: snowflakeToken
+            token: snowflakeToken?.access
           }
         }
       ),
@@ -101,7 +104,7 @@ const useSnowflakeAPI = (props) => {
         !!props?.database &&
         !!props?.schema &&
         !!(props?.table || props?.view) &&
-        !!snowflakeToken
+        !!snowflakeToken?.access
     }
   );
 
@@ -153,7 +156,7 @@ const useSnowflakeAPI = (props) => {
     snowflakeAPI
       .get("schemas/" + dbName, {
         params: {
-          token: snowflakeToken
+          token: snowflakeToken?.access
         }
       })
       .then((res) => {
@@ -191,7 +194,7 @@ const useSnowflakeAPI = (props) => {
     snowflakeAPI
       .get("select_schema", {
         params: {
-          token: snowflakeToken,
+          token: snowflakeToken?.access,
           db_name: dbName,
           schema_name: schemaName
         }
@@ -254,7 +257,7 @@ const useSnowflakeAPI = (props) => {
     snowflakeAPI
       .get(`tables/${dbName}/${schemaName}`, {
         params: {
-          token: snowflakeToken
+          token: snowflakeToken?.access
         }
       })
       .then((res) => {
@@ -313,7 +316,7 @@ const useSnowflakeAPI = (props) => {
     snowflakeAPI
       .get(`views/${dbName}/${schemaName}`, {
         params: {
-          token: snowflakeToken
+          token: snowflakeToken?.access
         }
       })
       .then((res) => {
