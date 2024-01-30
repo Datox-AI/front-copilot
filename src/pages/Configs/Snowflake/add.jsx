@@ -7,7 +7,6 @@ import { useLocation } from "react-router-dom";
 
 const SnowflakeConfigAdd = () => {
   const location = useLocation();
-
   return (
     <div className={styles.container}>
       <div className={styles.form}>
@@ -29,7 +28,6 @@ const SnowflakeConfigAdd = () => {
             </Typography>
           </Box>
         </Box>
-
         <IntegrationForm
           initAccountIdentifier={location.state?.accountIdentifier}
           initClientId={location.state?.clientId}

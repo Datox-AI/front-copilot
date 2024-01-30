@@ -43,6 +43,7 @@ export const IntegrationForm = ({
   );
   const [manualWarehouse, setManualWarehouse] = useState(
     initAccountIdentifier ? "" : SNOWFLAKE_TEST_WAREHOUSE
+
   );
 
   const close = () => {

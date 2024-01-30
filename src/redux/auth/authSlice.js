@@ -41,11 +41,11 @@ const authSlice = createSlice({
 });
 
 export const {
-  setToken,
-  setUser,
   logout,
-  setAuthorized,
+  setUser,
+  setToken,
   setUserRoles,
+  setAuthorized,
   setSnowflakeToken,
   setSnowflakeRefreshToken
 } = authSlice.actions;

@@ -166,6 +166,10 @@
           display: none;
         }
 
+        .more_icon.isOpened {
+          display: block;
+        }
+
         .pin_icon {
           path {
             stroke: #fff;
@@ -187,7 +191,7 @@
             position: absolute;
             top: 0;
             right: 0;
-            display: none;
+            // display: none;
             list-style: none;
             padding: 0;
             margin: 0;
