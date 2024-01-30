@@ -22,6 +22,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { onToggleItem } from "../../redux/integrations/integrationsSlice";
+import CustomSelect from "../CustomSelect";
 
 const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
   const { chatId } = useParams();
@@ -168,9 +169,36 @@ const NestedList = ({ data, onSelectItem, parent }) => {
   );
 };
 
-const NestedListContainer = () => {
-  const { isConnected, initAuth, snowflakeData, onSelectItem } =
-    useSnowflakeAPI();
+const NestedListContainer = ({ selectedDatabase, selectedSchema, refetch }) => {
+  const {
+    isConnected,
+    initAuth,
+    snowflakeData,
+    onSelectItem,
+    databases,
+    schemas
+  } = useSnowflakeAPI({
+    enableDatabases: true,
+    database: selectedDatabase
+  });
+
+  const mutatedDatabases = useMemo(() => {
+    if (!databases) return [];
+
+    return databases.map((db) => ({
+      label: db,
+      onClick: (db) => console.log(db)
+    }));
+  }, [databases]);
+
+  const mutatedSchemas = useMemo(() => {
+    if (!schemas) return [];
+
+    return schemas.map((sch) => ({
+      label: sch,
+      onClick: (sch) => console.log(sch)
+    }));
+  }, [schemas]);
 
   const onAuth = () => {
     initAuth.mutate(
@@ -180,7 +208,7 @@ const NestedListContainer = () => {
         client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
         token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
         redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        manual_warehouse: SNOWFLAKE_TEST_WAREHOUSE
+        warehouse: SNOWFLAKE_TEST_WAREHOUSE
       },
       {
         onSuccess: (res) => {
@@ -195,6 +223,31 @@ const NestedListContainer = () => {
 
   return (
     <Box display="flex" width="100%" flexDirection="column" my={2}>
+      <Box width="100%" display="flex" gap="10px" mb={2}>
+        <Box width="50%">
+          <CustomSelect
+            options={mutatedDatabases}
+            selectedValue={
+              !!selectedDatabase && {
+                label: selectedDatabase
+              }
+            }
+            placeholder="No database"
+          />
+        </Box>
+        <Box width="50%">
+          <CustomSelect
+            options={mutatedSchemas}
+            selectedValue={
+              !!selectedSchema && {
+                label: selectedSchema
+              }
+            }
+            placeholder="No schema"
+          />
+        </Box>
+      </Box>
+
       {!isConnected ? (
         <Button variant="contained" onClick={onAuth}>
           Connect

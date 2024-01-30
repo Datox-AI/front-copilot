@@ -55,12 +55,14 @@
     "rsuite": "^5.40.0",
     "sass": "^1.66.1",
     "snowflake-sdk": "^1.9.2",
+    "socket.io-client": "^4.7.4",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "util": "^0.12.5",
     "uuid": "^9.0.1",
     "web-vitals": "^2.1.4",
-    "webpack": "^5.75.0"
+    "webpack": "^5.75.0",
+    "websocket": "^1.0.34"
   },
   "scripts": {
     "start": "react-app-rewired start",

@@ -6,7 +6,7 @@ import {
 } from "../redux/auth/authSlice";
 
 export const snowflakeAPI = axios.create({
-  baseURL: "https://snowflakedatox.azurewebsites.net/"
+  baseURL: "https://newcopilotwebapi.azurewebsites.net/"
 });
 
 const refreshToken = async () =>
@@ -44,6 +44,10 @@ snowflakeAPI.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 snowflakeAPI.interceptors?.request.use(
   (config) => {
     const token = store.getState()?.auth?.token;
+
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
 
     return config;
   },

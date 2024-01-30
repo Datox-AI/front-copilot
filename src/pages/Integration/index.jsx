@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
 import { _integrations } from "../../consts/integrations";
 import toast from "react-hot-toast";
+import websocket from "../../services/websocket";
 
 const Integration = () => {
   const location = useLocation();
@@ -22,6 +23,7 @@ const Integration = () => {
 
   const { integrationId, chatId } = useParams();
   const { openedIntegrations } = useSelector((store) => store.integrations);
+  const { token } = useSelector((store) => store.auth);
 
   const [activeIntegration, setActiveIntegration] = useState(
     openedIntegrations[0]
@@ -33,6 +35,29 @@ const Integration = () => {
 
   const [activeChat, setActiveChat] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState([]);
+
+  useEffect(() => {
+    if (!chatId) return;
+
+    // Connect to WebSocket when component mounts
+    websocket.connect(
+      `wss://newcopilotwebapi.azurewebsites.net/agent/ws/${chatId}?token=${token}`
+    );
+
+    // Add a message handler to update component state
+    const handleIncomingMessage = (message) => {
+      console.log(message);
+    };
+
+    websocket.addMessageHandler(handleIncomingMessage);
+
+    return () => {
+      // Remove the message handler when component unmounts
+      websocket.removeMessageHandler(handleIncomingMessage);
+      // Close WebSocket connection when component unmounts
+      websocket.closeConnection();
+    };
+  }, [chatId, token]);
 
   useEffect(() => {
     if (!integrationId) return;
