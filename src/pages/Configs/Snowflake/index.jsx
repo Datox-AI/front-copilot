@@ -19,24 +19,27 @@ import { useSelector } from "react-redux";
 
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
-  const { initAuth } = useSnowflakeAPI();
+  const { initAuth, credentials } = useSnowflakeAPI({
+    enableUserCredentials: true
+  });
+
   const { skipOnboarding } = useSelector(
     (store) => store.integrations.snowflake
   );
 
   const onEdit = () => {
-    navigate("/configs/snowflake/123");
+    navigate("/configs/snowflake/1");
   };
 
   const onSignIn = () => {
     initAuth.mutate(
       {
-        account_identifier: SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
-        client_id: SNOWFLAKE_TEST_CLIENT_ID,
-        client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
-        token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
-        redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        warehouse: SNOWFLAKE_TEST_WAREHOUSE
+        account_identifier: credentials?.account_identifier,
+        client_id: credentials?.client_id,
+        client_secret: credentials?.client_secret,
+        token_endpoint: credentials?.token_endpoint,
+        redirect_uri: credentials?.redirect_uri,
+        warehouse: credentials?.warehouse
       },
       {
         onSuccess: (res) => {
@@ -55,13 +58,18 @@ const SnowflakeConfig = () => {
     <div className={styles.container}>
       <ConfigWrapper>
         <Box display="flex" width="100%" flexDirection="column">
-          <ConfigCard onEdit={onEdit} onSignIn={onSignIn} />
-          <Button
+          <ConfigCard
+            name={credentials?.account_identifier}
+            description={credentials?.client_id}
+            onEdit={onEdit}
+            onSignIn={onSignIn}
+          />
+          {/* <Button
             className={styles.btn}
             onClick={() => navigate("/configs/snowflake/create")}
           >
             <AddRoundedIcon /> Add Account
-          </Button>
+          </Button> */}
         </Box>
       </ConfigWrapper>
     </div>

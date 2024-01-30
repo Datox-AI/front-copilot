@@ -3,10 +3,14 @@ import styles from "../style.module.scss";
 import { IntegrationForm } from "../../Chat/FileBar/NewChatPopup";
 import { Box, Typography } from "@mui/material";
 import { integrationIcons } from "../../../consts/integrations";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
+import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
 
 const SnowflakeConfigAdd = () => {
   const location = useLocation();
+  const { id } = useParams();
+  const { credentials } = useSnowflakeAPI({ enableUserCredentials: !!id });
+
   return (
     <div className={styles.container}>
       <div className={styles.form}>
@@ -29,10 +33,17 @@ const SnowflakeConfigAdd = () => {
           </Box>
         </Box>
         <IntegrationForm
-          initAccountIdentifier={location.state?.accountIdentifier}
-          initClientId={location.state?.clientId}
-          initClientSecret={location.state?.clientSecret}
-          initOauthTokenEndpoint={location.state?.accountIdentifier}
+          initWarehouse={credentials?.warehouse}
+          initClientId={location.state?.clientId || credentials?.client_id}
+          initAccountIdentifier={
+            location.state?.accountIdentifier || credentials?.account_identifier
+          }
+          initClientSecret={
+            location.state?.clientSecret || credentials?.client_secret
+          }
+          initOauthTokenEndpoint={
+            location.state?.oauthTokenEndpoint || credentials?.token_endpoint
+          }
         />
       </div>
     </div>

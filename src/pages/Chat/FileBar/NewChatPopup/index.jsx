@@ -3,25 +3,19 @@ import styles from "../style.module.scss";
 import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, TextField } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { toggleIntegrationConfig } from "../../../../redux/integrations/integrationsSlice";
 import { integrationIcons } from "../../../../consts/integrations";
-import {
-  SNOWFLAKE_REDIRECT_URL,
-  SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
-  SNOWFLAKE_TEST_CLIENT_ID,
-  SNOWFLAKE_TEST_CLIENT_SECRET,
-  SNOWFLAKE_TEST_TOKEN_ENDPOINT,
-  SNOWFLAKE_TEST_WAREHOUSE
-} from "../../../../consts/snowflake";
+import { SNOWFLAKE_REDIRECT_URL } from "../../../../consts/snowflake";
 import { useNavigate } from "react-router-dom";
 
 export const IntegrationForm = ({
-  initAccountIdentifier,
   initClientId,
+  initWarehouse,
   initClientSecret,
+  initAccountIdentifier,
   initOauthTokenEndpoint
 }) => {
   const dispatch = useDispatch();
@@ -30,21 +24,32 @@ export const IntegrationForm = ({
   const { initAuth } = useSnowflakeAPI();
 
   const [accountIdentifier, setAccountIdentifier] = useState(
-    initAccountIdentifier || SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER
+    initAccountIdentifier
   );
-  const [clientId, setClientId] = useState(
-    initClientId || SNOWFLAKE_TEST_CLIENT_ID
-  );
-  const [clientSecret, setClientSecret] = useState(
-    initClientSecret || SNOWFLAKE_TEST_CLIENT_SECRET
-  );
-  const [tokenEndpoint, setTokenEndpoint] = useState(
-    initOauthTokenEndpoint || SNOWFLAKE_TEST_TOKEN_ENDPOINT
-  );
-  const [manualWarehouse, setManualWarehouse] = useState(
-    initAccountIdentifier ? "" : SNOWFLAKE_TEST_WAREHOUSE
+  const [clientId, setClientId] = useState(initClientId);
+  const [clientSecret, setClientSecret] = useState(initClientSecret);
+  const [tokenEndpoint, setTokenEndpoint] = useState(initOauthTokenEndpoint);
+  const [manualWarehouse, setManualWarehouse] = useState(initWarehouse);
 
-  );
+  useEffect(() => {
+    setClientId(initClientId);
+  }, [initClientId]);
+
+  useEffect(() => {
+    setAccountIdentifier(initAccountIdentifier);
+  }, [initAccountIdentifier]);
+
+  useEffect(() => {
+    setClientSecret(initClientSecret);
+  }, [initClientSecret]);
+
+  useEffect(() => {
+    setTokenEndpoint(initOauthTokenEndpoint);
+  }, [initOauthTokenEndpoint]);
+
+  useEffect(() => {
+    setManualWarehouse(initWarehouse);
+  }, [initWarehouse]);
 
   const close = () => {
     dispatch(toggleIntegrationConfig(null));
@@ -85,6 +90,7 @@ export const IntegrationForm = ({
             onChange={({ target: { value } }) => setAccountIdentifier(value)}
           />
         </label>
+
         <label className={styles.field}>
           <span>Client ID</span>
           <TextField
@@ -92,6 +98,7 @@ export const IntegrationForm = ({
             onChange={({ target: { value } }) => setClientId(value)}
           />
         </label>
+
         <label className={styles.field}>
           <span>Client Secret</span>
           <TextField
@@ -100,6 +107,7 @@ export const IntegrationForm = ({
             onChange={({ target: { value } }) => setClientSecret(value)}
           />
         </label>
+
         <label className={styles.field}>
           <span>Token Endpoint</span>
           <TextField

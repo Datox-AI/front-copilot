@@ -31,6 +31,14 @@ const useSnowflakeAPI = (props) => {
     [snowflakeToken?.access]
   );
 
+  const { data: credentials } = useQuery(
+    ["GET_SNOWFLAKE_USER_CREDENTIALS"],
+    () => snowflakeAPI.get("get_oauth"),
+    {
+      enabled: props?.enableUserCredentials
+    }
+  );
+
   const { data: databases } = useQuery(
     ["GET_DATABASES"],
     () =>
@@ -439,6 +447,7 @@ const useSnowflakeAPI = (props) => {
     columns,
     isLoadingColumns,
     previewData,
+    credentials,
     isLoadingPreviewData,
     refetchPreviewData,
     refetchColumns,
