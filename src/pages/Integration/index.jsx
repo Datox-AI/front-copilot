@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
 import { _integrations } from "../../consts/integrations";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
+import toast from "react-hot-toast";
 
 const Integration = () => {
   const dispatch = useDispatch();
@@ -16,15 +17,18 @@ const Integration = () => {
 
   const { integrationId, chatId } = useParams();
   const { openedIntegrations } = useSelector((store) => store.integrations);
-  const { token } = useSelector((store) => store.auth);
+  const { token, snowflakeToken } = useSelector((store) => store.auth);
 
   const [activeIntegration, setActiveIntegration] = useState(
     openedIntegrations[0]
   );
 
-  const { data, refetch } = useChatsAPI({
-    isGetUsers: true
-  });
+  const { data, refetch, singleChat, updateSnowflakeData, refetchSingleChat } =
+    useChatsAPI({
+      isGetUsers: true,
+      chatId
+    });
+
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
 
   const [activeChat, setActiveChat] = useState(null);
@@ -33,10 +37,44 @@ const Integration = () => {
   const [selectedDatabase, setSelectedDatabase] = useState("");
 
   const selectDatabase = (item) => {
-    setSelectedDatabase(item);
+    if (singleChat)
+      updateSnowflakeData.mutate(
+        {
+          id: chatId,
+          body: {
+            chat_id: chatId,
+            snowflake_account: credentials?.account_identifier,
+            database_name: item,
+            snowflake_schema: selectedSchema,
+            warehouse: credentials?.warehouse
+          }
+        },
+        {
+          onSuccess: () => refetchSingleChat(),
+          onError: () => toast.error("Error on changing database")
+        }
+      );
+    else setSelectedDatabase(item);
   };
   const selectSchema = (item) => {
-    setSelectedSchema(item);
+    if (singleChat)
+      updateSnowflakeData.mutate(
+        {
+          id: chatId,
+          body: {
+            chat_id: chatId,
+            snowflake_account: credentials?.account_identifier,
+            database_name: selectedDatabase,
+            snowflake_schema: item,
+            warehouse: credentials?.warehouse
+          }
+        },
+        {
+          onSuccess: () => refetchSingleChat(),
+          onError: () => toast.error("Error on changing schema")
+        }
+      );
+    else setSelectedSchema(item);
   };
 
   useEffect(() => {
@@ -49,6 +87,11 @@ const Integration = () => {
 
     // Add a message handler to update component state
     const handleIncomingMessage = (message) => {
+      if (message === "Engine is not connected") {
+        websocket.sendMessage({
+          oauth_token: snowflakeToken?.access
+        });
+      }
       console.log(message);
     };
 
@@ -60,7 +103,14 @@ const Integration = () => {
       // Close WebSocket connection when component unmounts
       websocket.closeConnection();
     };
-  }, [chatId, token]);
+  }, [chatId, token, snowflakeToken]);
+
+  useEffect(() => {
+    if (!singleChat) return;
+
+    setSelectedDatabase(singleChat.snowflake_data?.database_name);
+    setSelectedSchema(singleChat.snowflake_data?.snowflake_schema);
+  }, [singleChat]);
 
   useEffect(() => {
     if (!integrationId) return;
