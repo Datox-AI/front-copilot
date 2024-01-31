@@ -49,7 +49,10 @@ const Chatting = ({
   refetch,
   setRelatedFiles,
   isAudit,
-  columnName
+  columnName,
+  snowflakeCredentials,
+  selectedDatabase,
+  selectedSchema
 }) => {
   const listRef = createRef();
 
@@ -121,6 +124,9 @@ const Chatting = ({
             handleSelectIntegration={handleSelectIntegration}
             onCloseIntegration={onCloseIntegration}
             refetch={refetch}
+            snowflakeCredentials={snowflakeCredentials}
+            selectedDatabase={selectedDatabase}
+            selectedSchema={selectedSchema}
           />
         )}
 

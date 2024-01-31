@@ -1,23 +1,16 @@
 import FileBar from "../Chat/FileBar";
+import websocket from "../../services/websocket";
 import useChatsAPI from "../../hooks/api/useChatsAPI";
 
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
-import {
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams
-} from "react-router-dom";
+import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
 import { _integrations } from "../../consts/integrations";
-import toast from "react-hot-toast";
-import websocket from "../../services/websocket";
+import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 
 const Integration = () => {
-  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -32,9 +25,19 @@ const Integration = () => {
   const { data, refetch } = useChatsAPI({
     isGetUsers: true
   });
+  const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
 
   const [activeChat, setActiveChat] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState([]);
+  const [selectedSchema, setSelectedSchema] = useState("");
+  const [selectedDatabase, setSelectedDatabase] = useState("");
+
+  const selectDatabase = (item) => {
+    setSelectedDatabase(item);
+  };
+  const selectSchema = (item) => {
+    setSelectedSchema(item);
+  };
 
   useEffect(() => {
     if (!chatId) return;
@@ -140,12 +143,17 @@ const Integration = () => {
   return (
     <Box width="100%" display="flex">
       <FileBar
-        activeIntegration={activeIntegration}
-        activeChat={activeChat}
-        relatedFiles={relatedFiles}
+        title="Chat"
         refetch={refetch}
         hideNewChatBtn={true}
-        title="Chat"
+        activeChat={activeChat}
+        relatedFiles={relatedFiles}
+        selectSchema={selectSchema}
+        selectDatabase={selectDatabase}
+        selectedSchema={selectedSchema}
+        snowflakeCredentials={credentials}
+        selectedDatabase={selectedDatabase}
+        activeIntegration={activeIntegration}
       />
       <Outlet
         context={{
@@ -157,7 +165,10 @@ const Integration = () => {
           handleSelectChat,
           chatId,
           refetch,
-          setRelatedFiles
+          setRelatedFiles,
+          snowflakeCredentials: credentials,
+          selectedDatabase,
+          selectedSchema
         }}
       />
     </Box>

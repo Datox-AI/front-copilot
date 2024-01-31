@@ -11,18 +11,12 @@ import { ReactComponent as ColumnsI } from "../../assets/icons/columns.svg";
 import { ReactComponent as DataPreviewI } from "../../assets/icons/data-preview.svg";
 import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
 import { Box, Button, CircularProgress } from "@mui/material";
-import {
-  SNOWFLAKE_REDIRECT_URL,
-  SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
-  SNOWFLAKE_TEST_CLIENT_ID,
-  SNOWFLAKE_TEST_CLIENT_SECRET,
-  SNOWFLAKE_TEST_TOKEN_ENDPOINT,
-  SNOWFLAKE_TEST_WAREHOUSE
-} from "../../consts/snowflake";
+import { SNOWFLAKE_REDIRECT_URL } from "../../consts/snowflake";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { onToggleItem } from "../../redux/integrations/integrationsSlice";
 import CustomSelect from "../CustomSelect";
+import SnowflakeDropdown from "../../pages/Chat/FileBar/SnowflakeDropdown";
 
 const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
   const { chatId } = useParams();
@@ -169,7 +163,14 @@ const NestedList = ({ data, onSelectItem, parent }) => {
   );
 };
 
-const NestedListContainer = ({ selectedDatabase, selectedSchema, refetch }) => {
+const NestedListContainer = ({
+  refetch,
+  selectSchema,
+  selectDatabase,
+  selectedSchema,
+  selectedDatabase,
+  snowflakeCredentials
+}) => {
   const {
     isConnected,
     initAuth,
@@ -203,12 +204,12 @@ const NestedListContainer = ({ selectedDatabase, selectedSchema, refetch }) => {
   const onAuth = () => {
     initAuth.mutate(
       {
-        account_identifier: SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
-        client_id: SNOWFLAKE_TEST_CLIENT_ID,
-        client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
-        token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
+        account_identifier: snowflakeCredentials?.account_identifier,
+        client_id: snowflakeCredentials?.client_id,
+        client_secret: snowflakeCredentials?.client_secret,
+        token_endpoint: snowflakeCredentials?.token_endpoint,
         redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        warehouse: SNOWFLAKE_TEST_WAREHOUSE
+        warehouse: snowflakeCredentials?.warehouse
       },
       {
         onSuccess: (res) => {
@@ -223,29 +224,28 @@ const NestedListContainer = ({ selectedDatabase, selectedSchema, refetch }) => {
 
   return (
     <Box display="flex" width="100%" flexDirection="column" my={2}>
-      <Box width="100%" display="flex" gap="10px" mb={2}>
-        <Box width="50%">
-          <CustomSelect
-            options={mutatedDatabases}
-            selectedValue={
-              !!selectedDatabase && {
-                label: selectedDatabase
-              }
-            }
-            placeholder="No database"
-          />
-        </Box>
-        <Box width="50%">
-          <CustomSelect
-            options={mutatedSchemas}
-            selectedValue={
-              !!selectedSchema && {
-                label: selectedSchema
-              }
-            }
-            placeholder="No schema"
-          />
-        </Box>
+      <Box width="100%" mb={1}>
+        <SnowflakeDropdown
+          label={
+            selectedDatabase || selectedSchema
+              ? [selectedDatabase, selectedSchema].join(".")
+              : "No database selected"
+          }
+          databases={
+            databases || [
+              "DATABASE1",
+              "DATABASE2",
+              "DATABASE3",
+              "DATABASE4",
+              "DATABASE5"
+            ]
+          }
+          schemas={["SCHEMA1", "SCHEMA2", "SCHEMA3", "SCHEMA4"]}
+          selectedDatabase={selectedDatabase}
+          selectedSchema={selectedSchema}
+          onSelectDatabase={selectDatabase}
+          onSelectSchema={selectSchema}
+        />
       </Box>
 
       {!isConnected ? (

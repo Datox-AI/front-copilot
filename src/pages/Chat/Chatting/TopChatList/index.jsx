@@ -15,7 +15,10 @@ const TopChatList = ({
   activeChat,
   activeIntegration,
   onCloseIntegration,
-  refetch
+  refetch,
+  snowflakeCredentials,
+  selectedDatabase,
+  selectedSchema
 }) => {
   const navigate = useNavigate();
   const { createChat, deleteChat } = useChatsAPI({});
@@ -24,9 +27,21 @@ const TopChatList = ({
 
   const onCreate = () => {
     const chatType =
-      activeIntegration?.type === "sql" ? "Analytics" : "FileSearch";
+      activeIntegration?.type === "sql" ? "DataAnalytics" : "FileSearch";
 
-    createChat.mutate(chatType, {
+    const payload = {
+      type: chatType,
+      snowflake_data: {
+        ...snowflakeCredentials,
+        snowflake_account: snowflakeCredentials?.account_identifier,
+        database_name: selectedDatabase,
+        snowflake_schema: selectedSchema
+      }
+    };
+
+    if (activeIntegration?.type !== "sql") delete payload.snowflake_data;
+
+    createChat.mutate(payload, {
       onSuccess: (res) => {
         refetch();
         navigate(res.id);
