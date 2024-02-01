@@ -4,7 +4,7 @@ import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 
 import { useEffect, useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { toggleIntegrationConfig } from "../../../../redux/integrations/integrationsSlice";
 import { integrationIcons } from "../../../../consts/integrations";
@@ -12,6 +12,7 @@ import { SNOWFLAKE_REDIRECT_URL } from "../../../../consts/snowflake";
 import { useNavigate } from "react-router-dom";
 
 export const IntegrationForm = ({
+  isCreate,
   initClientId,
   initWarehouse,
   initClientSecret,
@@ -21,7 +22,7 @@ export const IntegrationForm = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { initAuth } = useSnowflakeAPI();
+  const { initAuth, changeAuth } = useSnowflakeAPI();
 
   const [accountIdentifier, setAccountIdentifier] = useState(
     initAccountIdentifier
@@ -53,31 +54,51 @@ export const IntegrationForm = ({
 
   const close = () => {
     dispatch(toggleIntegrationConfig(null));
-    navigate("../");
+    navigate("/configs/snowflake");
   };
 
   const onAuth = () => {
-    initAuth.mutate(
-      {
-        account_identifier: accountIdentifier,
-        client_id: clientId,
-        client_secret: clientSecret,
-        token_endpoint: tokenEndpoint,
-        redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        warehouse: manualWarehouse
-      },
-      {
-        onSuccess: (res) => {
-          close();
-          window.location.replace(res.authorization_url);
+    if (isCreate)
+      initAuth.mutate(
+        {
+          account_identifier: accountIdentifier,
+          client_id: clientId,
+          client_secret: clientSecret,
+          token_endpoint: tokenEndpoint,
+          redirect_uri: SNOWFLAKE_REDIRECT_URL,
+          warehouse: manualWarehouse
         },
-        onError: (err) => {
-          console.log(err);
+        {
+          onSuccess: (res) => {
+            close();
+          },
+          onError: (err) => {
+            console.log(err);
 
-          toast.err(err.data.detail);
+            toast.err(err.data.detail);
+          }
         }
-      }
-    );
+      );
+    else {
+      changeAuth.mutate(
+        {
+          account_identifier: accountIdentifier,
+          client_id: clientId,
+          client_secret: clientSecret,
+          token_endpoint: tokenEndpoint,
+          redirect_uri: SNOWFLAKE_REDIRECT_URL,
+          warehouse: manualWarehouse
+        },
+        {
+          onSuccess: () => {
+            close();
+          },
+          onError: (err) => {
+            toast.err(err.data.detail);
+          }
+        }
+      );
+    }
   };
 
   return (
@@ -128,10 +149,14 @@ export const IntegrationForm = ({
       <div className={styles.footer}>
         <Button
           variant="contained"
-          disabled={initAuth.isLoading}
+          disabled={initAuth.isLoading || changeAuth.isLoading}
           onClick={onAuth}
         >
-          Connect
+          {initAuth.isLoading || changeAuth.isLoading ? (
+            <CircularProgress size={20} />
+          ) : (
+            "Submit"
+          )}
         </Button>
         <Button variant="outlined" onClick={close}>
           Cancel

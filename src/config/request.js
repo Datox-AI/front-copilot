@@ -18,7 +18,7 @@ const errorHandler = (error) => {
 
   return Promise.reject(error.response);
 };
-console.log(BASE_API_URL);
+
 request.interceptors?.request.use(
   (config) => {
     const token = store.getState()?.auth?.token;

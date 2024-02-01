@@ -21,13 +21,13 @@ const TopChatList = ({
   selectedSchema
 }) => {
   const navigate = useNavigate();
+
   const { createChat, deleteChat } = useChatsAPI({});
 
   const [deletableChatId, setDeletableChatId] = useState(null);
 
   const onCreate = () => {
-    const chatType =
-      activeIntegration?.type === "sql" ? "DataAnalytics" : "FileSearch";
+    const chatType = activeIntegration?.dataType;
 
     const payload = {
       type: chatType,
@@ -39,7 +39,8 @@ const TopChatList = ({
       }
     };
 
-    if (activeIntegration?.type !== "sql") delete payload.snowflake_data;
+    if (activeIntegration?.dataType !== "DataAnalytics")
+      delete payload.snowflake_data;
 
     createChat.mutate(payload, {
       onSuccess: (res) => {
@@ -58,13 +59,6 @@ const TopChatList = ({
       }
     });
   }, [deletableChatId]);
-
-  const filteredChats = useMemo(() => {
-    if (activeIntegration?.name === "Snowflake")
-      return chats?.filter((chat) => chat.type === "Analytics");
-
-    return chats?.filter((chat) => chat.type === "FileSearch");
-  }, [chats, activeIntegration]);
 
   const moreIntegrations = useMemo(
     () => [
@@ -98,20 +92,10 @@ const TopChatList = ({
           mainIcon={<AddRoundedIcon className={styles.more} />}
           data={moreIntegrations}
         />
-        {/* <button
-          style={{
-            background: "none",
-            outline: "none",
-            border: "none",
-            marginTop: 3
-          }}
-        >
-          <AddRoundedIcon />
-        </button> */}
       </div>
 
       <div className={styles.chatList}>
-        {filteredChats?.map((chat) => (
+        {chats?.map((chat) => (
           <ChatItem
             active={chat.id === activeChat?.id}
             name={chat.name}

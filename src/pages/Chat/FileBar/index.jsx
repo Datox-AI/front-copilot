@@ -26,8 +26,10 @@ const MessagesList = ({
     const _chats = chats?.filter((chat) =>
       search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
     );
+    // TODO
+    // return _chats?.filter((chat) => chat.messagesCount !== 0);
 
-    return _chats?.filter((chat) => chat.messagesCount !== 0);
+    return _chats;
   }, [chats, search, isAudit]);
 
   const pinnedChats = useMemo(() => {

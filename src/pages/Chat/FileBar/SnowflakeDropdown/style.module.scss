@@ -13,6 +13,16 @@
     background: #fff;
     padding: 8px 12px;
 
+    span {
+      width: 95%;
+      overflow: hidden;
+      word-break: normal;
+      text-align: left;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
     &.active,
     &:hover {
       background-color: #f6f5f8;

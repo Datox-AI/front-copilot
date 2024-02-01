@@ -20,8 +20,8 @@ const Chat = ({ isAudit }) => {
   const chats = useMemo(
     () =>
       isAudit
-        ? data?.lists
-        : data?.lists?.filter((chat) => chat?.type === "Analytics"),
+        ? data.length > 0
+        : data?.filter((chat) => chat?.type === "Analytics"),
     [data, isAudit]
   );
 
@@ -32,10 +32,10 @@ const Chat = ({ isAudit }) => {
   useEffect(() => {
     if (!chatId || !data) return;
 
-    const foundChat = data?.lists?.find((chat) => chat.id === chatId);
+    const foundChat = data?.find((chat) => chat.id === chatId);
 
     handleSelectChat(foundChat);
-  }, [chatId, data?.lists]);
+  }, [chatId, data]);
 
   return (
     <Box width="100%" display="flex">

@@ -18,22 +18,8 @@ const normalizer = (item, level, idx) => ({
   children: []
 });
 
-const snowflakeToken = {
-  access:
-    "ver:1-hint:39500814307338-ETMsDgAAAY1eX1ZQABRBRVMvQ0JDL1BLQ1M1UGFkZGluZwEAABAAELvIVsRLxU9XQP7KZzqpfvUAAABQ2fAg13rpxwJqpjW4xW2hVroXc3GOwmqAMGtNCCjgBHSu4cZM09Hc5vA+5NY8U3FVYcHOXqp9cLaWH955pFldBRc/dVeofme7+Hhs2z3u/PkAFGf8xr1acYw08sCGsKob+sNl7BoT",
-
-  refresh:
-    "ver:2-hint:39500814315526-did:2016-ETMsDgAAAY1eX1ZKABRBRVMvQ0JDL1BLQ1M1UGFkZGluZwEAABAAEO25bhw2meqkSxx+ntZ44ekAAADw0KLbvE926SCQkujEoY6UnfnRnf8xm1UvQyyXnpz94JJhb5DCHvhlC6+RflfYMNAJHRjSOYVD2O+thVJmJ2EcKCqMLlHIQBD/1rysUgkmgm6bYS2F/SZg+AlJ1Nh2xGrTBNv/mu5yUhQnnGsBBUsIrINNBK9ezIv2m4ieAD+ZN2XigjHMBZrYo0G1VZnocXp2aJh2vrJP+ry4OvfdA7XOgxG3svrR4gPn065tstkcVo6rKb+zxLKDki/oDe9DFWivxum4ZV3hMtWwaGiWGuI3l1+gFHeALWjdWSgeYNZO6eISz1Zgcz6PnKlyiitM46vpABTCDd0NZj1eCOoIpsWYTiFp0sN6YA==",
-  token_type: "Bearer",
-  username: "NURMUKHAMMAD",
-  scope: "refresh_token session:role:ACCOUNTADMIN",
-  refresh_token_expires_in: 7775999,
-  expires_in: 600,
-  idpInitiated: false
-};
-
 const useSnowflakeAPI = (props) => {
-  const { _snowflakeToken } = useSelector((store) => store.auth);
+  const { snowflakeToken } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
 
   const snowflakeData = useSelector(
@@ -47,7 +33,13 @@ const useSnowflakeAPI = (props) => {
 
   const { data: credentials } = useQuery(
     ["GET_SNOWFLAKE_USER_CREDENTIALS"],
-    () => snowflakeAPI.get("get_oauth"),
+    () =>
+      snowflakeAPI.get("get_oauth", {
+        params: {
+          token: snowflakeToken.access
+        }
+      }),
+
     {
       enabled: props?.enableUserCredentials
     }
@@ -62,7 +54,7 @@ const useSnowflakeAPI = (props) => {
         }
       }),
     {
-      enabled: props?.enableDatabases && !!snowflakeToken?.access
+      enabled: props?.enableDatabases && !!snowflakeToken.access
     }
   );
 
@@ -75,7 +67,7 @@ const useSnowflakeAPI = (props) => {
         }
       }),
     {
-      enabled: !!props?.database && !!snowflakeToken?.access
+      enabled: !!props?.database && !!snowflakeToken.access
     }
   );
 
@@ -97,7 +89,7 @@ const useSnowflakeAPI = (props) => {
         }`,
         {
           params: {
-            token: snowflakeToken?.access
+            token: snowflakeToken.access
           }
         }
       ),
@@ -144,6 +136,12 @@ const useSnowflakeAPI = (props) => {
   );
 
   const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
+
+  const changeAuth = useMutation((data) =>
+    snowflakeAPI.put("update_oauth", data)
+  );
+
+  const deleteAuth = useMutation(() => snowflakeAPI.delete("delete_oauth"));
 
   const setError = useCallback(
     (dbName, error, schemaName) => {
@@ -462,6 +460,8 @@ const useSnowflakeAPI = (props) => {
     isLoadingColumns,
     previewData,
     credentials,
+    deleteAuth,
+    changeAuth,
     isLoadingPreviewData,
     refetchPreviewData,
     refetchColumns,

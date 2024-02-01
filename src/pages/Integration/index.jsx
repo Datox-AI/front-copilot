@@ -3,7 +3,7 @@ import websocket from "../../services/websocket";
 import useChatsAPI from "../../hooks/api/useChatsAPI";
 
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
@@ -42,11 +42,9 @@ const Integration = () => {
         {
           id: chatId,
           body: {
+            ...singleChat?.snowflake_data,
             chat_id: chatId,
-            snowflake_account: credentials?.account_identifier,
-            database_name: item,
-            snowflake_schema: selectedSchema,
-            warehouse: credentials?.warehouse
+            database_name: item
           }
         },
         {
@@ -62,11 +60,9 @@ const Integration = () => {
         {
           id: chatId,
           body: {
-            chat_id: chatId,
-            snowflake_account: credentials?.account_identifier,
-            database_name: selectedDatabase,
+            ...singleChat?.snowflake_data,
             snowflake_schema: item,
-            warehouse: credentials?.warehouse
+            chat_id: chatId
           }
         },
         {
@@ -87,12 +83,11 @@ const Integration = () => {
 
     // Add a message handler to update component state
     const handleIncomingMessage = (message) => {
-      if (message === "Engine is not connected") {
+      if (message?.message === "Engine is not connected") {
         websocket.sendMessage({
           oauth_token: snowflakeToken?.access
         });
       }
-      console.log(message);
     };
 
     websocket.addMessageHandler(handleIncomingMessage);
@@ -170,23 +165,22 @@ const Integration = () => {
 
   const handleSelectChat = (integration) => setActiveChat(integration);
 
+  const filteredChats = useMemo(
+    () => data?.filter((chat) => chat?.type === activeIntegration?.dataType),
+    [activeIntegration, data]
+  );
+
   useEffect(() => {
-    if (!chatId && !data) return;
+    if (!chatId && !filteredChats) return;
 
-    const mutatedData = data?.lists?.filter(
-      (chat) =>
-        chat?.type ===
-        (activeIntegration?.type === "sql" ? "Analytics" : "FileSearch")
-    );
+    const foundChat = filteredChats?.find((chat) => chat.id === chatId);
 
-    const foundChat = mutatedData?.find((chat) => chat.id === chatId);
-
-    if (integrationId && mutatedData?.length > 0 && (!chatId || !foundChat)) {
-      navigate(`/integration/${integrationId}/${mutatedData[0]?.id || ""}`);
+    if (integrationId && filteredChats?.length > 0 && (!chatId || !foundChat)) {
+      navigate(`/integration/${integrationId}/${filteredChats[0]?.id || ""}`);
     }
 
     handleSelectChat(foundChat);
-  }, [chatId, data, integrationId, activeIntegration]);
+  }, [chatId, filteredChats, integrationId, activeIntegration]);
 
   if (!integrationId) return <Navigate to="../" />;
 
@@ -208,7 +202,7 @@ const Integration = () => {
       <Outlet
         context={{
           integrations: openedIntegrations,
-          chats: data?.lists,
+          chats: filteredChats,
           activeChat,
           activeIntegration,
           onCloseIntegration,

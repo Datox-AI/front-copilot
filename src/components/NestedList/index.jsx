@@ -3,20 +3,18 @@ import classNames from "classnames";
 import PopoverMenu from "../PopoverMenu";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+import SnowflakeDropdown from "../../pages/Chat/FileBar/SnowflakeDropdown";
 
 import { ReactComponent as MoreVertI } from "../../assets/icons/vertical-dots.svg";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
 import { ReactComponent as ColumnsI } from "../../assets/icons/columns.svg";
 import { ReactComponent as DataPreviewI } from "../../assets/icons/data-preview.svg";
 import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
 import { Box, Button, CircularProgress } from "@mui/material";
-import { SNOWFLAKE_REDIRECT_URL } from "../../consts/snowflake";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { onToggleItem } from "../../redux/integrations/integrationsSlice";
-import CustomSelect from "../CustomSelect";
-import SnowflakeDropdown from "../../pages/Chat/FileBar/SnowflakeDropdown";
 
 const NestedListItem = ({ listItem, onSelectItem, zIndex }) => {
   const { chatId } = useParams();
@@ -164,96 +162,61 @@ const NestedList = ({ data, onSelectItem, parent }) => {
 };
 
 const NestedListContainer = ({
-  refetch,
   selectSchema,
   selectDatabase,
   selectedSchema,
   selectedDatabase,
   snowflakeCredentials
 }) => {
-  const {
-    isConnected,
-    initAuth,
-    snowflakeData,
-    onSelectItem,
-    databases,
-    schemas
-  } = useSnowflakeAPI({
-    enableDatabases: true,
-    database: selectedDatabase
-  });
+  const { isConnected, snowflakeData, onSelectItem, databases } =
+    useSnowflakeAPI({
+      enableDatabases: true,
+      database: selectedDatabase
+    });
 
-  const mutatedDatabases = useMemo(() => {
-    if (!databases) return [];
-
-    return databases.map((db) => ({
-      label: db,
-      onClick: (db) => console.log(db)
-    }));
-  }, [databases]);
-
-  const mutatedSchemas = useMemo(() => {
-    if (!schemas) return [];
-
-    return schemas.map((sch) => ({
-      label: sch,
-      onClick: (sch) => console.log(sch)
-    }));
-  }, [schemas]);
-
-  const onAuth = () => {
-    initAuth.mutate(
-      {
-        account_identifier: snowflakeCredentials?.account_identifier,
-        client_id: snowflakeCredentials?.client_id,
-        client_secret: snowflakeCredentials?.client_secret,
-        token_endpoint: snowflakeCredentials?.token_endpoint,
-        redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        warehouse: snowflakeCredentials?.warehouse
-      },
-      {
-        onSuccess: (res) => {
-          window.location.replace(res.authorization_url);
-        },
-        onError: (err) => {
-          toast.err(err.data.detail);
-        }
-      }
-    );
+  const onAuth = async () => {
+    window.location.replace(snowflakeCredentials.authorization_url);
   };
 
   return (
     <Box display="flex" width="100%" flexDirection="column" my={2}>
-      <Box width="100%" mb={1}>
-        <SnowflakeDropdown
-          label={
-            selectedDatabase || selectedSchema
-              ? [selectedDatabase, selectedSchema].join(".")
-              : "No database selected"
-          }
-          databases={
-            databases || [
-              "DATABASE1",
-              "DATABASE2",
-              "DATABASE3",
-              "DATABASE4",
-              "DATABASE5"
-            ]
-          }
-          schemas={["SCHEMA1", "SCHEMA2", "SCHEMA3", "SCHEMA4"]}
-          selectedDatabase={selectedDatabase}
-          selectedSchema={selectedSchema}
-          onSelectDatabase={selectDatabase}
-          onSelectSchema={selectSchema}
-        />
-      </Box>
-
       {!isConnected ? (
         <Button variant="contained" onClick={onAuth}>
           Connect
         </Button>
       ) : (
-        <NestedList data={snowflakeData} onSelectItem={onSelectItem} />
+        <>
+          <Box width="100%" mb={1}>
+            <SnowflakeDropdown
+              label={
+                selectedDatabase || selectedSchema
+                  ? [selectedDatabase, selectedSchema].join(".")
+                  : "No database selected"
+              }
+              databases={
+                databases || [
+                  "FINANCE INFORMATION",
+                  "FROSTY_SAMPLE",
+                  "DATABASE3",
+                  "DATABASE4",
+                  "DATABASE5"
+                ]
+              }
+              schemas={[
+                "INFORMATION_SCHEMA",
+                "CYBERSYN_FINANCIAL",
+                "SCHEMA3",
+                "SCHEMA4"
+              ]}
+              selectedDatabase={selectedDatabase}
+              selectedSchema={selectedSchema}
+              onSelectDatabase={selectDatabase}
+              onSelectSchema={selectSchema}
+            />
+          </Box>
+
+          <NestedList data={snowflakeData} onSelectItem={onSelectItem} />
+        </>
       )}
     </Box>
   );
