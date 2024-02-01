@@ -31,6 +31,20 @@ const useSnowflakeAPI = (props) => {
     [snowflakeToken?.access]
   );
 
+  const { data: credentials } = useQuery(
+    ["GET_SNOWFLAKE_USER_CREDENTIALS"],
+    () =>
+      snowflakeAPI.get("get_oauth", {
+        params: {
+          token: snowflakeToken.access
+        }
+      }),
+
+    {
+      enabled: props?.enableUserCredentials
+    }
+  );
+
   const { data: databases } = useQuery(
     ["GET_DATABASES"],
     () =>
@@ -40,7 +54,7 @@ const useSnowflakeAPI = (props) => {
         }
       }),
     {
-      enabled: props?.enableDatabases && !!snowflakeToken?.access
+      enabled: props?.enableDatabases && !!snowflakeToken.access
     }
   );
 
@@ -49,11 +63,11 @@ const useSnowflakeAPI = (props) => {
     () =>
       snowflakeAPI.get("schemas/" + props?.database, {
         params: {
-          token: snowflakeToken
+          token: snowflakeToken?.access
         }
       }),
     {
-      enabled: props?.database && !!snowflakeToken
+      enabled: !!props?.database && !!snowflakeToken.access
     }
   );
 
@@ -75,7 +89,7 @@ const useSnowflakeAPI = (props) => {
         }`,
         {
           params: {
-            token: snowflakeToken?.access
+            token: snowflakeToken.access
           }
         }
       ),
@@ -122,6 +136,12 @@ const useSnowflakeAPI = (props) => {
   );
 
   const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
+
+  const changeAuth = useMutation((data) =>
+    snowflakeAPI.put("update_oauth", data)
+  );
+
+  const deleteAuth = useMutation(() => snowflakeAPI.delete("delete_oauth"));
 
   const setError = useCallback(
     (dbName, error, schemaName) => {
@@ -439,6 +459,9 @@ const useSnowflakeAPI = (props) => {
     columns,
     isLoadingColumns,
     previewData,
+    credentials,
+    deleteAuth,
+    changeAuth,
     isLoadingPreviewData,
     refetchPreviewData,
     refetchColumns,

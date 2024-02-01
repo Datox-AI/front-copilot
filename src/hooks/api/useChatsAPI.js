@@ -22,12 +22,28 @@ const useChatsAPI = ({ isGetUsers = false, userId, chatId }) => {
     }
   );
 
-  const createChat = useMutation((type) =>
-    request.post("/api/chats", { type })
+  const {
+    data: singleChat,
+    isLoading: isLoadingSingleChat,
+    refetch: refetchSingleChat
+  } = useQuery(
+    ["GET_CHAT_HISTORY", chatId],
+    async () => await request.get(`/api/chats/chat-history/${chatId}`),
+    {
+      enabled: !!chatId
+    }
+  );
+
+  const createChat = useMutation((data) =>
+    request.post("/api/chats", { ...data })
   );
 
   const updateChat = useMutation((data) =>
     request.put("/api/chats/" + data.id, data.body)
+  );
+
+  const updateSnowflakeData = useMutation((data) =>
+    request.put("/api/chats/snowflake-data/" + data.id, data.body)
   );
 
   const deleteChat = useMutation((id) => request.delete("/api/chats/" + id));
@@ -44,12 +60,14 @@ const useChatsAPI = ({ isGetUsers = false, userId, chatId }) => {
     isLoadingChat,
     generateChatName,
     refetchChat,
+    singleChat,
+    isLoadingSingleChat,
+    refetchSingleChat,
     createChat,
     deleteChat,
-    updateChat
+    updateChat,
+    updateSnowflakeData
   };
-
-  return;
 };
 
 export default useChatsAPI;

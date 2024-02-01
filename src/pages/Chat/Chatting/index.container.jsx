@@ -22,7 +22,10 @@ const ChattingContainer = ({}) => {
     chatId,
     refetch,
     setRelatedFiles,
-    isAudit
+    isAudit,
+    snowflakeCredentials,
+    selectedDatabase,
+    selectedSchema
   } = useOutletContext();
 
   return (
@@ -41,6 +44,9 @@ const ChattingContainer = ({}) => {
       columnName={columnName}
       setRelatedFiles={setRelatedFiles}
       isAudit={isAudit}
+      snowflakeCredentials={snowflakeCredentials}
+      selectedDatabase={selectedDatabase}
+      selectedSchema={selectedSchema}
     />
   );
 };

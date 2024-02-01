@@ -13,20 +13,22 @@ const refreshToken = async () =>
   new Promise(async (resolve, reject) => {
     const token = store.getState()?.auth?.snowflakeToken?.refresh;
 
-    snowflakeAPI
-      .post("refresh_token?refresh_token=" + token)
-      .then((res) => resolve(res))
-      .catch((err) => {
-        store.dispatch(setSnowflakeToken(null));
-        reject(err);
-      });
+    if (token)
+      snowflakeAPI
+        .post("refresh_token?refresh_token=" + token)
+        .then((res) => resolve(res))
+        .catch((err) => {
+          store.dispatch(setSnowflakeToken(null));
+          store.dispatch(setSnowflakeRefreshToken(null));
+          reject(null);
+        });
   });
 
 const errorHandler = async (error) => {
   const status = error.response?.status;
   const originalRequest = error.config;
 
-  if (status === 401) {
+  if (status === 401 && !error.config.url.includes("refresh_token")) {
     const res = await refreshToken();
 
     store.dispatch(setSnowflakeToken(res.access_token));
@@ -43,10 +45,15 @@ snowflakeAPI.defaults.headers.post["Access-Control-Allow-Origin"] = "*";
 
 snowflakeAPI.interceptors?.request.use(
   (config) => {
-    const token = store.getState()?.auth?.token;
+    const token = store.getState()?.auth?.snowflakeToken?.access;
+    const apiToken = store.getState()?.auth?.token;
 
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`;
+      config.headers["Token"] = `Bearer ${token}`;
+    }
+
+    if (apiToken) {
+      config.headers["Authorization"] = `Bearer ${apiToken}`;
     }
 
     return config;
