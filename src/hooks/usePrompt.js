@@ -38,7 +38,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
 
   const updateLastMessage = (text) => {
     const _cachedMsgs = [
-      ...(queryClient?.getQueryData(["GET_MESSAGES", chatId])?.lists || [])
+      ...(queryClient?.getQueryData(["GET_MESSAGES", chatId]) || [])
     ];
 
     const lastIndex = _cachedMsgs.length - 1;
@@ -49,9 +49,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       isTyping: true
     };
 
-    queryClient.setQueryData(["GET_MESSAGES", chatId], {
-      lists: [..._cachedMsgs]
-    });
+    queryClient.setQueryData(["GET_MESSAGES", chatId], [..._cachedMsgs]);
     scrollToTheEndOfTheChat();
   };
 
@@ -195,13 +193,12 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       role: "Assistant"
     };
 
-    const _cachedMsgs = [
-      ...queryClient.getQueryData(["GET_MESSAGES", chatId])?.lists
-    ];
+    const _cachedMsgs = [...queryClient.getQueryData(["GET_MESSAGES", chatId])];
 
-    queryClient.setQueryData(["GET_MESSAGES", chatId], {
-      lists: [..._cachedMsgs, { ...newMSG }]
-    });
+    queryClient.setQueryData(
+      ["GET_MESSAGES", chatId],
+      [..._cachedMsgs, { ...newMSG }]
+    );
 
     dispatch(clearFiles({ chatId }));
 
@@ -214,7 +211,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       },
       body: JSON.stringify({
         prompt: message,
-        replyTo: replyMessage?.id,
+        replyTo: replyMessage?.id || "",
         files: [...(files || []).map((file) => file.fileId)]
       })
     })
@@ -242,13 +239,12 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       role: "User"
     };
 
-    const _cachedMsgs = [
-      ...queryClient.getQueryData(["GET_MESSAGES", chatId])?.lists
-    ];
+    const _cachedMsgs = [...queryClient.getQueryData(["GET_MESSAGES", chatId])];
 
-    queryClient.setQueryData(["GET_MESSAGES", chatId], {
-      lists: [..._cachedMsgs, { ...newMSG }]
-    });
+    queryClient.setQueryData(
+      ["GET_MESSAGES", chatId],
+      [..._cachedMsgs, { ...newMSG }]
+    );
 
     setQuestions([]);
     setReplyMessage(null);

@@ -6,7 +6,7 @@ export const BASE_API_URL = process.env.REACT_APP_BASE_API_URL;
 export const COPILOT_API_KEY = process.env.REACT_APP_COPILOT_API_KEY;
 
 export const request = axios.create({
-  baseURL: "https://newcopilotwebapi.azurewebsites.net" || BASE_API_URL
+  baseURL: BASE_API_URL
 });
 
 const errorHandler = (error) => {
