@@ -33,7 +33,7 @@ const SnowflakeConfigAdd = () => {
           </Box>
         </Box>
         <IntegrationForm
-          isCreate={!id}
+          isCreate={id === "create"}
           initWarehouse={credentials?.warehouse}
           initClientId={location.state?.clientId || credentials?.client_id}
           initAccountIdentifier={

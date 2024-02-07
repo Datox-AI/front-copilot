@@ -151,7 +151,7 @@ const Chatting = ({
         )}
         <div className={styles.chatting}>
           <div className={styles.messages}>
-            {data?.lists?.length > 0 || isLoading ? (
+            {data?.length > 0 || isLoading ? (
               <Messages
                 ref={listRef}
                 data={data}

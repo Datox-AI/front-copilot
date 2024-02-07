@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "react-query";
 import { request } from "../../config/request";
 
-const getMessages = (chatId) => request.get(`/api/messages/${chatId}`);
+const getMessages = (chatId) => request.get(`/api/chats/${chatId}/messages`);
 const pinMessage = (data, chatId) =>
   request.put(`/api/chats/${chatId}/messages/${data.id}`, { ...data.body });
 const unpinMessage = (data, chatId) =>

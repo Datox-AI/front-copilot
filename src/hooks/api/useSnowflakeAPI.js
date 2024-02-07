@@ -33,12 +33,7 @@ const useSnowflakeAPI = (props) => {
 
   const { data: credentials } = useQuery(
     ["GET_SNOWFLAKE_USER_CREDENTIALS"],
-    () =>
-      snowflakeAPI.get("get_oauth", {
-        params: {
-          token: snowflakeToken.access
-        }
-      }),
+    () => snowflakeAPI.get("api/snowflake_integration/get_oauth"),
 
     {
       enabled: props?.enableUserCredentials
@@ -48,7 +43,7 @@ const useSnowflakeAPI = (props) => {
   const { data: databases } = useQuery(
     ["GET_DATABASES"],
     () =>
-      snowflakeAPI.get("databases", {
+      snowflakeAPI.get("api/snowflake_integration/databases", {
         params: {
           token: snowflakeToken?.access
         }
@@ -61,7 +56,7 @@ const useSnowflakeAPI = (props) => {
   const { data: schemas } = useQuery(
     ["GET_SCHEMAS", props?.database],
     () =>
-      snowflakeAPI.get("schemas/" + props?.database, {
+      snowflakeAPI.get("api/snowflake_integration/schemas/" + props?.database, {
         params: {
           token: snowflakeToken?.access
         }
@@ -84,9 +79,9 @@ const useSnowflakeAPI = (props) => {
     ],
     () =>
       snowflakeAPI(
-        `columns/${props?.database}/${props?.schema}/${
-          props?.table || props?.view
-        }`,
+        `api/snowflake_integration/columns/${props?.database}/${
+          props?.schema
+        }/${props?.table || props?.view}`,
         {
           params: {
             token: snowflakeToken.access
@@ -116,9 +111,9 @@ const useSnowflakeAPI = (props) => {
     ],
     () =>
       snowflakeAPI(
-        `preview_data/${props?.database}/${props?.schema}/${
-          props?.table || props?.view
-        }`,
+        `api/snowflake_integration/preview_data/${props?.database}/${
+          props?.schema
+        }/${props?.table || props?.view}`,
         {
           params: {
             token: snowflakeToken?.access
@@ -135,13 +130,17 @@ const useSnowflakeAPI = (props) => {
     }
   );
 
-  const initAuth = useMutation((data) => snowflakeAPI.post("init_oauth", data));
-
-  const changeAuth = useMutation((data) =>
-    snowflakeAPI.put("update_oauth", data)
+  const initAuth = useMutation((data) =>
+    snowflakeAPI.post("api/snowflake_integration/init_oauth", data)
   );
 
-  const deleteAuth = useMutation(() => snowflakeAPI.delete("delete_oauth"));
+  const changeAuth = useMutation((data) =>
+    snowflakeAPI.put("api/snowflake_integration/update_oauth", data)
+  );
+
+  const deleteAuth = useMutation(() =>
+    snowflakeAPI.delete("api/snowflake_integration/delete_oauth")
+  );
 
   const setError = useCallback(
     (dbName, error, schemaName) => {
@@ -187,7 +186,7 @@ const useSnowflakeAPI = (props) => {
   const getSchemas = (dbName) => {
     dispatch(setStatusIsFetching({ itemName: dbName, status: true }));
     snowflakeAPI
-      .get("schemas/" + dbName, {
+      .get("api/snowflake_integartion/schemas/" + dbName, {
         params: {
           token: snowflakeToken?.access
         }
@@ -225,7 +224,7 @@ const useSnowflakeAPI = (props) => {
 
   const checkSchema = (dbName, schemaName) =>
     snowflakeAPI
-      .get("select_schema", {
+      .get("api/snowflake_integration/select_schema", {
         params: {
           token: snowflakeToken?.access,
           db_name: dbName,
@@ -288,7 +287,7 @@ const useSnowflakeAPI = (props) => {
 
   const getTables = (dbName, schemaName) =>
     snowflakeAPI
-      .get(`tables/${dbName}/${schemaName}`, {
+      .get(`api/snowflake_integration/tables/${dbName}/${schemaName}`, {
         params: {
           token: snowflakeToken?.access
         }
@@ -347,7 +346,7 @@ const useSnowflakeAPI = (props) => {
 
   const getViews = (dbName, schemaName) =>
     snowflakeAPI
-      .get(`views/${dbName}/${schemaName}`, {
+      .get(`api/snowflake_integration/views/${dbName}/${schemaName}`, {
         params: {
           token: snowflakeToken?.access
         }
@@ -438,7 +437,8 @@ const useSnowflakeAPI = (props) => {
   };
 
   useEffect(() => {
-    if (!databases || snowflakeData.length > 0) return;
+    // if (!databases || snowflakeData.length > 0) return;
+    if (!databases) return;
 
     dispatch(
       setSnowflakeData([
@@ -448,7 +448,7 @@ const useSnowflakeAPI = (props) => {
         }))
       ])
     );
-  }, [databases, snowflakeData]);
+  }, [databases]);
 
   return {
     isConnected,
