@@ -168,7 +168,7 @@ const NestedListContainer = ({
   selectedDatabase,
   snowflakeCredentials
 }) => {
-  const { isConnected, snowflakeData, onSelectItem, databases } =
+  const { isConnected, snowflakeData, onSelectItem, databases, schemas } =
     useSnowflakeAPI({
       enableDatabases: true,
       database: selectedDatabase
@@ -193,21 +193,8 @@ const NestedListContainer = ({
                   ? [selectedDatabase, selectedSchema].join(".")
                   : "No database selected"
               }
-              databases={
-                databases || [
-                  "FINANCE INFORMATION",
-                  "FROSTY_SAMPLE",
-                  "DATABASE3",
-                  "DATABASE4",
-                  "DATABASE5"
-                ]
-              }
-              schemas={[
-                "INFORMATION_SCHEMA",
-                "CYBERSYN_FINANCIAL",
-                "SCHEMA3",
-                "SCHEMA4"
-              ]}
+              databases={databases?.databases}
+              schemas={schemas?.schemas}
               selectedDatabase={selectedDatabase}
               selectedSchema={selectedSchema}
               onSelectDatabase={selectDatabase}

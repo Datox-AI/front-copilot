@@ -150,21 +150,25 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
 
             dataString += decoder.decode(value);
 
-            const _messages = dataString.split("\n\n");
-            dataString = _messages.pop();
+            console.log(dataString);
+            onParseTypes("Text", { Text: dataString });
 
-            _messages.forEach((message) => {
-              const line = message.trim();
+            // TODO: DO NOT DELETE
+            // const _messages = dataString.split("\n\n");
+            // dataString = _messages.pop();
 
-              if (!line.startsWith("data:")) return;
+            // _messages.forEach((message) => {
+            //   const line = message.trim();
 
-              const jsonString = line.substring(5).trim();
-              const dataJSON = JSON.parse(jsonString);
+            //   if (!line.startsWith("data:")) return;
 
-              if (!dataJSON) return;
+            //   const jsonString = line.substring(5).trim();
+            //   const dataJSON = JSON.parse(jsonString);
 
-              onParseTypes(dataJSON.Type, dataJSON);
-            });
+            //   if (!dataJSON) return;
+
+            //   onParseTypes(dataJSON.Type, dataJSON);
+            // });
 
             try {
               read();
@@ -185,7 +189,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   const fetchStream = (message) => {
     let newMSG = {
       prompt: "",
-      created: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
       files: [],
       replyTo: null,
@@ -193,7 +197,9 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       role: "Assistant"
     };
 
-    const _cachedMsgs = [...queryClient.getQueryData(["GET_MESSAGES", chatId])];
+    const _cachedMsgs = [
+      ...(queryClient.getQueryData(["GET_MESSAGES", chatId]) || [])
+    ];
 
     queryClient.setQueryData(
       ["GET_MESSAGES", chatId],
@@ -211,7 +217,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       },
       body: JSON.stringify({
         prompt: message,
-        replyTo: replyMessage?.id || "",
+        replyTo: replyMessage?.id,
         files: [...(files || []).map((file) => file.fileId)]
       })
     })
@@ -225,7 +231,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
     // creating mock message before fetching
     let newMSG = {
       prompt: text,
-      created: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
+      created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
       files: [
         ...(files || []).map((file) => ({
@@ -239,7 +245,9 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
       role: "User"
     };
 
-    const _cachedMsgs = [...queryClient.getQueryData(["GET_MESSAGES", chatId])];
+    const _cachedMsgs = [
+      ...(queryClient.getQueryData(["GET_MESSAGES", chatId]) || [])
+    ];
 
     queryClient.setQueryData(
       ["GET_MESSAGES", chatId],

@@ -46,7 +46,7 @@ const SnowflakeDropdown = ({
               onSelect={onSelectDatabase}
             />
           </div>
-          {!!selectedDatabase && schemas.length > 0 && (
+          {!!databases?.length > 0 && schemas?.length > 0 && (
             <div className={styles.dropdownSchema}>
               <DropdownWrapper
                 data={schemas}

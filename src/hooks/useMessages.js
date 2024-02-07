@@ -15,7 +15,7 @@ const useMessages = ({ activeChat, refetch, data, chatId, listRef }) => {
 
   useEffect(() => {
     if (!data || !activeChat) return;
-    if (data.lists.length > 2) return;
+    if (data.length > 2) return;
     if (activeChat?.name !== "New Chat") return;
 
     generateChatName.mutate(activeChat?.id, {
@@ -28,21 +28,21 @@ const useMessages = ({ activeChat, refetch, data, chatId, listRef }) => {
   }, [chatId]);
 
   useEffect(() => {
-    if (!oneTimeRenderRef.current && data?.lists.length > 0) {
+    if (!oneTimeRenderRef.current && data?.length > 0) {
       listRef.current?.scrollIntoView({
         block: "end"
       });
 
       oneTimeRenderRef.current = true;
     }
-  }, [data?.lists, chatId, oneTimeRenderRef.current]);
+  }, [data, chatId, oneTimeRenderRef.current]);
 
   const groupedMessages = useMemo(() => {
-    if (!data || !data.lists) return [];
+    if (!data || data?.length === 0) return [];
 
     // Group messages by date
-    const groups = data.lists.reduce((groups, message) => {
-      const date = message.created.split("T")[0];
+    const groups = data.reduce((groups, message) => {
+      const date = message.created_at.split("T")[0];
       if (!groups[date]) {
         groups[date] = [];
       }

@@ -78,7 +78,7 @@ const Integration = () => {
 
     // Connect to WebSocket when component mounts
     websocket.connect(
-      `wss://newcopilotwebapi.azurewebsites.net/agent/ws/${chatId}?token=${token}`
+      `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws/${chatId}?token=${token}`
     );
 
     // Add a message handler to update component state
