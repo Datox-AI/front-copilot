@@ -83,6 +83,7 @@ const Integration = () => {
 
     // Add a message handler to update component state
     const handleIncomingMessage = (message) => {
+      console.log(message);
       if (message?.message === "Engine is not connected") {
         websocket.sendMessage({
           oauth_token: snowflakeToken?.access
