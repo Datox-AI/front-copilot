@@ -149,26 +149,23 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
             }
 
             dataString += decoder.decode(value);
+            const str = decoder.decode(value);
 
-            console.log(dataString);
-            onParseTypes("Text", { Text: dataString });
+            const _messages = dataString.split("\n\n");
+            dataString = _messages.pop();
 
-            // TODO: DO NOT DELETE
-            // const _messages = dataString.split("\n\n");
-            // dataString = _messages.pop();
+            _messages.forEach((message) => {
+              const line = message.trim();
 
-            // _messages.forEach((message) => {
-            //   const line = message.trim();
+              if (!line.startsWith("data:")) return;
 
-            //   if (!line.startsWith("data:")) return;
+              const jsonString = line.substring(5).trim();
+              const dataJSON = JSON.parse(jsonString);
 
-            //   const jsonString = line.substring(5).trim();
-            //   const dataJSON = JSON.parse(jsonString);
+              if (!dataJSON) return;
 
-            //   if (!dataJSON) return;
-
-            //   onParseTypes(dataJSON.Type, dataJSON);
-            // });
+              onParseTypes(dataJSON.Type, dataJSON);
+            });
 
             try {
               read();
