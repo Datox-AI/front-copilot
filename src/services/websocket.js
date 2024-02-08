@@ -33,7 +33,7 @@ class WebSocketService {
 
   sendMessage(message) {
     if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(message));
+      this.socket.send(message);
     } else {
       console.error("WebSocket is not open. Unable to send message.");
     }

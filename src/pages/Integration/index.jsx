@@ -85,9 +85,7 @@ const Integration = () => {
     const handleIncomingMessage = (message) => {
       console.log(message);
       if (message?.message === "Engine is not connected") {
-        websocket.sendMessage({
-          oauth_token: snowflakeToken?.access
-        });
+        websocket.sendMessage(`{ "oauth_token": ${snowflakeToken?.access} }`);
       }
     };
 
@@ -99,7 +97,7 @@ const Integration = () => {
       // Close WebSocket connection when component unmounts
       websocket.closeConnection();
     };
-  }, [chatId, token, snowflakeToken?.access]);
+  }, [chatId, token, snowflakeToken]);
 
   useEffect(() => {
     if (!singleChat) return;
