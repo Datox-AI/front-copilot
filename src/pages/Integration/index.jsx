@@ -99,7 +99,7 @@ const Integration = () => {
       // Close WebSocket connection when component unmounts
       websocket.closeConnection();
     };
-  }, [chatId, token, snowflakeToken]);
+  }, [chatId, token, snowflakeToken?.access]);
 
   useEffect(() => {
     if (!singleChat) return;
