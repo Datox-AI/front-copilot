@@ -186,7 +186,7 @@ const useSnowflakeAPI = (props) => {
   const getSchemas = (dbName) => {
     dispatch(setStatusIsFetching({ itemName: dbName, status: true }));
     snowflakeAPI
-      .get("api/snowflake_integartion/schemas/" + dbName, {
+      .get("api/snowflake_integration/schemas/" + dbName, {
         params: {
           token: snowflakeToken?.access
         }
