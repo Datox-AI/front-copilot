@@ -87,8 +87,13 @@ const Integration = () => {
       dispatch(startStreaming({ chatId }));
       websocket.sendMessage(txt);
     },
-    [websocket]
+    [websocket, chatId]
   );
+
+  useEffect(() => {
+    if (isAgentConnected) toast.success("Agent successfuly connected");
+    else toast.error("Agent not running");
+  }, [isAgentConnected]);
 
   useEffect(() => {
     if (!chatId) return;
@@ -131,6 +136,8 @@ const Integration = () => {
             dispatch(
               setTextToGenerator({ chatId, text: "Unexepected error happened" })
             );
+
+            setIsAgentConnected(false);
 
             timeout = setTimeout(() => {
               dispatch(stopStreaming({ chatId }));
@@ -267,6 +274,7 @@ const Integration = () => {
           selectedDatabase,
           selectedSchema,
           isAgentConnected,
+
           sendMessageToAgent: handleWebsocketMessage
         }}
       />

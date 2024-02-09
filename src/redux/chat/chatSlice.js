@@ -76,7 +76,8 @@ const chatSlice = createSlice({
       state.textGenerator[payload.chatId].questions = [...payload.questions];
     },
     startStreaming: (state, { payload }) => {
-      state.textGenerator[payload.chatId].isStreaming = true;
+      if (state.textGenerator[payload.chatId])
+        state.textGenerator[payload.chatId].isStreaming = true;
     },
     stopStreaming: (state, { payload }) => {
       state.textGenerator[payload.chatId].isStreaming = false;
