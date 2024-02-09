@@ -110,7 +110,7 @@ const Messages = forwardRef(
                       files={message.files}
                       showDots={!realMessage.trim()}
                       questions={!isAudit && realQuestions}
-                      replyMessage={data?.lists?.find(
+                      replyMessage={data?.find(
                         (msg) => msg.id === message.replyTo
                       )}
                       onClick={

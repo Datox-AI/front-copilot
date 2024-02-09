@@ -10,13 +10,21 @@ import {
   clearFiles,
   createTextGenerator,
   destroyTextGenerator,
+  setQuestionsToGenerator,
   setTextToGenerator,
   startStreaming,
   stopStreaming
 } from "../redux/chat/chatSlice";
 import { BASE_API_URL, COPILOT_API_KEY } from "../config/request";
 
-const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
+const usePrompt = ({
+  chatId,
+  refetchMessages,
+  listRef,
+  setRelatedFiles,
+  isAgentConnected,
+  sendMessageToAgent
+}) => {
   const dispatch = useDispatch();
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
@@ -40,7 +48,6 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
     const _cachedMsgs = [
       ...(queryClient?.getQueryData(["GET_MESSAGES", chatId]) || [])
     ];
-
     const lastIndex = _cachedMsgs.length - 1;
 
     _cachedMsgs[lastIndex] = {
@@ -86,6 +93,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
   };
 
   const onQuestions = (qstns) => {
+    dispatch(setQuestionsToGenerator({ chatId, questions: qstns }));
     setQuestions(qstns);
   };
 
@@ -205,23 +213,26 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
 
     dispatch(clearFiles({ chatId }));
 
-    fetch(`${BASE_API_URL}api/chats/${chatId}/messages`, {
-      method: "POST",
-      headers: {
-        ApiKey: COPILOT_API_KEY,
-        Authorization: "Bearer " + token,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        prompt: message,
-        replyTo: replyMessage?.id,
-        files: [...(files || []).map((file) => file.fileId)]
+    // Messaging via websocket when agent connected
+    if (isAgentConnected) sendMessageToAgent(message);
+    else
+      fetch(`${BASE_API_URL}api/chats/${chatId}/messages`, {
+        method: "POST",
+        headers: {
+          ApiKey: COPILOT_API_KEY,
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          prompt: message,
+          replyTo: replyMessage?.id,
+          files: [...(files || []).map((file) => file.fileId)]
+        })
       })
-    })
-      .then((res) => onFetchSuccess(res, message))
-      .catch((err) => {
-        console.log(err);
-      });
+        .then((res) => onFetchSuccess(res, message))
+        .catch((err) => {
+          console.log(err);
+        });
   };
 
   const startPrompting = (text) => {
@@ -255,6 +266,7 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
     setReplyMessage(null);
     dispatch(createTextGenerator({ chatId }));
     scrollToTheEndOfTheChat();
+
     fetchStream(text);
   };
 
@@ -263,6 +275,8 @@ const usePrompt = ({ chatId, refetchMessages, listRef, setRelatedFiles }) => {
     questions,
     replyMessage,
     clearReplyMessage,
+    onText,
+    onQuestions,
     selectReplyMessage: setReplyMessage
   };
 };

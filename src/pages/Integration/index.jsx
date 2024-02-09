@@ -3,13 +3,19 @@ import websocket from "../../services/websocket";
 import useChatsAPI from "../../hooks/api/useChatsAPI";
 
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
 import { _integrations } from "../../consts/integrations";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+import usePrompt from "../../hooks/usePrompt";
+import {
+  setTextToGenerator,
+  startStreaming,
+  stopStreaming
+} from "../../redux/chat/chatSlice";
 
 const Integration = () => {
   const dispatch = useDispatch();
@@ -30,11 +36,13 @@ const Integration = () => {
     });
 
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
+  const { onText, onQuestions } = usePrompt({ chatId });
 
   const [activeChat, setActiveChat] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedSchema, setSelectedSchema] = useState("");
   const [selectedDatabase, setSelectedDatabase] = useState("");
+  const [isAgentConnected, setIsAgentConnected] = useState(false);
 
   const selectDatabase = (item) => {
     if (singleChat)
@@ -54,6 +62,7 @@ const Integration = () => {
       );
     else setSelectedDatabase(item);
   };
+
   const selectSchema = (item) => {
     if (singleChat)
       updateSnowflakeData.mutate(
@@ -73,6 +82,14 @@ const Integration = () => {
     else setSelectedSchema(item);
   };
 
+  const handleWebsocketMessage = useCallback(
+    (txt) => {
+      dispatch(startStreaming({ chatId }));
+      websocket.sendMessage(txt);
+    },
+    [websocket]
+  );
+
   useEffect(() => {
     if (!chatId) return;
 
@@ -81,11 +98,46 @@ const Integration = () => {
       `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws/${chatId}?token=${token}`
     );
 
+    let timeout;
+
     // Add a message handler to update component state
     const handleIncomingMessage = (message) => {
       console.log(message);
-      if (message?.message === "Engine is not connected") {
-        websocket.sendMessage(`{ "oauth_token": ${snowflakeToken?.access} }`);
+      switch (message?.message) {
+        case "Engine is connected succesfully":
+          setIsAgentConnected(true);
+          break;
+
+        case "Engine is not connected":
+          websocket.sendMessage({
+            oauth_token: snowflakeToken?.access
+          });
+          break;
+
+        default:
+          if (message?.status !== "error") {
+            if (message?.output) {
+              onText(message.output);
+            }
+
+            if (message?.followup_questions) {
+              onQuestions(message?.followup_questions?.split("\n"));
+            }
+
+            timeout = setTimeout(() => {
+              dispatch(stopStreaming({ chatId }));
+            }, 300);
+          } else {
+            dispatch(
+              setTextToGenerator({ chatId, text: "Unexepected error happened" })
+            );
+
+            timeout = setTimeout(() => {
+              dispatch(stopStreaming({ chatId }));
+            }, 300);
+          }
+
+          break;
       }
     };
 
@@ -96,6 +148,8 @@ const Integration = () => {
       websocket.removeMessageHandler(handleIncomingMessage);
       // Close WebSocket connection when component unmounts
       websocket.closeConnection();
+
+      clearTimeout(timeout);
     };
   }, [chatId, token, snowflakeToken]);
 
@@ -211,7 +265,9 @@ const Integration = () => {
           setRelatedFiles,
           snowflakeCredentials: credentials,
           selectedDatabase,
-          selectedSchema
+          selectedSchema,
+          isAgentConnected,
+          sendMessageToAgent: handleWebsocketMessage
         }}
       />
     </Box>

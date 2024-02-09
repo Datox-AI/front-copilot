@@ -25,7 +25,9 @@ const ChattingContainer = ({}) => {
     isAudit,
     snowflakeCredentials,
     selectedDatabase,
-    selectedSchema
+    selectedSchema,
+    isAgentConnected,
+    sendMessageToAgent
   } = useOutletContext();
 
   return (
@@ -47,6 +49,8 @@ const ChattingContainer = ({}) => {
       snowflakeCredentials={snowflakeCredentials}
       selectedDatabase={selectedDatabase}
       selectedSchema={selectedSchema}
+      isAgentConnected={isAgentConnected}
+      sendMessageToAgent={sendMessageToAgent}
     />
   );
 };

@@ -15,7 +15,7 @@ const refreshToken = async () =>
 
     if (token)
       snowflakeAPI
-        .post("refresh_token?refresh_token=" + token)
+        .post("api/snowflake_intergration/refresh_token?refresh_token=" + token)
         .then((res) => resolve(res))
         .catch((err) => {
           store.dispatch(setSnowflakeToken(null));

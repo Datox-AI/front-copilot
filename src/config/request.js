@@ -10,7 +10,8 @@ export const request = axios.create({
 });
 
 const errorHandler = (error) => {
-  const status = error.response.status;
+  const status = error?.response?.status;
+
   if (status === 401) {
     store.dispatch(setAuthorized(true));
     // window.location.reload();

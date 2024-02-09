@@ -1,8 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { v4 as uuidv4 } from "uuid";
 
-const _textGeneratorInit = {};
-
 const initialState = {
   textGenerator: {},
   files: {}
@@ -62,7 +60,8 @@ const chatSlice = createSlice({
         isStreaming: false,
         isStopped: false,
         prompt: "",
-        files: []
+        files: [],
+        questions: []
       };
     },
     destroyTextGenerator: (state, { payload }) => {
@@ -72,6 +71,9 @@ const chatSlice = createSlice({
       const prevText = state.textGenerator[payload.chatId].text;
 
       state.textGenerator[payload.chatId].text = prevText + payload.text;
+    },
+    setQuestionsToGenerator: (state, { payload }) => {
+      state.textGenerator[payload.chatId].questions = [...payload.questions];
     },
     startStreaming: (state, { payload }) => {
       state.textGenerator[payload.chatId].isStreaming = true;
@@ -92,7 +94,8 @@ export const {
   uploadFile,
   removeFile,
   clearFiles,
-  finishUploadFile
+  finishUploadFile,
+  setQuestionsToGenerator
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

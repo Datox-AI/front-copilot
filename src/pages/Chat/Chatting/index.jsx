@@ -52,7 +52,9 @@ const Chatting = ({
   columnName,
   snowflakeCredentials,
   selectedDatabase,
-  selectedSchema
+  selectedSchema,
+  isAgentConnected,
+  sendMessageToAgent
 }) => {
   const listRef = createRef();
 
@@ -71,7 +73,6 @@ const Chatting = ({
 
   const {
     files,
-    questions,
     replyMessage,
     startPrompting,
     clearReplyMessage,
@@ -80,7 +81,9 @@ const Chatting = ({
     chatId,
     refetchMessages,
     listRef,
-    setRelatedFiles
+    setRelatedFiles,
+    isAgentConnected,
+    sendMessageToAgent
   });
 
   const {
@@ -162,7 +165,7 @@ const Chatting = ({
                 refetch={refetch}
                 replyMessage={replyMessage}
                 isLoading={isLoading}
-                questions={questions}
+                questions={textGenerator?.questions || []}
                 activeChat={activeChat}
                 selectedMessages={selectedMessages}
                 isStreaming={textGenerator?.isStreaming}

@@ -8,6 +8,8 @@ import { CircularProgress } from "@mui/material";
 import { useCallback, useMemo, useState } from "react";
 import DeleteChatPopup from "../../FileBar/DeleteChatPopup";
 import PopoverMenu from "../../../../components/PopoverMenu";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 const TopChatList = ({
   integrations,
@@ -22,6 +24,7 @@ const TopChatList = ({
 }) => {
   const navigate = useNavigate();
 
+  const { snowflakeToken } = useSelector((store) => store.auth);
   const { createChat, deleteChat } = useChatsAPI({});
 
   const [deletableChatId, setDeletableChatId] = useState(null);
@@ -41,6 +44,16 @@ const TopChatList = ({
 
     if (activeIntegration?.dataType !== "DataAnalytics")
       delete payload.snowflake_data;
+    else {
+      if (!snowflakeToken?.access)
+        return toast.error(
+          "Please connect to snowflake , using connect button in left bar"
+        );
+      if (!selectedDatabase)
+        return toast.error("Please select database to create chat");
+      if (!selectedSchema)
+        return toast.error("Please select schema to create chat");
+    }
 
     createChat.mutate(payload, {
       onSuccess: (res) => {
