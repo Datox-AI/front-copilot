@@ -49,7 +49,7 @@ const useSnowflakeAPI = (props) => {
         }
       }),
     {
-      enabled: props?.enableDatabases && !!snowflakeToken.access
+      enabled: props?.enableDatabases && !!snowflakeToken?.access
     }
   );
 
@@ -62,7 +62,7 @@ const useSnowflakeAPI = (props) => {
         }
       }),
     {
-      enabled: !!props?.database && !!snowflakeToken.access
+      enabled: !!props?.database && !!snowflakeToken?.access
     }
   );
 
@@ -84,7 +84,7 @@ const useSnowflakeAPI = (props) => {
         }/${props?.table || props?.view}`,
         {
           params: {
-            token: snowflakeToken.access
+            token: snowflakeToken?.access
           }
         }
       ),
