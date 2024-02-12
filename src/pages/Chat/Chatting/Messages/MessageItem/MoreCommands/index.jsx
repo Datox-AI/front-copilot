@@ -58,10 +58,6 @@ const MoreCommands = ({
   ]);
 
   useEffect(() => {
-    document
-      .getElementById("messages-list")
-      .addEventListener("scroll", () => replaceMoreMenu());
-
     replaceMoreMenu();
   }, [ref.current]);
 

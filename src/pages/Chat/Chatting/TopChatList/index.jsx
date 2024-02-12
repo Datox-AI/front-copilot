@@ -58,6 +58,7 @@ const TopChatList = ({
     createChat.mutate(payload, {
       onSuccess: (res) => {
         refetch();
+
         navigate(res.id);
       }
     });
@@ -68,7 +69,15 @@ const TopChatList = ({
       onSuccess: () => {
         refetch();
         setDeletableChatId(null);
-        if (activeChat?.id === deletableChatId) navigate("../");
+        const foundChatIndex = chats.findIndex(
+          (chat) => chat.id === deletableChatId
+        );
+        const nextChat = chats[foundChatIndex - 1] || chats[foundChatIndex + 1];
+
+        if (activeChat.id === deletableChatId)
+          if (nextChat) navigate(nextChat.id);
+          else if (chats[0]?.id) navigate(chats[0]?.id);
+          else navigate("../");
       }
     });
   }, [deletableChatId]);

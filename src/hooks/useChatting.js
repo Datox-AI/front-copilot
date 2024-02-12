@@ -17,7 +17,9 @@ const useChatting = ({
   deleteMutation,
   startPrompting,
   setRelatedFiles,
-  refetchMessages
+  refetchMessages,
+  isSnowflakeChat,
+  isAgentConnected
 }) => {
   const dispatch = useDispatch();
 
@@ -77,7 +79,11 @@ const useChatting = ({
     else setSelectedMessages((prev) => [...prev, messageId]);
   };
 
-  const disabled = useMemo(() => !text, [text]);
+  const disabled = useMemo(() => {
+    if (isSnowflakeChat) return !isAgentConnected || !text;
+
+    return !text;
+  }, [text, isAgentConnected, isSnowflakeChat]);
 
   useEffect(() => {
     if (selectedMessages.length === 0) return setMode(chatModes.CHAT);

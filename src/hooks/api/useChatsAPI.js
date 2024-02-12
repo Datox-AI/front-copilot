@@ -1,8 +1,13 @@
 import { useMutation, useQuery } from "react-query";
 import { request } from "../../config/request";
 
-const useChatsAPI = ({ isGetUsers = false, userId, chatId }) => {
-  const { data, isLoading, refetch } = useQuery(
+const useChatsAPI = ({
+  isGetUsers = false,
+  userId,
+  chatId,
+  chatType = "gpt"
+}) => {
+  const { data, isLoading, refetch, isFetching } = useQuery(
     ["GET_CHATS", userId],
     async () => await request.get(`/api/chats${userId ? `/${userId}` : ""}`),
     {
@@ -30,7 +35,19 @@ const useChatsAPI = ({ isGetUsers = false, userId, chatId }) => {
     ["GET_CHAT_HISTORY", chatId],
     async () => await request.get(`/api/chats/chat-history/${chatId}`),
     {
-      enabled: !!chatId
+      enabled: !!chatId && chatType === "gpt"
+    }
+  );
+
+  const {
+    data: singleAnalyticsChat,
+    isLoading: isLoadingSingleAnalyticsChat,
+    refetch: refetchSingleAnalyticsChat
+  } = useQuery(
+    ["GET_ANALYTICS_CHAT_HISTORY", chatId],
+    async () => await request.get(`/api/analytics_agent/${chatId}/messages`),
+    {
+      enabled: !!chatId && chatType === "analytics"
     }
   );
 
@@ -55,8 +72,12 @@ const useChatsAPI = ({ isGetUsers = false, userId, chatId }) => {
   return {
     data,
     isLoading,
+    isFetching,
     refetch,
     selectedChat,
+    singleAnalyticsChat,
+    isLoadingSingleAnalyticsChat,
+    refetchSingleAnalyticsChat,
     isLoadingChat,
     generateChatName,
     refetchChat,

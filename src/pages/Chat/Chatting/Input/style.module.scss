@@ -4,6 +4,7 @@
   align-items: flex-end;
   gap: 10px;
   padding: 0 20px;
+  position: relative;
 
   .attach {
     width: 48px;
@@ -66,5 +67,12 @@
     background-color: transparent;
     outline: none;
     border: none;
+  }
+
+  .log {
+    position: absolute;
+    bottom: -20px;
+    right: 20px;
+    font-size: 12px;
   }
 }

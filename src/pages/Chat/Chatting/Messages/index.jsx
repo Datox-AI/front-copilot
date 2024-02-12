@@ -7,6 +7,7 @@ import useMessages, { chatModes } from "../../../../hooks/useMessages";
 import { forwardRef } from "react";
 import { useMsal } from "@azure/msal-react";
 import { focusOnInput } from "../../../../utils";
+import ScrollToBottom from "../../../../components/ScrollToBottom";
 
 const errorEmptyMessage = "Something wrong with response prompt";
 
@@ -50,7 +51,7 @@ const Messages = forwardRef(
       <div className={styles.messages} id="messages-list">
         {isLoading ? (
           <div className={styles.block}>
-            <div className={styles.messageList} ref={listRef}>
+            <div className={styles.messageList}>
               {Array(4)
                 .fill(4)
                 .map((item, idx) => (
@@ -121,16 +122,19 @@ const Messages = forwardRef(
                     />
                   );
                 })}
-                <div
-                  ref={listRef}
-                  style={{
-                    padding: "10px 0"
-                  }}
-                ></div>
               </div>
             </div>
           ))
         )}
+        <div
+          ref={listRef}
+          id="messages-list-ref"
+          style={{
+            width: "100%",
+            minHeight: "20px"
+          }}
+        ></div>
+        <ScrollToBottom itemRef={listRef} />
       </div>
     );
   }

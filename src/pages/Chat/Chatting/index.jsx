@@ -11,7 +11,7 @@ import SelectedMessages from "./SelectedMessages";
 import useChatting from "../../../hooks/useChatting";
 
 import { useSelector } from "react-redux";
-import { createRef, useState } from "react";
+import { createRef, useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 
@@ -54,7 +54,8 @@ const Chatting = ({
   selectedDatabase,
   selectedSchema,
   isAgentConnected,
-  sendMessageToAgent
+  sendMessageToAgent,
+  isSnowflakeChat
 }) => {
   const listRef = createRef();
 
@@ -76,7 +77,8 @@ const Chatting = ({
     replyMessage,
     startPrompting,
     clearReplyMessage,
-    selectReplyMessage
+    selectReplyMessage,
+    scrollToTheEndOfTheChat
   } = usePrompt({
     chatId,
     refetchMessages,
@@ -110,9 +112,15 @@ const Chatting = ({
     textGenerator,
     deleteMutation,
     setRelatedFiles,
+    isSnowflakeChat,
+    isAgentConnected,
     startPrompting,
     refetchMessages
   });
+
+  useEffect(() => {
+    scrollToTheEndOfTheChat();
+  }, [data]);
 
   return (
     <>
@@ -198,6 +206,8 @@ const Chatting = ({
               replyMessage={replyMessage}
               clearReplyMessage={clearReplyMessage}
               isStreaming={textGenerator?.isStreaming}
+              isAgentConnected={isAgentConnected}
+              isSnowflakeChat={isSnowflakeChat}
             />
           )}
         </div>

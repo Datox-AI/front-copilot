@@ -15,6 +15,8 @@ const Input = ({
   isStreaming,
   replyMessage,
   onFileUpload,
+  isSnowflakeChat,
+  isAgentConnected,
   clearReplyMessage,
   onCancel
 }) => {
@@ -64,6 +66,14 @@ const Input = ({
       >
         {isStreaming ? <PauseCircleOutlineRoundedIcon /> : <SendIcon />}
       </button>
+
+      {isSnowflakeChat && (
+        <p className={styles.log}>
+          {isAgentConnected
+            ? "Agent is connected..."
+            : "Agent is not connected!"}
+        </p>
+      )}
     </form>
   );
 };

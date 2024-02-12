@@ -149,10 +149,14 @@ const NestedList = ({ data, onSelectItem, parent }) => {
   return (
     <ul
       className={styles.nestedList}
-      style={{
-        "max-height": "calc(100vh - 210px)",
-        overflow: "scroll"
-      }}
+      style={
+        !parent
+          ? {
+              "max-height": "calc(100vh - 210px)",
+              overflow: "scroll"
+            }
+          : {}
+      }
     >
       {data.map((item, i) => (
         <NestedListItem

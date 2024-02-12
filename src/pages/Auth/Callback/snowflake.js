@@ -7,6 +7,7 @@ import {
   setSnowflakeToken
 } from "../../../redux/auth/authSlice";
 import toast from "react-hot-toast";
+import { Box, CircularProgress } from "@mui/material";
 
 const SnowflakeCallback = () => {
   const location = useLocation();
@@ -34,7 +35,20 @@ const SnowflakeCallback = () => {
     fetchToken();
   }, [location]);
 
-  return <></>;
+  return (
+    <Box
+      width="100%"
+      height="100vh"
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      gap="15px"
+    >
+      <CircularProgress size={50} />
+      <p>Loading...</p>
+    </Box>
+  );
 };
 
 export default SnowflakeCallback;

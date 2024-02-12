@@ -38,7 +38,8 @@ const usePrompt = ({
 
   const scrollToTheEndOfTheChat = useCallback(() => {
     listRef?.current?.scrollIntoView({
-      block: "end"
+      block: "end",
+      behavior: "smooth"
     });
   }, [listRef]);
 
@@ -80,7 +81,6 @@ const usePrompt = ({
 
   const onText = (text) => {
     dispatch(setTextToGenerator({ chatId, text }));
-    scrollToTheEndOfTheChat();
   };
 
   const onSearchFiles = (_files) => {
@@ -265,8 +265,6 @@ const usePrompt = ({
     setQuestions([]);
     setReplyMessage(null);
     dispatch(createTextGenerator({ chatId }));
-    scrollToTheEndOfTheChat();
-
     fetchStream(text);
   };
 
@@ -274,6 +272,7 @@ const usePrompt = ({
     startPrompting,
     questions,
     replyMessage,
+    scrollToTheEndOfTheChat,
     clearReplyMessage,
     onText,
     onQuestions,

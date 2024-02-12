@@ -29,11 +29,19 @@ const Integration = () => {
     openedIntegrations[0]
   );
 
-  const { data, refetch, singleChat, updateSnowflakeData, refetchSingleChat } =
-    useChatsAPI({
-      isGetUsers: true,
-      chatId
-    });
+  const {
+    data,
+    refetch,
+    singleChat,
+    updateSnowflakeData,
+    refetchSingleChat,
+    isFetching,
+    singleAnalyticsChat
+  } = useChatsAPI({
+    isGetUsers: true,
+    chatId,
+    chatType: "analytics"
+  });
 
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
   const { onText, onQuestions } = usePrompt({ chatId });
@@ -91,12 +99,14 @@ const Integration = () => {
   );
 
   useEffect(() => {
+    if (activeIntegration.type !== "sql") return;
+
     if (isAgentConnected) toast.success("Agent successfuly connected");
     else toast.error("Agent not running");
   }, [isAgentConnected]);
 
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || activeIntegration.type !== "sql") return;
 
     // Connect to WebSocket when component mounts
     websocket.connect(
@@ -161,11 +171,11 @@ const Integration = () => {
   }, [chatId, token, snowflakeToken]);
 
   useEffect(() => {
-    if (!singleChat) return;
+    if (!singleAnalyticsChat) return;
 
-    setSelectedDatabase(singleChat.snowflake_data?.database_name);
-    setSelectedSchema(singleChat.snowflake_data?.snowflake_schema);
-  }, [singleChat]);
+    setSelectedDatabase(singleAnalyticsChat.snowflake_data?.database_name);
+    setSelectedSchema(singleAnalyticsChat.snowflake_data?.snowflake_schema);
+  }, [singleAnalyticsChat]);
 
   useEffect(() => {
     if (!integrationId) return;
@@ -215,7 +225,9 @@ const Integration = () => {
     const foundIntegrationIndex = openedIntegrations.findIndex(
       (integration) => integration.id === integrationId
     );
-    const nextIntegration = openedIntegrations[foundIntegrationIndex - 1];
+    const nextIntegration =
+      openedIntegrations[foundIntegrationIndex - 1] ||
+      openedIntegrations?.[foundIntegrationIndex + 1];
 
     dispatch(
       toggleIntegration({ data: openedIntegrations[foundIntegrationIndex] })
@@ -231,16 +243,17 @@ const Integration = () => {
   );
 
   useEffect(() => {
-    if (!chatId && !filteredChats) return;
+    if ((!chatId && !filteredChats) || isFetching) return;
 
     const foundChat = filteredChats?.find((chat) => chat.id === chatId);
 
-    if (integrationId && filteredChats?.length > 0 && (!chatId || !foundChat)) {
+    if (integrationId && filteredChats?.length > 0 && !foundChat) {
       navigate(`/integration/${integrationId}/${filteredChats[0]?.id || ""}`);
+      return;
     }
 
     handleSelectChat(foundChat);
-  }, [chatId, filteredChats, integrationId, activeIntegration]);
+  }, [chatId, filteredChats, integrationId, activeIntegration, isFetching]);
 
   if (!integrationId) return <Navigate to="../" />;
 
@@ -274,7 +287,7 @@ const Integration = () => {
           selectedDatabase,
           selectedSchema,
           isAgentConnected,
-
+          isSnowflakeChat: activeIntegration?.dataType === "DataAnalytics",
           sendMessageToAgent: handleWebsocketMessage
         }}
       />

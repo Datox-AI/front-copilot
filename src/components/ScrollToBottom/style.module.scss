@@ -1,0 +1,34 @@
+.scrollToTop {
+  position: sticky;
+  bottom: 15px;
+  left: calc(calc(100% - 20px) / 2);
+  margin: 0 auto;
+  z-index: 1000; /* Ensure the button stays above other content */
+}
+
+.scrollToTop button {
+  box-shadow: 0 0 6px 0px rgba(0, 0, 0, 0.5);
+  background-color: #fff; /* Example button color */
+  // color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  // border: 1px solid $primary;
+  border-radius: 100px;
+  svg {
+    width: 35px;
+    height: 35px;
+    transform: rotate(180deg);
+  }
+}
+
+.scrollToTop button:hover {
+  background-color: #fff; /* Example hover color */
+}
