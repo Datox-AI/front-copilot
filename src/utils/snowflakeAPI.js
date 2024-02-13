@@ -13,7 +13,7 @@ export const snowflakeAPI = axios.create({
 const refreshToken = async () =>
   new Promise(async (resolve, reject) => {
     const token = store.getState()?.auth?.snowflakeToken?.refresh;
-
+    console.log(store.getState()?.auth?.snowflakeToken);
     if (token)
       snowflakeAPI
         .post("api/snowflake_integration/refresh_token", {
