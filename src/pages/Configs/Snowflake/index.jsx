@@ -3,7 +3,7 @@ import styles from "../style.module.scss";
 import ConfigCard from "../../../components/ConfigCard";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
-import OnboardingSnowflake from "../../../components/OnboardingIntegration/Snowflake";
+
 import { Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -26,7 +26,7 @@ const SnowflakeConfig = () => {
     window.location.replace(credentials?.authorization_url);
   };
 
-  if (!skipOnboarding) return <OnboardingSnowflake />;
+  // if (!skipOnboarding) return <OnboardingSnowflake />;
 
   return (
     <div className={styles.container}>

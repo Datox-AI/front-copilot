@@ -185,7 +185,9 @@ const NestedListContainer = ({
     });
 
   const onAuth = async () => {
-    window.location.replace(snowflakeCredentials.authorization_url);
+    window.location.replace(
+      snowflakeCredentials.authorization_url || "/configs/snowflake"
+    );
   };
 
   return (

@@ -24,18 +24,20 @@ const Input = ({
 
   return (
     <form className={styles.inputContainer} onSubmit={onSend}>
-      <label htmlFor="attach_file" className={styles.attach}>
-        <input
-          type="file"
-          style={{ display: "none" }}
-          id="attach_file"
-          multiple
-          accept=".doc, .docx, .xls, .xlsx, .pdf"
-          disabled={isStreaming}
-          onChange={onFileUpload}
-        />
-        <AttachFileRoundedIcon />
-      </label>
+      {!isSnowflakeChat && (
+        <label htmlFor="attach_file" className={styles.attach}>
+          <input
+            type="file"
+            style={{ display: "none" }}
+            id="attach_file"
+            multiple
+            accept=".doc, .docx, .xls, .xlsx, .pdf"
+            disabled={isStreaming}
+            onChange={onFileUpload}
+          />
+          <AttachFileRoundedIcon />
+        </label>
+      )}
 
       <div className={styles.input}>
         {replyMessage && (

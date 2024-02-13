@@ -68,9 +68,9 @@ const chatSlice = createSlice({
       delete state.textGenerator[payload.chatId];
     },
     setTextToGenerator: (state, { payload }) => {
-      const prevText = state.textGenerator[payload.chatId].text;
-
-      state.textGenerator[payload.chatId].text = prevText + payload.text;
+      const prevText = state.textGenerator?.[payload.chatId]?.text || "";
+      if (state.textGenerator[payload.chatId])
+        state.textGenerator[payload.chatId].text = prevText + payload.text;
     },
     setQuestionsToGenerator: (state, { payload }) => {
       state.textGenerator[payload.chatId].questions = [...payload.questions];
@@ -80,7 +80,8 @@ const chatSlice = createSlice({
         state.textGenerator[payload.chatId].isStreaming = true;
     },
     stopStreaming: (state, { payload }) => {
-      state.textGenerator[payload.chatId].isStreaming = false;
+      if (state.textGenerator[payload.chatId])
+        state.textGenerator[payload.chatId].isStreaming = false;
     }
   }
 });

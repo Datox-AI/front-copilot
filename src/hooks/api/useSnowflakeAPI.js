@@ -442,7 +442,7 @@ const useSnowflakeAPI = (props) => {
 
     dispatch(
       setSnowflakeData([
-        ...databases?.databases?.map((db, idx) => ({
+        ...(databases?.databases || [])?.map((db, idx) => ({
           ...normalizer(db, 1, idx),
           children: []
         }))

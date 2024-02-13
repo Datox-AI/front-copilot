@@ -96,7 +96,7 @@ const Messages = forwardRef(
                       refetch={refetchMessages}
                       isHighlightedMessage={isHighlightedMessage}
                       isBot={message.role === "Assistant"}
-                      time={moment(message.created).format("hh:mm A")}
+                      time={moment(message.created_at).format("hh:mm A")}
                       onSelectQuestion={onSelectQuestion}
                       isSelected={selectedMessages.includes(message.id)}
                       onReply={() => onReply(message)}

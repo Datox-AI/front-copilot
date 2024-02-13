@@ -16,18 +16,6 @@ const useChatsAPI = ({
   );
 
   const {
-    data: selectedChat,
-    isLoading: isLoadingChat,
-    refetch: refetchChat
-  } = useQuery(
-    ["GET_CHAT", userId, chatId],
-    async () => await request.get(`/api/chats${userId ? `/${userId}` : ""}`),
-    {
-      enabled: !!isGetUsers
-    }
-  );
-
-  const {
     data: singleChat,
     isLoading: isLoadingSingleChat,
     refetch: refetchSingleChat
@@ -48,6 +36,18 @@ const useChatsAPI = ({
     async () => await request.get(`/api/analytics_agent/${chatId}/messages`),
     {
       enabled: !!chatId && chatType === "analytics"
+    }
+  );
+
+  const {
+    data: singleRagChat,
+    isLoading: isLoadingSingleRagChat,
+    refetch: refetchSingleRagChat
+  } = useQuery(
+    ["GET_RAG_CHAT_HISTORY", chatId],
+    async () => await request.get(`/api/rag_agent/${chatId}/messages`),
+    {
+      enabled: !!chatId && chatType === "rag"
     }
   );
 
@@ -74,20 +74,20 @@ const useChatsAPI = ({
     isLoading,
     isFetching,
     refetch,
-    selectedChat,
     singleAnalyticsChat,
     isLoadingSingleAnalyticsChat,
     refetchSingleAnalyticsChat,
-    isLoadingChat,
     generateChatName,
-    refetchChat,
     singleChat,
     isLoadingSingleChat,
     refetchSingleChat,
     createChat,
     deleteChat,
     updateChat,
-    updateSnowflakeData
+    updateSnowflakeData,
+    singleRagChat,
+    isLoadingSingleRagChat,
+    refetchSingleRagChat
   };
 };
 

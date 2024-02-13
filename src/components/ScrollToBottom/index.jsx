@@ -9,12 +9,14 @@ export default function ScrollToBottom({ itemRef }) {
   // Show button when user scrolls down 400px
   const toggleVisibility = () => {
     const messagesList = document.getElementById("messages-list");
-    const { scrollTop, scrollHeight, clientHeight } = messagesList;
+    if (messagesList) {
+      const { scrollTop, scrollHeight, clientHeight } = messagesList;
 
-    if (scrollHeight - scrollTop - clientHeight > 400) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
+      if (scrollHeight - scrollTop - clientHeight > 400) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
     }
   };
 

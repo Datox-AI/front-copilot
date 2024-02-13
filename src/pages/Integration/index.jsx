@@ -36,11 +36,16 @@ const Integration = () => {
     updateSnowflakeData,
     refetchSingleChat,
     isFetching,
-    singleAnalyticsChat
+    singleAnalyticsChat,
+    singleRagChat,
+    refetchSingleRagChat
   } = useChatsAPI({
     isGetUsers: true,
     chatId,
-    chatType: "analytics"
+    chatType:
+      activeIntegration?.dataType === "DataAnalytics"
+        ? "analytics"
+        : activeIntegration?.dataType === "FileSearch" && "rag"
   });
 
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
@@ -97,13 +102,6 @@ const Integration = () => {
     },
     [websocket, chatId]
   );
-
-  useEffect(() => {
-    if (activeIntegration.type !== "sql") return;
-
-    if (isAgentConnected) toast.success("Agent successfuly connected");
-    else toast.error("Agent not running");
-  }, [isAgentConnected]);
 
   useEffect(() => {
     if (!chatId || activeIntegration.type !== "sql") return;
@@ -165,6 +163,7 @@ const Integration = () => {
       websocket.removeMessageHandler(handleIncomingMessage);
       // Close WebSocket connection when component unmounts
       websocket.closeConnection();
+      setIsAgentConnected(false);
 
       clearTimeout(timeout);
     };
@@ -255,6 +254,11 @@ const Integration = () => {
     handleSelectChat(foundChat);
   }, [chatId, filteredChats, integrationId, activeIntegration, isFetching]);
 
+  useEffect(() => {
+    if (filteredChats?.length === 0 && activeIntegration)
+      navigate(`/integration/${activeIntegration?.id}`);
+  }, [filteredChats, activeIntegration]);
+
   if (!integrationId) return <Navigate to="../" />;
 
   return (
@@ -282,11 +286,17 @@ const Integration = () => {
           handleSelectChat,
           chatId,
           refetch,
+          refetchSingleChat:
+            activeIntegration?.dataType === "DataAnalytics"
+              ? refetchSingleChat
+              : refetchSingleRagChat,
           setRelatedFiles,
           snowflakeCredentials: credentials,
           selectedDatabase,
           selectedSchema,
           isAgentConnected,
+          chatMessages:
+            singleAnalyticsChat?.messages || singleRagChat?.messages,
           isSnowflakeChat: activeIntegration?.dataType === "DataAnalytics",
           sendMessageToAgent: handleWebsocketMessage
         }}

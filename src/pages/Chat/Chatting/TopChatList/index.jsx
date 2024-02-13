@@ -5,7 +5,7 @@ import ChatItem from "./ChatItem";
 import IntegrationTab from "./IntegrationTab";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { CircularProgress } from "@mui/material";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import DeleteChatPopup from "../../FileBar/DeleteChatPopup";
 import PopoverMenu from "../../../../components/PopoverMenu";
 import { useSelector } from "react-redux";
