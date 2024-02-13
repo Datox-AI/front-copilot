@@ -24,7 +24,8 @@ const usePrompt = ({
   setRelatedFiles,
   isAgentConnected,
   sendMessageToAgent,
-  isRagType
+  isRagType,
+  activeIntegration
 }) => {
   const dispatch = useDispatch();
   const textGenerator = useSelector(
@@ -46,18 +47,58 @@ const usePrompt = ({
 
   const clearReplyMessage = () => setReplyMessage(null);
 
-  const updateLastMessage = (text) => {
+  const getCachedMessages = () => {
     let _cachedMsgs;
 
-    if (isRagType)
-      _cachedMsgs = [
-        ...(queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId])
-          ?.messages || [])
-      ];
-    else
-      _cachedMsgs = [
-        ...(queryClient.getQueryData(["GET_MESSAGES", chatId]) || [])
-      ];
+    switch (activeIntegration?.dataType) {
+      case "FileSearch":
+        _cachedMsgs = [
+          ...(queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId])
+            ?.messages || [])
+        ];
+        break;
+
+      case "DataAnalytics":
+        _cachedMsgs = [
+          ...(queryClient.getQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId])
+            ?.messages || [])
+        ];
+        break;
+
+      default:
+        _cachedMsgs = [
+          ...(queryClient.getQueryData(["GET_MESSAGES", chatId]) || [])
+        ];
+        break;
+    }
+
+    return _cachedMsgs;
+  };
+
+  const pushToCachedMessages = (elements) => {
+    switch (activeIntegration?.dataType) {
+      case "FileSearch":
+        queryClient.setQueryData(["GET_RAG_CHAT_HISTORY", chatId], {
+          ...queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId]),
+          messages: [...elements]
+        });
+        break;
+
+      case "DataAnalytics":
+        queryClient.setQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId], {
+          ...queryClient.getQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId]),
+          messages: [...elements]
+        });
+        break;
+
+      default:
+        queryClient.setQueryData(["GET_MESSAGES", chatId], [...elements]);
+        break;
+    }
+  };
+
+  const updateLastMessage = (text) => {
+    const _cachedMsgs = [...getCachedMessages()];
 
     const lastIndex = _cachedMsgs.length - 1;
 
@@ -67,12 +108,7 @@ const usePrompt = ({
       isTyping: true
     };
 
-    if (isRagType)
-      queryClient.setQueryData(["GET_RAG_CHAT_HISTORY", chatId], {
-        ...queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId]),
-        messages: [..._cachedMsgs]
-      });
-    else queryClient.setQueryData(["GET_MESSAGES", chatId], [..._cachedMsgs]);
+    pushToCachedMessages(_cachedMsgs);
 
     scrollToTheEndOfTheChat();
   };
@@ -218,28 +254,9 @@ const usePrompt = ({
       role: "Assistant"
     };
 
-    let _cachedMsgs;
+    const _cachedMsgs = [...getCachedMessages()];
 
-    if (isRagType)
-      _cachedMsgs = [
-        ...(queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId])
-          ?.messages || [])
-      ];
-    else
-      _cachedMsgs = [
-        ...(queryClient.getQueryData(["GET_MESSAGES", chatId]) || [])
-      ];
-
-    if (isRagType)
-      queryClient.setQueryData(["GET_RAG_CHAT_HISTORY", chatId], {
-        ...queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId]),
-        messages: [..._cachedMsgs, { ...newMSG }]
-      });
-    else
-      queryClient.setQueryData(
-        ["GET_MESSAGES", chatId],
-        [..._cachedMsgs, { ...newMSG }]
-      );
+    pushToCachedMessages([..._cachedMsgs, { ...newMSG }]);
 
     dispatch(clearFiles({ chatId }));
 
@@ -288,29 +305,9 @@ const usePrompt = ({
       role: "User"
     };
 
-    let _cachedMsgs;
+    const _cachedMsgs = [...getCachedMessages()];
 
-    if (isRagType)
-      _cachedMsgs = [
-        ...(queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId])
-          ?.messages || [])
-      ];
-    else
-      _cachedMsgs = [
-        ...(queryClient.getQueryData(["GET_MESSAGES", chatId]) || [])
-      ];
-
-    if (isRagType)
-      queryClient.setQueryData(["GET_RAG_CHAT_HISTORY", chatId], {
-        ...queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId]),
-        messages: [..._cachedMsgs, { ...newMSG }]
-      });
-    else
-      queryClient.setQueryData(
-        ["GET_MESSAGES", chatId],
-        [..._cachedMsgs, { ...newMSG }]
-      );
-
+    pushToCachedMessages([..._cachedMsgs, { ...newMSG }]);
     setQuestions([]);
     setReplyMessage(null);
     dispatch(createTextGenerator({ chatId }));

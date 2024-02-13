@@ -151,7 +151,8 @@ const Chatting = ({
     listRef,
     setRelatedFiles,
     isAgentConnected,
-    sendMessageToAgent
+    sendMessageToAgent,
+    activeIntegration
   });
 
   const {
