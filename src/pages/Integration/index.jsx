@@ -37,6 +37,7 @@ const Integration = () => {
     refetchSingleChat,
     isFetching,
     singleAnalyticsChat,
+    refetchSingleAnalyticsChat,
     singleRagChat,
     refetchSingleRagChat
   } = useChatsAPI({
@@ -58,18 +59,18 @@ const Integration = () => {
   const [isAgentConnected, setIsAgentConnected] = useState(false);
 
   const selectDatabase = (item) => {
-    if (singleChat)
+    if (singleAnalyticsChat)
       updateSnowflakeData.mutate(
         {
           id: chatId,
           body: {
-            ...singleChat?.snowflake_data,
+            ...singleAnalyticsChat?.snowflake_data,
             chat_id: chatId,
             database_name: item
           }
         },
         {
-          onSuccess: () => refetchSingleChat(),
+          onSuccess: () => refetchSingleAnalyticsChat(),
           onError: () => toast.error("Error on changing database")
         }
       );
@@ -77,18 +78,18 @@ const Integration = () => {
   };
 
   const selectSchema = (item) => {
-    if (singleChat)
+    if (singleAnalyticsChat)
       updateSnowflakeData.mutate(
         {
           id: chatId,
           body: {
-            ...singleChat?.snowflake_data,
+            ...singleAnalyticsChat?.snowflake_data,
             snowflake_schema: item,
             chat_id: chatId
           }
         },
         {
-          onSuccess: () => refetchSingleChat(),
+          onSuccess: () => refetchSingleAnalyticsChat(),
           onError: () => toast.error("Error on changing schema")
         }
       );

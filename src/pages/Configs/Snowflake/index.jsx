@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
-  const { initAuth, credentials } = useSnowflakeAPI({
+  const { initAuth, credentials, deleteAuth } = useSnowflakeAPI({
     enableUserCredentials: true
   });
 
@@ -47,6 +47,10 @@ const SnowflakeConfig = () => {
               <AddRoundedIcon /> Add Account
             </Button>
           )}
+
+          {/* <Button className={styles.btn} onClick={() => deleteAuth.mutate()}>
+            Delete
+          </Button> */}
         </Box>
       </ConfigWrapper>
     </div>
