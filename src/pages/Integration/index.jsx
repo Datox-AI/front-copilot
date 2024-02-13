@@ -140,6 +140,7 @@ const Integration = () => {
 
             timeout = setTimeout(() => {
               dispatch(stopStreaming({ chatId }));
+              refetchSingleAnalyticsChat();
             }, 300);
           } else {
             dispatch(
