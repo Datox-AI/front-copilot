@@ -133,7 +133,7 @@ const Integration = () => {
             if (message?.output) {
               onText(message.output);
             }
-
+            console.log(message);
             if (message?.followup_questions) {
               onQuestions(message?.followup_questions?.split("\n"));
             }
