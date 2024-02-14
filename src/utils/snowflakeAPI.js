@@ -4,7 +4,6 @@ import {
   setSnowflakeRefreshToken,
   setSnowflakeToken
 } from "../redux/auth/authSlice";
-import toast from "react-hot-toast";
 
 export const snowflakeAPI = axios.create({
   baseURL: "https://newcopilotwebapi.azurewebsites.net/"
@@ -13,7 +12,7 @@ export const snowflakeAPI = axios.create({
 const refreshToken = async () =>
   new Promise(async (resolve, reject) => {
     const token = store.getState()?.auth?.snowflakeToken?.refresh;
-    console.log(store.getState()?.auth?.snowflakeToken);
+
     if (token)
       snowflakeAPI
         .post("api/snowflake_integration/refresh_token", {
@@ -22,7 +21,7 @@ const refreshToken = async () =>
         .then((res) => resolve(res))
         .catch((err) => {
           store.dispatch(setSnowflakeToken(null));
-          store.dispatch(setSnowflakeRefreshToken(null));
+          // store.dispatch(setSnowflakeRefreshToken(null));
           reject(null);
         });
     else {
@@ -30,7 +29,7 @@ const refreshToken = async () =>
       //   "Token has been expired, please follow up to settings/snowflake page to get authorized"
       // );
       store.dispatch(setSnowflakeToken(null));
-      store.dispatch(setSnowflakeRefreshToken(null));
+      // store.dispatch(setSnowflakeRefreshToken(null));
     }
   });
 
@@ -44,6 +43,9 @@ const errorHandler = async (error) => {
     store.dispatch(setSnowflakeToken(res.access_token));
     store.dispatch(setSnowflakeRefreshToken(res.refresh_token));
     if (!!res) return originalRequest;
+  } else if (status === 401 && error?.config?.url?.includes("refresh_token")) {
+    store.dispatch(setSnowflakeToken(null));
+    store.dispatch(setSnowflakeRefreshToken(null));
   }
 
   return Promise.reject(error.response);

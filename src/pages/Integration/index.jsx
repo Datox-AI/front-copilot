@@ -98,7 +98,7 @@ const Integration = () => {
 
   const handleWebsocketMessage = useCallback(
     (txt) => {
-      dispatch(startStreaming({ chatId }));
+      // dispatch(startStreaming({ chatId }));
       websocket.sendMessage(txt);
     },
     [websocket, chatId]
@@ -139,7 +139,7 @@ const Integration = () => {
             }
 
             timeout = setTimeout(() => {
-              dispatch(stopStreaming({ chatId }));
+              // dispatch(stopStreaming({ chatId }));
               refetchSingleAnalyticsChat();
             }, 300);
           } else {
@@ -150,7 +150,7 @@ const Integration = () => {
             setIsAgentConnected(false);
 
             timeout = setTimeout(() => {
-              dispatch(stopStreaming({ chatId }));
+              // dispatch(stopStreaming({ chatId }));
             }, 300);
           }
 
