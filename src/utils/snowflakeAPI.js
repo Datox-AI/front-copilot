@@ -24,13 +24,6 @@ const refreshToken = async () =>
           // store.dispatch(setSnowflakeRefreshToken(null));
           reject(null);
         });
-    else {
-      // toast.error(
-      //   "Token has been expired, please follow up to settings/snowflake page to get authorized"
-      // );
-      store.dispatch(setSnowflakeToken(null));
-      // store.dispatch(setSnowflakeRefreshToken(null));
-    }
   });
 
 const errorHandler = async (error) => {

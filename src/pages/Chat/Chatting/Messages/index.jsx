@@ -109,6 +109,7 @@ const Messages = forwardRef(
                       author_fullname={author}
                       message={realMessage}
                       files={message.files}
+                      storeFileId={message.stored_file_id}
                       showDots={!realMessage.trim()}
                       questions={!isAudit && realQuestions}
                       replyMessage={data?.find(

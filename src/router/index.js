@@ -11,6 +11,7 @@ import SnowflakeConfig from "../pages/Configs/Snowflake";
 import SnowflakeConfigAdd from "../pages/Configs/Snowflake/add";
 import ColumnsTable from "../pages/Integration/ColumnDetails/Columns";
 import PreviewData from "../pages/Integration/ColumnDetails/PreviewData";
+import Store from "../pages/Integration/ColumnDetails/Store";
 
 export const userRouter = createBrowserRouter([
   {
@@ -61,6 +62,15 @@ export const userRouter = createBrowserRouter([
                       {
                         path: ":columnName",
                         element: <PreviewData />
+                      }
+                    ]
+                  },
+                  {
+                    path: "store",
+                    children: [
+                      {
+                        path: ":fileId",
+                        element: <Store />
                       }
                     ]
                   }
@@ -189,6 +199,15 @@ export const adminRouter = createBrowserRouter([
                       {
                         path: ":columnName",
                         element: <PreviewData />
+                      }
+                    ]
+                  },
+                  {
+                    path: "store",
+                    children: [
+                      {
+                        path: ":fileId",
+                        element: <Store />
                       }
                     ]
                   }

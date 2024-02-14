@@ -6,11 +6,12 @@ import MoreCommands from "./MoreCommands";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
-import { Avatar, Box, Checkbox } from "@mui/material";
+import { Avatar, Box, Button, Checkbox } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
 import { chatModes } from "../../../../../hooks/useMessages";
 import File from "../../../../../components/File";
 import Dots from "../../../../../components/Dots";
+import { Link } from "react-router-dom";
 
 const ReplyMessage = ({ onClickReply, replyMessage }) => {
   return (
@@ -42,7 +43,8 @@ const MessageItem = ({
   fullData,
   showDots,
   isHighlightedMessage,
-  onHighlightMessage
+  onHighlightMessage,
+  storeFileId
 }) => {
   const onClickReply = (_id) => {
     document.getElementById("message-" + _id).scrollIntoView({
@@ -123,6 +125,24 @@ const MessageItem = ({
                 questions={questions}
                 onSelectQuestion={onSelectQuestion}
               />
+            )}
+
+            {storeFileId && (
+              <Link
+                to={`/integration/2/${chatId}/store/${storeFileId}`}
+                style={{
+                  textDecoration: "none"
+                }}
+              >
+                <Button
+                  style={{
+                    marginTop: "10px"
+                  }}
+                  variant="outlined"
+                >
+                  Show Data
+                </Button>
+              </Link>
             )}
           </p>
           <span className={styles.time}>{time}</span>
