@@ -99,9 +99,12 @@ const Integration = () => {
   const handleWebsocketMessage = useCallback(
     (txt) => {
       // dispatch(startStreaming({ chatId }));
-      websocket.sendMessage(txt);
+      if (isAgentConnected)
+        websocket.sendMessage({
+          user_input: txt
+        });
     },
-    [websocket, chatId]
+    [websocket, chatId, isAgentConnected]
   );
 
   useEffect(() => {
