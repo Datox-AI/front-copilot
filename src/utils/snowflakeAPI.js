@@ -24,6 +24,10 @@ const refreshToken = async () =>
           // store.dispatch(setSnowflakeRefreshToken(null));
           reject(null);
         });
+    else {
+      store.dispatch(setSnowflakeToken(null));
+      store.dispatch(setSnowflakeRefreshToken(null));
+    }
   });
 
 const errorHandler = async (error) => {

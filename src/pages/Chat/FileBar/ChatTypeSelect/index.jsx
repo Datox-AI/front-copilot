@@ -8,7 +8,7 @@ import { useSelector } from "react-redux";
 import { SelectIntegrations } from "../../../../components/Popups/SelectIntegrations";
 import { Box } from "@mui/material";
 
-const ChatTypeSelect = () => {
+const ChatTypeSelect = ({ snowflakeCredentials }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { openedIntegrations } = useSelector((store) => store.integrations);
@@ -52,6 +52,7 @@ const ChatTypeSelect = () => {
     <>
       <SelectIntegrations
         isOpen={isOpenPopup}
+        snowflakeCredentials={snowflakeCredentials}
         toggle={() => setIsOpenPopup((prev) => !prev)}
       />
       <Box maxWidth="200px">

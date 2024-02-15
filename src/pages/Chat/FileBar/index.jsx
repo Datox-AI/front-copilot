@@ -232,7 +232,9 @@ const FileBar = ({
           )}
         </Box>
 
-        {!isAudit && <ChatTypeSelect />}
+        {!isAudit && (
+          <ChatTypeSelect snowflakeCredentials={snowflakeCredentials} />
+        )}
       </header>
       <section className={styles.searchSection}>
         <label>

@@ -105,6 +105,10 @@ const useChatting = ({
     setRelatedFiles((prev) => arrayUniqueByKey([...prev, ..._files]));
   }, [data]);
 
+  useEffect(() => {
+    setText("");
+  }, [chatId]);
+
   const onTexting = (e) => {
     setText(e.target.value);
   };

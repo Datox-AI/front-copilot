@@ -5,6 +5,7 @@ import { Box } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { _integrations } from "../../consts/integrations";
+import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 
 const Chat = ({ isAudit }) => {
   const { chatId, userId } = useParams();
@@ -12,6 +13,8 @@ const Chat = ({ isAudit }) => {
     isGetUsers: true,
     userId
   });
+
+  const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
 
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [activeIntegration] = useState(_integrations[0]);
@@ -45,6 +48,7 @@ const Chat = ({ isAudit }) => {
         activeChat={activeChat}
         refetch={refetch}
         isAudit={isAudit}
+        snowflakeCredentials={credentials}
         hideNewChatBtn={isAudit}
         title="Chat"
       />{" "}
@@ -58,6 +62,7 @@ const Chat = ({ isAudit }) => {
           refetch,
           setRelatedFiles,
           isAudit
+          // snowflakeCredentials: credentials
         }}
       />
     </Box>
