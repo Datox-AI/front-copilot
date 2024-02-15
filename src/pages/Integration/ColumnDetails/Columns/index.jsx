@@ -6,21 +6,23 @@ import { useLocation, useParams } from "react-router-dom";
 import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
 import { useMemo } from "react";
 
-export const normalizeColumn = (name, withRender) => ({
-  key: name,
-  name,
-  props: {
-    style: {
-      minWidth: "50%"
-    }
-  },
-  render: withRender
-    ? (item, key) => (
-        <Box display="flex" gap="5px" justifyContent="flex-start">
-          {snowflakeTypesIcons[item[key].toLowerCase()]} {item[key]}
-        </Box>
-      )
-    : null
+export const normalizeColumn = (name, withRender, dataIndex) => ({
+  header: name,
+  accessorKey: dataIndex,
+  footer: (props) => props.column.id
+
+  // props: {
+  //   style: {
+  //     minWidth: "50%"
+  //   }
+  // },
+  // render: withRender
+  //   ? (item, key) => (
+  //       <Box display="flex" gap="5px" justifyContent="flex-start">
+  //         {snowflakeTypesIcons[item[key].toLowerCase()]} {item[key]}
+  //       </Box>
+  //     )
+  //   : null
 });
 
 const ColumnsTable = () => {

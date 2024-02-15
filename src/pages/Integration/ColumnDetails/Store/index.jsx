@@ -1,11 +1,12 @@
 import ColumnDetails from "..";
-import Table from "../../../../components/Table";
+// import Table from "../../../../components/Table";
 
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { normalizeColumn } from "../Columns";
 import { useMutation } from "react-query";
 import { request } from "../../../../config/request";
+import RCTable from "../../../../components/Table";
 
 const Store = () => {
   const { fileId, chatId } = useParams();
@@ -20,12 +21,7 @@ const Store = () => {
     () =>
       previewData?.length > 0
         ? Object.keys(previewData?.[0]).map((name) => ({
-            ...normalizeColumn(name, name === "type"),
-            props: {
-              style: {
-                minWidth: "25%"
-              }
-            }
+            ...normalizeColumn(name, name === "type", name)
           }))
         : [],
     [previewData]
@@ -46,7 +42,7 @@ const Store = () => {
 
   return (
     <ColumnDetails>
-      <Table
+      <RCTable
         columns={cols}
         data={previewData || []}
         isLoading={mutate.isLoading}

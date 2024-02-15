@@ -1,23 +1,14 @@
 .table {
   width: 100%;
-  overflow: scroll;
+  // overflow: scroll;
+  overflow-x: auto;
 
-  thead {
-    position: sticky;
-    top: 0;
-    background-color: #fff;
-
-    th {
-      width: 100%;
+  table {
+    thead {
       tr {
-        display: flex;
-        width: 100%;
-
-        td {
+        th {
+          text-align: left;
           border-bottom: 1px solid #e2e2e2;
-          min-width: 20%;
-          display: flex;
-          align-items: center;
           padding: 10px 16px;
           color: #6a69c6;
           font-size: 14px;
@@ -25,28 +16,24 @@
           font-weight: 600;
           line-height: normal;
           background-color: #fff;
+          text-transform: uppercase;
         }
       }
     }
-  }
 
-  tbody {
-    tr {
-      display: flex;
-      width: 100%;
+    tbody {
+      tr {
+        td {
+          border-bottom: 1px solid #e2e2e2;
+          min-width: 20%;
+          padding: 10px 16px;
+          color: #616161;
 
-      td {
-        border-bottom: 1px solid #e2e2e2;
-        min-width: 20%;
-        display: flex;
-        align-items: center;
-        padding: 10px 16px;
-        color: #616161;
-
-        font-size: 12px;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 500;
+          line-height: normal;
+        }
       }
     }
   }

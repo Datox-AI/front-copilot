@@ -20,12 +20,7 @@ const PreviewData = () => {
     () =>
       previewData?.data_preview?.length > 0
         ? Object.keys(previewData?.data_preview?.[0]).map((name) => ({
-            ...normalizeColumn(name, name === "type"),
-            props: {
-              style: {
-                minWidth: "25%"
-              }
-            }
+            ...normalizeColumn(name, name === "type")
           }))
         : [],
     [previewData?.data_preview]
