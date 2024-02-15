@@ -34,7 +34,7 @@ jobs:
           production_branch: "main"
         env:
           REACT_APP_MSAL_REDIRECT_URI: https://copilot.datox.ai/
-          REACT_APP_MSAL_CLIENT_ID: 4b27aceb-ba01-4d7e-bb3b-bc114c8d1726
+          REACT_APP_MSAL_CLIENT_ID: 4f9cfb5f-6d5f-4561-9472-2572267129fd
           REACT_APP_BASE_API_URL: https://copilotwebapi.azurewebsites.net/
           REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=
           REACT_APP_SNOWFLAKE_REDIRECT_URL: https://copilot.datox.ai/callback/snowflake
