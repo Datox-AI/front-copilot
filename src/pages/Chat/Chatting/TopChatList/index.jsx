@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useChatsAPI from "../../../../hooks/api/useChatsAPI";
 import styles from "../style.module.scss";
 import ChatItem from "./ChatItem";
@@ -10,6 +10,7 @@ import DeleteChatPopup from "../../FileBar/DeleteChatPopup";
 import PopoverMenu from "../../../../components/PopoverMenu";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
 
 const TopChatList = ({
   integrations,
@@ -23,9 +24,11 @@ const TopChatList = ({
   selectedSchema
 }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const { snowflakeToken } = useSelector((store) => store.auth);
   const { createChat, deleteChat } = useChatsAPI({});
+  const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
 
   const [deletableChatId, setDeletableChatId] = useState(null);
 
@@ -86,14 +89,23 @@ const TopChatList = ({
     () => [
       {
         title: "Snowflake",
-        onClick: () => navigate("/configs/snowflake")
+        onClick: () => {
+          if (pathname.includes("/integration/2")) return;
+          if (credentials) return navigate("/integration/2");
+
+          navigate("/configs/snowflake");
+        }
       },
       {
         title: "Sharepoint",
-        onClick: () => navigate("/integration/3")
+        onClick: () => {
+          if (pathname.includes("/integration/3")) return;
+
+          navigate("/integration/3");
+        }
       }
     ],
-    []
+    [pathname, credentials]
   );
 
   return (
@@ -110,9 +122,11 @@ const TopChatList = ({
             iconType={integration?.iconType}
           />
         ))}
+
         <PopoverMenu
           mainIcon={<AddRoundedIcon className={styles.more} />}
           data={moreIntegrations}
+          isClickable={true}
         />
       </div>
 
