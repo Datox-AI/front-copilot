@@ -58,15 +58,21 @@ const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
             <li className={!!selectedUser && styles.selected}>
               <Box display="flex" alignItems="center" width="100%" gap="10px">
                 <Avatar
-                  {...stringAvatar(selectedUser.displayName)}
+                  {...stringAvatar(
+                    [selectedUser.first_name, selectedUser.last_name].join(" ")
+                  )}
                   sx={{
-                    ...stringAvatar(selectedUser.displayName).sx,
+                    ...stringAvatar(
+                      [selectedUser.first_name, selectedUser.last_name].join(
+                        " "
+                      )
+                    ).sx,
                     height: 32,
                     width: 32,
                     fontSize: 14
                   }}
                 />{" "}
-                {selectedUser.displayName}
+                {[selectedUser.first_name, selectedUser.last_name].join(" ")}
               </Box>
 
               <Select
@@ -83,7 +89,7 @@ const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
                 <MenuItem value={null} className="menu-item-select">
                   None
                 </MenuItem>
-                {roles?.lists?.map((role) => (
+                {roles?.map((role) => (
                   <MenuItem
                     value={role.id}
                     key={role.id}

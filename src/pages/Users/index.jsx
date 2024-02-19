@@ -140,8 +140,11 @@ const Users = () => {
         </Box>
 
         <UsersTable
-          users={data?.lists?.filter((_user) =>
-            _user.displayName.toLowerCase().includes(search.toLowerCase())
+          users={data?.filter((_user) =>
+            [_user.first_name, _user.last_name]
+              .join(" ")
+              .toLowerCase()
+              .includes(search.toLowerCase())
           )}
           isLoading={isLoading}
           selectedUsers={selectedUsers}
@@ -163,7 +166,7 @@ const Users = () => {
 
       {/* FOR BULK DEACTIVATE */}
       <DeleteChatPopup
-        title={`Are you sure want to remove ${deletableUser?.displayName} from active users?`}
+        title={`Are you sure want to remove ${deletableUser?.first_name} from active users?`}
         description=" "
         newImg={notUser}
         isOpen={!!deletableUser}

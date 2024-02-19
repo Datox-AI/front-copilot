@@ -26,7 +26,7 @@ const PopoverMenu = ({
   data = _data,
   mainIcon = <MoreHorizIcon />,
   position = "bottom" | "top",
-  isClickable
+  isClickable = true
 }) => {
   const ref = useRef();
 

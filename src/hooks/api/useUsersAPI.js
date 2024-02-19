@@ -3,11 +3,14 @@ import { request } from "../../config/request";
 
 const useUsersAPI = (status) => {
   const { data, isLoading, refetch } = useQuery(["GET_USERS", status], () =>
-    request.get("api/users", {
-      params: {
-        UserStatuses: status
-      }
-    })
+    request.get(
+      "api/users/"
+      // {
+      //   params: {
+      //     UserStatuses: status
+      //   }
+      // }
+    )
   );
 
   const updateMutation = useMutation((payload) =>

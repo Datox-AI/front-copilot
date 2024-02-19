@@ -87,15 +87,19 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
               <li key={u} className={!!foundUser && styles.selected}>
                 <Box display="flex" alignItems="center" width="100%" gap="10px">
                   <Avatar
-                    {...stringAvatar(user.displayName)}
+                    {...stringAvatar(
+                      [user.first_name, user.last_name].join(" ")
+                    )}
                     sx={{
-                      ...stringAvatar(user.displayName).sx,
+                      ...stringAvatar(
+                        [user.first_name, user.last_name].join(" ")
+                      ).sx,
                       height: 32,
                       width: 32,
                       fontSize: 14
                     }}
                   />{" "}
-                  {user.displayName}
+                  {[user.first_name, user.last_name].join(" ")}
                 </Box>
 
                 <Select
@@ -112,7 +116,7 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
                   <MenuItem value={null} className="menu-item-select">
                     None
                   </MenuItem>
-                  {roles?.lists?.map((role) => (
+                  {roles?.map((role) => (
                     <MenuItem
                       value={role.id}
                       key={role.id}

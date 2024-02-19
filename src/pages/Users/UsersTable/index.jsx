@@ -187,7 +187,7 @@ const UsersTable = ({
               .map(() => <UserItemSkeleton />)
           : users?.map((user, u) => (
               <UserItem
-                fullname={user?.displayName}
+                fullname={[user.first_name, user.last_name].join(" ")}
                 email={user?.status}
                 department="Engineering"
                 title="-"

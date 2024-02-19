@@ -242,6 +242,23 @@ th,
   opacity: 1;
 }
 
+.splitter {
+  width: 1px;
+  height: 100vh;
+  background-color: #fff;
+  border-right: 1px solid #e2e2e2;
+  cursor: col-resize;
+  max-width: 2px;
+  /* position: absolute; */
+  /* right: -2px; */
+}
+
+.splitter:hover,
+.splitter.isDragging {
+  background: var(--primary-color);
+  width: 4px;
+}
+
 @media (hover: hover) {
   .resizer {
     opacity: 0;

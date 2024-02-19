@@ -25,6 +25,7 @@ import {
 // needed for row & cell level scope DnD setup
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Box, CircularProgress } from "@mui/material";
 
 const DragAlongCell = ({ cell }) => {
   const { isDragging, setNodeRef, transform } = useSortable({
@@ -147,7 +148,7 @@ export const MemoizedTableBody = React.memo(
 );
 const columnResizeMode = "onChange";
 
-const RCTable = ({ columns, data }) => {
+const RCTable = ({ columns, data, isLoading }) => {
   const _cols = useMemo(
     () =>
       columns?.length > 0
@@ -209,6 +210,13 @@ const RCTable = ({ columns, data }) => {
     useSensor(TouchSensor, {}),
     useSensor(KeyboardSensor, {})
   );
+
+  if (isLoading)
+    return (
+      <Box width="100%" height={400}>
+        <CircularProgress size={30} />
+      </Box>
+    );
 
   return (
     <DndContext

@@ -44,7 +44,8 @@ const MessageItem = ({
   showDots,
   isHighlightedMessage,
   onHighlightMessage,
-  storeFileId
+  storeFileId,
+  sqlQuery
 }) => {
   const onClickReply = (_id) => {
     document.getElementById("message-" + _id).scrollIntoView({
@@ -120,6 +121,7 @@ const MessageItem = ({
             {showDots && <Dots />}
 
             <CustomMarkdown message={message} />
+            {sqlQuery && <CustomMarkdown message={sqlQuery} />}
             {questions && questions.length > 0 && (
               <QuestionsList
                 questions={questions}

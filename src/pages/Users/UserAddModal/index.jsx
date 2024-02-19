@@ -121,7 +121,7 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
                     <MenuItem value={null} className="menu-item-select">
                       None
                     </MenuItem>
-                    {roles?.lists?.map((role) => (
+                    {roles?.map((role) => (
                       <MenuItem
                         value={role.id}
                         key={role.id}

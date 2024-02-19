@@ -52,6 +52,7 @@ const Integration = () => {
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
   const { onText, onQuestions } = usePrompt({ chatId });
 
+  const [width, setWidth] = useState(284);
   const [activeChat, setActiveChat] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedSchema, setSelectedSchema] = useState("");
@@ -250,6 +251,38 @@ const Integration = () => {
     [activeIntegration, data]
   );
 
+  const [isDragging, setIsDragging] = useState(false);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isDragging) return;
+
+      const _width = e.clientX;
+
+      if (_width > 284 && _width < 600) {
+        setWidth(_width);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+
+      return () => {
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+    }
+  }, [isDragging, width]);
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+  };
+
   useEffect(() => {
     if ((!chatId && !filteredChats) || isFetching) return;
 
@@ -272,44 +305,63 @@ const Integration = () => {
 
   return (
     <Box width="100%" display="flex">
-      <FileBar
-        title="Chat"
-        refetch={refetch}
-        hideNewChatBtn={true}
-        activeChat={activeChat}
-        relatedFiles={relatedFiles}
-        selectSchema={selectSchema}
-        selectDatabase={selectDatabase}
-        selectedSchema={selectedSchema}
-        snowflakeCredentials={credentials}
-        selectedDatabase={selectedDatabase}
-        activeIntegration={activeIntegration}
-      />
-      <Outlet
-        context={{
-          integrations: openedIntegrations,
-          chats: filteredChats,
-          activeChat,
-          activeIntegration,
-          onCloseIntegration,
-          handleSelectChat,
-          chatId,
-          refetch,
-          refetchSingleChat:
-            activeIntegration?.dataType === "DataAnalytics"
-              ? refetchSingleChat
-              : refetchSingleRagChat,
-          setRelatedFiles,
-          snowflakeCredentials: credentials,
-          selectedDatabase,
-          selectedSchema,
-          isAgentConnected,
-          chatMessages:
-            singleAnalyticsChat?.messages || singleRagChat?.messages,
-          isSnowflakeChat: activeIntegration?.dataType === "DataAnalytics",
-          sendMessageToAgent: handleWebsocketMessage
+      <div
+        style={{
+          width: `${width}px`,
+          minWidth: 284,
+          maxWidth: 600
         }}
-      />
+      >
+        <FileBar
+          title="Chat"
+          refetch={refetch}
+          hideNewChatBtn={true}
+          activeChat={activeChat}
+          relatedFiles={relatedFiles}
+          selectSchema={selectSchema}
+          selectDatabase={selectDatabase}
+          selectedSchema={selectedSchema}
+          snowflakeCredentials={credentials}
+          selectedDatabase={selectedDatabase}
+          activeIntegration={activeIntegration}
+        />
+      </div>
+      <button
+        className={"splitter " + (isDragging && "isDragging")}
+        onMouseDown={handleMouseDown}
+      ></button>
+
+      <div
+        style={{
+          width: `calc(100% - ${width - 1}px)`
+        }}
+      >
+        <Outlet
+          context={{
+            integrations: openedIntegrations,
+            chats: filteredChats,
+            activeChat,
+            activeIntegration,
+            onCloseIntegration,
+            handleSelectChat,
+            chatId,
+            refetch,
+            refetchSingleChat:
+              activeIntegration?.dataType === "DataAnalytics"
+                ? refetchSingleChat
+                : refetchSingleRagChat,
+            setRelatedFiles,
+            snowflakeCredentials: credentials,
+            selectedDatabase,
+            selectedSchema,
+            isAgentConnected,
+            chatMessages:
+              singleAnalyticsChat?.messages || singleRagChat?.messages,
+            isSnowflakeChat: activeIntegration?.dataType === "DataAnalytics",
+            sendMessageToAgent: handleWebsocketMessage
+          }}
+        />
+      </div>
     </Box>
   );
 };

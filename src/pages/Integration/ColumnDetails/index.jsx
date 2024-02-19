@@ -16,6 +16,7 @@ const ColumnDetails = ({ children }) => {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
+      console.log(e);
       if (isDragging) {
         const deltaY = startY.current - e.clientY; // Adjust the calculation here
         const newHeight = height + deltaY;

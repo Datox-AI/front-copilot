@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 import styles from "./style.module.scss"; // CSS file for styling the button
-import { ArrowCircleUpRounded } from "@mui/icons-material";
+
+import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
 
 export default function ScrollToBottom({ itemRef }) {
   const [isVisible, setIsVisible] = useState(false);
@@ -41,7 +42,7 @@ export default function ScrollToBottom({ itemRef }) {
     <div className={styles.scrollToTop}>
       {isVisible && (
         <button onClick={scrollToTop} title="Scroll to top">
-          <ArrowCircleUpRounded size={36} />
+          <SouthRoundedIcon size={24} />
         </button>
       )}
     </div>

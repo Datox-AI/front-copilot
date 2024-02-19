@@ -111,6 +111,7 @@ const Messages = forwardRef(
                       files={message.files}
                       storeFileId={message.stored_file_id}
                       showDots={!realMessage.trim()}
+                      sqlQuery={message.sql_query}
                       questions={!isAudit && realQuestions}
                       replyMessage={data?.find(
                         (msg) => msg.id === message.reply_to

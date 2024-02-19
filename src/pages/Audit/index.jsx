@@ -7,6 +7,8 @@ import useUsersAPI from "../../hooks/api/useUsersAPI";
 import { stringAvatar } from "../../utils";
 import classNames from "classnames";
 
+const getFullname = (firstName, lastName) => [firstName, lastName].join(" ");
+
 const Audit = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -15,8 +17,11 @@ const Audit = () => {
   const [search, setSearch] = useState("");
 
   const users = useMemo(() => {
-    return data?.lists?.filter((_user) =>
-      _user.displayName.toLowerCase().includes(search.toLowerCase())
+    return data?.filter((_user) =>
+      [_user.first_name, _user.last_name]
+        ?.join(" ")
+        ?.toLowerCase()
+        .includes(search.toLowerCase())
     );
   }, [data, search]);
 
@@ -49,9 +54,11 @@ const Audit = () => {
                 [styles.active]: userId === user.id
               })}
             >
-              <Avatar {...stringAvatar(user.displayName)} />
+              <Avatar
+                {...stringAvatar(getFullname(user.first_name, user.last_name))}
+              />
               <Box display="flex" flexDirection="column">
-                <p>{user.displayName}</p>
+                <p>{getFullname(user.first_name, user.last_name)}</p>
                 <span>{user.roles[0].name}</span>
               </Box>
             </li>
