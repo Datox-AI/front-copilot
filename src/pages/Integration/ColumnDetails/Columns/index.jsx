@@ -7,6 +7,7 @@ import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
 import { useMemo } from "react";
 
 export const normalizeColumn = (name, withRender, dataIndex) => ({
+  id: name,
   header: name,
   accessorKey: dataIndex,
   footer: (props) => props.column.id

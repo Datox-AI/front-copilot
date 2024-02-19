@@ -17,6 +17,17 @@
           line-height: normal;
           background-color: #fff;
           text-transform: uppercase;
+
+          .headerBox {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+          }
+
+          button {
+            background-color: transparent;
+            opacity: 0.6;
+          }
         }
       }
     }
@@ -36,5 +47,24 @@
         }
       }
     }
+  }
+}
+
+.filter {
+  &,
+  div {
+    display: flex;
+    margin-top: 5px;
+    gap: 5px;
+
+    input {
+      max-width: 100px;
+    }
+  }
+
+  input {
+    border: 1px solid #c1c1c1;
+    padding: 5px;
+    border-radius: 5px;
   }
 }

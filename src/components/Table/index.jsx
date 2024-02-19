@@ -1,11 +1,104 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  flexRender
+  flexRender,
+  getFilteredRowModel
 } from "@tanstack/react-table";
-import { Resizable } from "react-resizable";
 import styles from "./style.module.scss";
+import {
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core";
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+import {
+  arrayMove,
+  SortableContext,
+  horizontalListSortingStrategy
+} from "@dnd-kit/sortable";
+
+// needed for row & cell level scope DnD setup
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+
+const DragAlongCell = ({ cell }) => {
+  const { isDragging, setNodeRef, transform } = useSortable({
+    id: cell.column.id
+  });
+
+  const style = {
+    opacity: isDragging ? 0.8 : 1,
+    position: "relative",
+    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
+    transition: "width transform 0.2s ease-in-out",
+    width: cell.column.getSize(),
+    zIndex: isDragging ? 1 : 0
+  };
+
+  return (
+    <td style={style} ref={setNodeRef}>
+      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+    </td>
+  );
+};
+
+const DraggableTableHeader = ({ header, table }) => {
+  const { attributes, isDragging, listeners, setNodeRef, transform } =
+    useSortable({
+      id: header.column.id
+    });
+
+  const style = {
+    opacity: isDragging ? 0.8 : 1,
+    position: "relative",
+    transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
+    transition: "width transform 0.2s ease-in-out",
+    whiteSpace: "nowrap",
+    // width: header.column.getSize(),
+    zIndex: isDragging ? 1 : 0,
+    width: `calc(var(--header-${header?.id}-size) * 1px)`
+  };
+
+  return (
+    <th colSpan={header.colSpan} ref={setNodeRef} style={style}>
+      <div className={styles.headerBox}>
+        <span>
+          {flexRender(header.column.columnDef.header, header.getContext())}
+        </span>
+
+        {header.id !== "index" && (
+          <button {...attributes} {...listeners}>
+            🟰
+          </button>
+        )}
+
+        {header.id !== "index" && (
+          <div
+            {...{
+              onDoubleClick: () => header.column.resetSize(),
+              onMouseDown: header.getResizeHandler(),
+              onTouchStart: header.getResizeHandler(),
+              className: `resizer ${table.options.columnResizeDirection} ${
+                header.column.getIsResizing() ? "isResizing" : ""
+              }`,
+              style: {}
+            }}
+          />
+        )}
+      </div>
+      {header.column.getCanFilter() && header.index !== 0 ? (
+        <div className={styles.filter}>
+          <Filter column={header.column} table={table} />
+        </div>
+      ) : null}
+    </th>
+  );
+};
 
 function TableBody({ table }) {
   return (
@@ -55,84 +148,207 @@ export const MemoizedTableBody = React.memo(
 const columnResizeMode = "onChange";
 
 const RCTable = ({ columns, data }) => {
+  const _cols = useMemo(
+    () =>
+      columns?.length > 0
+        ? [
+            {
+              id: "index",
+              header: "#",
+              accessorKey: "index",
+              footer: (props) => props.column.id,
+              size: 50
+            },
+            ...columns
+          ]
+        : [],
+    [columns]
+  );
+
+  const _data = useMemo(() => {
+    return data.map((item, idx) => ({ ...item, index: idx + 1 }));
+  }, [data]);
+
+  useEffect(() => {
+    setColumnOrder(() => _cols.map((c) => c?.id));
+  }, [_cols]);
+
+  const [columnOrder, setColumnOrder] = useState(() => _cols.map((c) => c?.id));
+
   const table = useReactTable({
-    data,
-    columns,
+    data: _data,
+    columns: _cols,
     defaultColumn: {
-      minSize: 60,
-      maxSize: 800
+      minSize: 50
+      // maxSize: 800
     },
+    state: {
+      columnOrder
+    },
+    onColumnOrderChange: setColumnOrder,
     columnResizeMode,
     columnResizeDirection: "ltr",
-    getCoreRowModel: getCoreRowModel()
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel()
   });
 
+  // reorder columns after drag & drop
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (active && over && active.id !== over.id) {
+      setColumnOrder((columnOrder) => {
+        const oldIndex = columnOrder.indexOf(active.id);
+        const newIndex = columnOrder.indexOf(over.id);
+        return arrayMove(columnOrder, oldIndex, newIndex); //this is just a splice util
+      });
+    }
+  }
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
+    useSensor(KeyboardSensor, {})
+  );
+
   return (
-    <div className={styles.table}>
-      <table
-        {...{
-          style: {
-            width: table.getCenterTotalSize()
-          }
-        }}
-      >
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  {...{
-                    key: header.index,
-                    // colSpan: header.colSpan,
-                    style: {
-                      // width: header.getSize(),
-                      width: `calc(var(--header-${header?.id}-size) * 1px)`
-                    }
-                  }}
+    <DndContext
+      collisionDetection={closestCenter}
+      modifiers={[restrictToHorizontalAxis]}
+      onDragEnd={handleDragEnd}
+      sensors={sensors}
+    >
+      <div className={styles.table}>
+        <table
+          {...{
+            style: {
+              width: table.getCenterTotalSize()
+            }
+          }}
+        >
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {/* {headerGroup.headers.map((header) => ( */}
+                <SortableContext
+                  items={columnOrder}
+                  strategy={horizontalListSortingStrategy}
                 >
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  <div
-                    {...{
-                      onDoubleClick: () => header.column.resetSize(),
-                      onMouseDown: header.getResizeHandler(),
-                      onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${
-                        table.options.columnResizeDirection
-                      } ${header.column.getIsResizing() ? "isResizing" : ""}`,
-                      style: {}
-                    }}
-                  />
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  {...{
-                    key: cell.id,
-                    style: {
-                      width: cell.column.getSize()
-                    }
-                  }}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                  {headerGroup.headers.map((header) => (
+                    <DraggableTableHeader
+                      key={header.id}
+                      header={header}
+                      table={table}
+                    />
+                  ))}
+                </SortableContext>
+                {/* 
+                  // <th
+                  //   {...{
+                  //     key: header.index,
+                  //     // colSpan: header.colSpan,
+                  //     style: {
+                  //       // width: header.getSize(),
+                  //       width: `calc(var(--header-${header?.id}-size) * 1px)`
+                  //     }
+                  //   }}
+                  // >
+                  //   {header.isPlaceholder ? null : (
+                  //     <>
+                  //       {flexRender(
+                  //         header.column.columnDef.header,
+                  //         header.getContext()
+                  //       )}
+
+                  //       {header.column.getCanFilter() && header.index !== 0 ? (
+                  //         <div className={styles.filter}>
+                  //           <Filter column={header.column} table={table} />
+                  //         </div>
+                  //       ) : null}
+                  //     </>
+                  //   )}
+
+                  //   <div
+                  //     {...{
+                  //       onDoubleClick: () => header.column.resetSize(),
+                  //       onMouseDown: header.getResizeHandler(),
+                  //       onTouchStart: header.getResizeHandler(),
+                  //       className: `resizer ${
+                  //         table.options.columnResizeDirection
+                  //       } ${header.column.getIsResizing() ? "isResizing" : ""}`,
+                  //       style: {}
+                  //     }}
+                  //   />
+                  // </th>
+                // ))} */}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <SortableContext
+                    key={cell.id}
+                    items={columnOrder}
+                    strategy={horizontalListSortingStrategy}
+                  >
+                    <DragAlongCell key={cell.id} cell={cell} />
+                  </SortableContext>
+                  // <td
+                  //   {...{
+                  //     key: cell.id,
+                  //     style: {
+                  //       width: cell.column.getSize()
+                  //     }
+                  //   }}
+                  // >
+                  //   {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  // </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </DndContext>
   );
 };
+
+function Filter({ column, table }) {
+  const firstValue = table
+    .getPreFilteredRowModel()
+    .flatRows[0]?.getValue(column.id);
+
+  return typeof firstValue === "number" ? (
+    <div className="flex space-x-2">
+      <input
+        type="number"
+        value={column.getFilterValue()?.[0] ?? ""}
+        onChange={(e) =>
+          column.setFilterValue((old) => [e.target.value, old?.[1]])
+        }
+        placeholder={`Min`}
+        className="w-24 border shadow rounded"
+      />
+      <input
+        type="number"
+        value={column.getFilterValue()?.[1] ?? ""}
+        onChange={(e) =>
+          column.setFilterValue((old) => [old?.[0], e.target.value])
+        }
+        placeholder={`Max`}
+        className="w-24 border shadow rounded"
+      />
+    </div>
+  ) : (
+    <input
+      type="text"
+      value={column.getFilterValue() ?? ""}
+      onChange={(e) => column.setFilterValue(e.target.value)}
+      placeholder={`Search...`}
+      className="w-36 border shadow rounded"
+    />
+  );
+}
 
 export default RCTable;
