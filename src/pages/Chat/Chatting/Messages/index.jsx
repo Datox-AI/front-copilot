@@ -113,7 +113,7 @@ const Messages = forwardRef(
                       showDots={!realMessage.trim()}
                       questions={!isAudit && realQuestions}
                       replyMessage={data?.find(
-                        (msg) => msg.id === message.replyTo
+                        (msg) => msg.id === message.reply_to
                       )}
                       onClick={
                         mode === chatModes.SELECT

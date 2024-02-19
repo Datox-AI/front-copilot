@@ -249,7 +249,7 @@ const usePrompt = ({
       created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
       files: [],
-      replyTo: null,
+      reply_to: null,
       text: " ",
       role: "Assistant"
     };
@@ -300,7 +300,7 @@ const usePrompt = ({
             file.file.name.split(".")[file.file.name.split(".").length - 1]
         }))
       ],
-      replyTo: replyMessage?.id,
+      reply_to: replyMessage?.id,
       text,
       role: "User"
     };
