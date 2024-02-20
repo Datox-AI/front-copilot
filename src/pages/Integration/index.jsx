@@ -133,7 +133,7 @@ const Integration = () => {
             break;
 
           case "Engine is not connected":
-            sendData(chatId, {
+            sendData(ws?.chatId, {
               oauth_token: snowflakeToken?.access
             });
             break;
@@ -153,8 +153,8 @@ const Integration = () => {
               }
 
               setTimeout(() => {
-                dispatch(stopStreaming({ chatId }));
-                dispatch(destroyTextGenerator({ chatId }));
+                dispatch(stopStreaming({ chatId: ws?.chatId }));
+                dispatch(destroyTextGenerator({ chatId: ws?.chatId }));
                 refetchSingleAnalyticsChat();
               }, 300);
             } else {
@@ -166,7 +166,7 @@ const Integration = () => {
               );
 
               // setIsAgentConnected(false);
-              toggleAgentConnection(chatId, false);
+              toggleAgentConnection(ws?.chatId, false);
 
               setTimeout(() => {
                 // dispatch(stopStreaming({ chatId }));
