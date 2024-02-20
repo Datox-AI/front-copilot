@@ -129,7 +129,7 @@ const Integration = () => {
         switch (message?.message) {
           case "Engine is connected succesfully":
             // setIsAgentConnected(true);
-            toggleAgentConnection(chatId, true);
+            toggleAgentConnection(ws?.chatId, true);
             break;
 
           case "Engine is not connected":
