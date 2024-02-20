@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import usePrompt from "../../hooks/usePrompt";
 import {
   destroyTextGenerator,
+  setQuestionsToGenerator,
   setTextToGenerator,
   startStreaming,
   stopStreaming
@@ -66,7 +67,6 @@ const Integration = () => {
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedSchema, setSelectedSchema] = useState("");
   const [selectedDatabase, setSelectedDatabase] = useState("");
-  const [isAgentConnected, setIsAgentConnected] = useState(false);
 
   const currentWs = websockets.find((ws) => ws.chatId === chatId);
 
@@ -110,13 +110,14 @@ const Integration = () => {
 
   const handleWebsocketMessage = useCallback(
     (txt) => {
-      dispatch(startStreaming({ chatId }));
-      if (currentWs?.isAgentConnected)
-        sendData(chatId, {
+      if (currentWs?.isAgentConnected) {
+        dispatch(startStreaming({ chatId: currentWs?.chatId }));
+        sendData(currentWs?.chatId, {
           user_input: txt
         });
+      }
     },
-    [chatId, currentWs?.isAgentConnected]
+    [currentWs?.chatId, currentWs?.isAgentConnected]
   );
 
   useEffect(() => {
@@ -141,15 +142,33 @@ const Integration = () => {
           default:
             if (message?.status !== "error") {
               if (message?.output) {
-                onText(message.output);
+                // onText(message.output);
+                dispatch(
+                  setTextToGenerator({
+                    chatId: message?.chat_id,
+                    text: message.output
+                  })
+                );
               }
 
               if (message?.sql_query) {
-                onText(message.sql_query);
+                // onText(message.sql_query);
+                dispatch(
+                  setTextToGenerator({
+                    chatId: message?.chat_id,
+                    text: message.sql_query
+                  })
+                );
               }
 
               if (message?.followup_questions) {
-                onQuestions(message?.followup_questions);
+                dispatch(
+                  setQuestionsToGenerator({
+                    chatId: message?.chat_id,
+                    questions: message?.followup_questions
+                  })
+                );
+                // onQuestions(message?.followup_questions);
               }
 
               setTimeout(() => {
@@ -195,7 +214,7 @@ const Integration = () => {
     //   console.log("Removing...");
     //   removeWebSocket(chatId);
     // };
-  }, [chatId, token, integrationId]);
+  }, [chatId, integrationId]);
 
   useEffect(() => {
     if (!singleAnalyticsChat) return;
