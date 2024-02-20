@@ -72,6 +72,10 @@ const chatSlice = createSlice({
       if (state.textGenerator[payload.chatId])
         state.textGenerator[payload.chatId].text = prevText + payload.text;
     },
+    changeTextToGenerator: (state, { payload }) => {
+      if (state.textGenerator[payload.chatId])
+        state.textGenerator[payload.chatId].text = payload.text;
+    },
     setQuestionsToGenerator: (state, { payload }) => {
       if (state.textGenerator[payload.chatId])
         state.textGenerator[payload.chatId].questions = [...payload.questions];
@@ -98,7 +102,8 @@ export const {
   removeFile,
   clearFiles,
   finishUploadFile,
-  setQuestionsToGenerator
+  setQuestionsToGenerator,
+  changeTextToGenerator
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

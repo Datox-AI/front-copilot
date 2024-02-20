@@ -183,7 +183,7 @@ const Integration = () => {
         ws?.socket?.removeEventListener("message", () => {});
       });
     };
-  }, [websockets, chatId, activeIntegration, snowflakeToken]);
+  }, [websockets, chatId, activeIntegration, snowflakeToken?.access]);
 
   useEffect(() => {
     if (chatId && Number(integrationId) === 2) {
