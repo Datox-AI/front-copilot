@@ -1,7 +1,8 @@
-import { NavLink } from "react-router-dom";
 import styles from "../../style.module.scss";
-import { Close } from "@mui/icons-material";
 import classNames from "classnames";
+
+import { NavLink, useLocation } from "react-router-dom";
+import { Close } from "@mui/icons-material";
 import { integrationIcons } from "../../../../../consts/integrations";
 
 const IntegrationTab = ({
@@ -12,14 +13,23 @@ const IntegrationTab = ({
   integrationId,
   iconType
 }) => {
+  const { pathname } = useLocation();
+
   return (
     <button
       className={classNames(styles.integrationTab, { [styles.active]: active })}
     >
-      <NavLink to={`/integration/${integrationId}`}>
-        {integrationIcons[iconType]}
-        {name}
-      </NavLink>
+      {pathname.includes(`/integration/${integrationId}`) ? (
+        <a>
+          {integrationIcons[iconType]}
+          {name}
+        </a>
+      ) : (
+        <NavLink to={`/integration/${integrationId}`}>
+          {integrationIcons[iconType]}
+          {name}
+        </NavLink>
+      )}
 
       {name && active && <Close onClick={() => onClose(integrationId)} />}
     </button>

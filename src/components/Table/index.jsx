@@ -41,9 +41,30 @@ const DragAlongCell = ({ cell }) => {
     zIndex: isDragging ? 1 : 0
   };
 
+  // const value = flexRender(cell.column.columnDef.cell, cell.getContext());
+  const value = cell.getValue();
+  const withCut = cell.getValue()?.length > 40;
+
+  const [showMore, setShowMore] = useState(false);
+
+  const toggle = () => setShowMore((prev) => !prev);
+
   return (
     <td style={style} ref={setNodeRef}>
-      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+      {showMore && withCut ? (
+        <>
+          {value} <button onClick={toggle}>show less</button>
+        </>
+      ) : (
+        <>
+          {String(value).substring(0, 40)}
+          {withCut && (
+            <>
+              ... <button onClick={toggle}>show more</button>
+            </>
+          )}
+        </>
+      )}
     </td>
   );
 };
@@ -158,7 +179,8 @@ const RCTable = ({ columns, data, isLoading }) => {
               header: "#",
               accessorKey: "index",
               footer: (props) => props.column.id,
-              size: 50
+              size: 50,
+              minSize: 50
             },
             ...columns
           ]
@@ -180,7 +202,8 @@ const RCTable = ({ columns, data, isLoading }) => {
     data: _data,
     columns: _cols,
     defaultColumn: {
-      minSize: 50
+      minSize: 50,
+      size: 250
       // maxSize: 800
     },
     state: {
@@ -213,7 +236,13 @@ const RCTable = ({ columns, data, isLoading }) => {
 
   if (isLoading)
     return (
-      <Box width="100%" height={400}>
+      <Box
+        width="96%"
+        height={300}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
         <CircularProgress size={30} />
       </Box>
     );
@@ -236,7 +265,6 @@ const RCTable = ({ columns, data, isLoading }) => {
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
-                {/* {headerGroup.headers.map((header) => ( */}
                 <SortableContext
                   items={columnOrder}
                   strategy={horizontalListSortingStrategy}
@@ -249,45 +277,6 @@ const RCTable = ({ columns, data, isLoading }) => {
                     />
                   ))}
                 </SortableContext>
-                {/* 
-                  // <th
-                  //   {...{
-                  //     key: header.index,
-                  //     // colSpan: header.colSpan,
-                  //     style: {
-                  //       // width: header.getSize(),
-                  //       width: `calc(var(--header-${header?.id}-size) * 1px)`
-                  //     }
-                  //   }}
-                  // >
-                  //   {header.isPlaceholder ? null : (
-                  //     <>
-                  //       {flexRender(
-                  //         header.column.columnDef.header,
-                  //         header.getContext()
-                  //       )}
-
-                  //       {header.column.getCanFilter() && header.index !== 0 ? (
-                  //         <div className={styles.filter}>
-                  //           <Filter column={header.column} table={table} />
-                  //         </div>
-                  //       ) : null}
-                  //     </>
-                  //   )}
-
-                  //   <div
-                  //     {...{
-                  //       onDoubleClick: () => header.column.resetSize(),
-                  //       onMouseDown: header.getResizeHandler(),
-                  //       onTouchStart: header.getResizeHandler(),
-                  //       className: `resizer ${
-                  //         table.options.columnResizeDirection
-                  //       } ${header.column.getIsResizing() ? "isResizing" : ""}`,
-                  //       style: {}
-                  //     }}
-                  //   />
-                  // </th>
-                // ))} */}
               </tr>
             ))}
           </thead>
@@ -302,16 +291,6 @@ const RCTable = ({ columns, data, isLoading }) => {
                   >
                     <DragAlongCell key={cell.id} cell={cell} />
                   </SortableContext>
-                  // <td
-                  //   {...{
-                  //     key: cell.id,
-                  //     style: {
-                  //       width: cell.column.getSize()
-                  //     }
-                  //   }}
-                  // >
-                  //   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  // </td>
                 ))}
               </tr>
             ))}

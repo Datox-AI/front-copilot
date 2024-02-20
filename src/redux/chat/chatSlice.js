@@ -73,7 +73,8 @@ const chatSlice = createSlice({
         state.textGenerator[payload.chatId].text = prevText + payload.text;
     },
     setQuestionsToGenerator: (state, { payload }) => {
-      state.textGenerator[payload.chatId].questions = [...payload.questions];
+      if (state.textGenerator[payload.chatId])
+        state.textGenerator[payload.chatId].questions = [...payload.questions];
     },
     startStreaming: (state, { payload }) => {
       if (state.textGenerator[payload.chatId])

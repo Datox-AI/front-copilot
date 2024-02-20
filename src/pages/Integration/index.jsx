@@ -12,10 +12,12 @@ import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 import usePrompt from "../../hooks/usePrompt";
 import {
+  destroyTextGenerator,
   setTextToGenerator,
   startStreaming,
   stopStreaming
 } from "../../redux/chat/chatSlice";
+import { useWebSocket } from "../../hooks/useWebSocket";
 
 const Integration = () => {
   const dispatch = useDispatch();
@@ -51,6 +53,13 @@ const Integration = () => {
 
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
   const { onText, onQuestions } = usePrompt({ chatId });
+  const {
+    websockets,
+    addWebSocket,
+    sendData,
+    removeWebSocket,
+    toggleAgentConnection
+  } = useWebSocket();
 
   const [width, setWidth] = useState(284);
   const [activeChat, setActiveChat] = useState(null);
@@ -58,6 +67,8 @@ const Integration = () => {
   const [selectedSchema, setSelectedSchema] = useState("");
   const [selectedDatabase, setSelectedDatabase] = useState("");
   const [isAgentConnected, setIsAgentConnected] = useState(false);
+
+  const currentWs = websockets.find((ws) => ws.chatId === chatId);
 
   const selectDatabase = (item) => {
     if (singleAnalyticsChat)
@@ -99,85 +110,92 @@ const Integration = () => {
 
   const handleWebsocketMessage = useCallback(
     (txt) => {
-      // dispatch(startStreaming({ chatId }));
-      if (isAgentConnected)
-        websocket.sendMessage({
+      dispatch(startStreaming({ chatId }));
+      if (currentWs?.isAgentConnected)
+        sendData(chatId, {
           user_input: txt
         });
     },
-    [websocket, chatId, isAgentConnected]
+    [chatId, currentWs?.isAgentConnected]
   );
 
   useEffect(() => {
-    if (!chatId || activeIntegration.type !== "sql") return;
+    if (!chatId || Number(integrationId) !== 2) return;
 
-    // Connect to WebSocket when component mounts
-    websocket.connect(
-      `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws/${chatId}?token=${token}`
-    );
+    websockets.forEach((ws) => {
+      ws?.socket?.addEventListener("message", (event) => {
+        const message = JSON.parse(event.data);
+        console.log(message);
+        switch (message?.message) {
+          case "Engine is connected succesfully":
+            // setIsAgentConnected(true);
+            toggleAgentConnection(chatId, true);
+            break;
 
-    let timeout;
+          case "Engine is not connected":
+            sendData(chatId, {
+              oauth_token: snowflakeToken?.access
+            });
+            break;
 
-    // Add a message handler to update component state
-    const handleIncomingMessage = (message) => {
-      console.log(message);
-      switch (message?.message) {
-        case "Engine is connected succesfully":
-          setIsAgentConnected(true);
-          break;
+          default:
+            if (message?.status !== "error") {
+              if (message?.output) {
+                onText(message.output);
+              }
 
-        case "Engine is not connected":
-          websocket.sendMessage({
-            oauth_token: snowflakeToken?.access
-          });
-          break;
+              if (message?.sql_query) {
+                onText(message.sql_query);
+              }
 
-        default:
-          if (message?.status !== "error") {
-            if (message?.output) {
-              onText(message.output);
+              if (message?.followup_questions) {
+                onQuestions(message?.followup_questions);
+              }
+
+              setTimeout(() => {
+                dispatch(stopStreaming({ chatId }));
+                dispatch(destroyTextGenerator({ chatId }));
+                refetchSingleAnalyticsChat();
+              }, 300);
+            } else {
+              dispatch(
+                setTextToGenerator({
+                  chatId,
+                  text: "Unexepected error happened"
+                })
+              );
+
+              // setIsAgentConnected(false);
+              toggleAgentConnection(chatId, false);
+
+              setTimeout(() => {
+                // dispatch(stopStreaming({ chatId }));
+              }, 300);
             }
 
-            if (message?.sql_query) {
-              onText(message.sql_query);
-            }
-
-            if (message?.followup_questions) {
-              onQuestions(message?.followup_questions);
-            }
-
-            timeout = setTimeout(() => {
-              // dispatch(stopStreaming({ chatId }));
-              refetchSingleAnalyticsChat();
-            }, 300);
-          } else {
-            dispatch(
-              setTextToGenerator({ chatId, text: "Unexepected error happened" })
-            );
-
-            setIsAgentConnected(false);
-
-            timeout = setTimeout(() => {
-              // dispatch(stopStreaming({ chatId }));
-            }, 300);
-          }
-
-          break;
-      }
-    };
-
-    websocket.addMessageHandler(handleIncomingMessage);
+            break;
+        }
+      });
+    });
 
     return () => {
-      // Remove the message handler when component unmounts
-      websocket.removeMessageHandler(handleIncomingMessage);
-      // Close WebSocket connection when component unmounts
-      websocket.closeConnection();
-      setIsAgentConnected(false);
-
-      clearTimeout(timeout);
+      websockets.forEach((ws) => {
+        ws?.socket?.removeEventListener("message", () => {});
+      });
     };
-  }, [chatId, token, snowflakeToken]);
+  }, [websockets, chatId, activeIntegration, snowflakeToken]);
+
+  useEffect(() => {
+    if (chatId && Number(integrationId) === 2) {
+      addWebSocket(chatId);
+      return;
+    }
+
+    // return () => {
+    //   console.log("Removing...");
+    //   removeWebSocket(chatId);
+    // };
+  }, [chatId, token, integrationId]);
 
   useEffect(() => {
     if (!singleAnalyticsChat) return;
@@ -288,10 +306,10 @@ const Integration = () => {
 
     const foundChat = filteredChats?.find((chat) => chat.id === chatId);
 
-    if (integrationId && filteredChats?.length > 0 && !foundChat) {
-      navigate(`/integration/${integrationId}/${filteredChats[0]?.id || ""}`);
-      return;
-    }
+    // if (integrationId && filteredChats?.length > 0 && !foundChat) {
+    //   navigate(`/integration/${integrationId}/${filteredChats[0]?.id || ""}`);
+    //   return;
+    // }
 
     handleSelectChat(foundChat);
   }, [chatId, filteredChats, integrationId, activeIntegration, isFetching]);
@@ -354,7 +372,7 @@ const Integration = () => {
             snowflakeCredentials: credentials,
             selectedDatabase,
             selectedSchema,
-            isAgentConnected,
+            isAgentConnected: currentWs?.isAgentConnected,
             chatMessages:
               singleAnalyticsChat?.messages || singleRagChat?.messages,
             isSnowflakeChat: activeIntegration?.dataType === "DataAnalytics",
