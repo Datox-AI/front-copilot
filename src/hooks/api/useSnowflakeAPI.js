@@ -111,7 +111,7 @@ const useSnowflakeAPI = (props) => {
     ],
     () =>
       snowflakeAPI(
-        `api/snowflake_integration/preview_data/${props?.database}/${
+        `api/snowflake_integration/preview/${props?.database}/${
           props?.schema
         }/${props?.table || props?.view}`,
         {

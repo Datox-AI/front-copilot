@@ -193,6 +193,8 @@ const RCTable = ({ columns, data, isLoading }) => {
     return data.map((item, idx) => ({ ...item, index: idx + 1 }));
   }, [data]);
 
+  console.log(data, _data);
+
   useEffect(() => {
     setColumnOrder(() => _cols.map((c) => c?.id));
   }, [_cols]);
