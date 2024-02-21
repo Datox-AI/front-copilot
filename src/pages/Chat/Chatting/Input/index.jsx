@@ -23,11 +23,6 @@ const Input = ({
   clearReplyMessage,
   onCancel
 }) => {
-  console.log(text);
-  useHotkeys("command+enter", () => {
-    console.log("asdsa");
-  });
-
   const textareaRef = useRef(null);
   const files = useSelector((store) => store.chat.files[chatId]);
 

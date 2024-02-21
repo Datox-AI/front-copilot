@@ -191,17 +191,18 @@ const Integration = () => {
             } else {
               dispatch(
                 setTextToGenerator({
-                  chatId,
+                  chatId: ws?.chatId,
                   text: "Unexepected error happened"
                 })
               );
 
-              // setIsAgentConnected(false);
-              toggleAgentConnection(ws?.chatId, false);
+              dispatch(
+                stopStreaming({
+                  chatId: ws?.chatId
+                })
+              );
 
-              setTimeout(() => {
-                // dispatch(stopStreaming({ chatId }));
-              }, 300);
+              toggleAgentConnection(ws?.chatId, false);
             }
 
             break;

@@ -9,7 +9,7 @@ export const snowflakeAPI = axios.create({
   baseURL: "https://newcopilotwebapi.azurewebsites.net/"
 });
 
-const refreshToken = async () =>
+export const refreshSnowflakeToken = async () =>
   new Promise(async (resolve, reject) => {
     const token = store.getState()?.auth?.snowflakeToken?.refresh;
 
@@ -35,7 +35,7 @@ const errorHandler = async (error) => {
   const originalRequest = error.config;
 
   if (status === 401 && !error?.config?.url?.includes("refresh_token")) {
-    const res = await refreshToken();
+    const res = await refreshSnowflakeToken();
 
     store.dispatch(setSnowflakeToken(res.access_token));
 
