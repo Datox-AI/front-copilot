@@ -9,7 +9,7 @@ import { useMemo } from "react";
 export const normalizeColumn = (name, withRender, dataIndex) => ({
   id: name,
   header: name,
-  accessorKey: dataIndex,
+  accessorKey: name,
   footer: (props) => props.column.id
 
   // props: {
