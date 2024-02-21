@@ -126,88 +126,100 @@ const Integration = () => {
     });
   };
 
-  const handleIncomingMessages = (event) => {
-    const message = JSON.parse(event.data);
-    console.log(message);
-    switch (message?.message) {
-      case "Engine is connected succesfully":
-        // setIsAgentConnected(true);
-        toggleAgentConnection(message?.chat_id, true);
-        break;
+  useEffect(() => {
+    if (!chatId || Number(integrationId) !== 2) return;
 
-      case "Engine is not connected":
-        sendData(message?.chat_id, {
-          oauth_token: snowflakeToken?.access
-        });
-        break;
+    websockets.forEach((ws) => {
+      ws?.socket?.addEventListener("message", (event) => {
+        const message = JSON.parse(event.data);
+        console.log(message);
+        switch (message?.message) {
+          case "Engine is connected succesfully":
+            // setIsAgentConnected(true);
+            toggleAgentConnection(ws?.chatId, true);
+            break;
 
-      case "Agent is stopped":
-        dispatch(stopStreaming({ chatId: message?.chat_id }));
-        refetchSingleAnalyticsChat();
+          case "Engine is not connected":
+            sendData(ws?.chatId, {
+              oauth_token: snowflakeToken?.access
+            });
+            break;
 
-        break;
-
-      default:
-        if (message?.status !== "error") {
-          if (message?.output) {
-            // onText(message.output);
-            dispatch(
-              setTextToGenerator({
-                chatId: message?.chat_id,
-                text: message.output
-              })
-            );
-          }
-
-          if (message?.sql_query) {
-            // onText(message.sql_query);
-            dispatch(
-              setTextToGenerator({
-                chatId: message?.chat_id,
-                text: message.sql_query
-              })
-            );
-          }
-
-          if (message?.followup_questions) {
-            dispatch(
-              setQuestionsToGenerator({
-                chatId: message?.chat_id,
-                questions: message?.followup_questions
-              })
-            );
-            // onQuestions(message?.followup_questions);
-          }
-
-          setTimeout(() => {
-            dispatch(stopStreaming({ chatId: message?.chat_id }));
-            dispatch(destroyTextGenerator({ chatId: message?.chat_id }));
+          case "Agent is stopped":
+            dispatch(stopStreaming({ chatId: ws?.chatId }));
             refetchSingleAnalyticsChat();
-          }, 300);
-        } else {
-          dispatch(
-            setTextToGenerator({
-              chatId: message?.chat_id,
-              text: "Unexepected error happened"
-            })
-          );
 
-          dispatch(
-            stopStreaming({
-              chatId: message?.chat_id
-            })
-          );
+            break;
 
-          toggleAgentConnection(message?.chat_id, false);
+          default:
+            if (message?.status !== "error") {
+              if (message?.output) {
+                // onText(message.output);
+                dispatch(
+                  setTextToGenerator({
+                    chatId: message?.chat_id,
+                    text: message.output
+                  })
+                );
+              }
+
+              if (message?.sql_query) {
+                // onText(message.sql_query);
+                dispatch(
+                  setTextToGenerator({
+                    chatId: message?.chat_id,
+                    text: message.sql_query
+                  })
+                );
+              }
+
+              if (message?.followup_questions) {
+                dispatch(
+                  setQuestionsToGenerator({
+                    chatId: message?.chat_id,
+                    questions: message?.followup_questions
+                  })
+                );
+                // onQuestions(message?.followup_questions);
+              }
+
+              setTimeout(() => {
+                dispatch(stopStreaming({ chatId: ws?.chatId }));
+                dispatch(destroyTextGenerator({ chatId: ws?.chatId }));
+                refetchSingleAnalyticsChat();
+              }, 300);
+            } else {
+              dispatch(
+                setTextToGenerator({
+                  chatId: ws?.chatId,
+                  text: "Unexepected error happened"
+                })
+              );
+
+              dispatch(
+                stopStreaming({
+                  chatId: ws?.chatId
+                })
+              );
+
+              toggleAgentConnection(ws?.chatId, false);
+            }
+
+            break;
         }
+      });
+    });
 
-        break;
-    }
-  };
+    return () => {
+      websockets.forEach((ws) => {
+        ws?.socket?.removeEventListener("message", (e) => console.log(e));
+      });
+    };
+  }, [websockets, chatId, activeIntegration, snowflakeToken?.access]);
 
   useEffect(() => {
     if (chatId && Number(integrationId) === 2) {
-      addWebSocket(chatId, false, handleIncomingMessages);
+      addWebSocket(chatId);
       return;
     }
 
@@ -215,7 +227,7 @@ const Integration = () => {
     //   console.log("Removing...");
     //   removeWebSocket(chatId);
     // };
-  }, [chatId, integrationId, handleIncomingMessages]);
+  }, [chatId, integrationId]);
 
   useEffect(() => {
     if (!singleAnalyticsChat) return;
