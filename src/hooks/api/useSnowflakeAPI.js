@@ -49,7 +49,7 @@ const useSnowflakeAPI = (props) => {
         }
       }),
     {
-      enabled: props?.enableDatabases && !!snowflakeToken?.access
+      enabled: !!props?.enableDatabases && !!snowflakeToken?.access
     }
   );
 

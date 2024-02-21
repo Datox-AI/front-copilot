@@ -11,10 +11,9 @@ import { DeleteOutlineRounded } from "@mui/icons-material";
 
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
-  const { initAuth, credentials, deleteAuth, refetchCredentials } =
-    useSnowflakeAPI({
-      enableUserCredentials: true
-    });
+  const { credentials, deleteAuth, refetchCredentials } = useSnowflakeAPI({
+    enableUserCredentials: true
+  });
 
   const { skipOnboarding } = useSelector(
     (store) => store.integrations.snowflake
