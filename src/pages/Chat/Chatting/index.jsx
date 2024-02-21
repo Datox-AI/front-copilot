@@ -120,7 +120,8 @@ const Chatting = ({
   sendMessageToAgent,
   isSnowflakeChat,
   chatMessages,
-  refetchSingleChat
+  refetchSingleChat,
+  handleWsStopStreaming
 }) => {
   const listRef = createRef();
 
@@ -182,7 +183,8 @@ const Chatting = ({
     isSnowflakeChat,
     isAgentConnected,
     startPrompting,
-    refetchMessages: refetchSingleChat || refetchMessages
+    refetchMessages: refetchSingleChat || refetchMessages,
+    handleWsStopStreaming
   });
 
   useEffect(() => {

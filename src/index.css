@@ -222,8 +222,8 @@ th,
   position: absolute;
   top: 0;
   height: 100%;
-  width: 5px;
-  background: rgba(0, 0, 0, 0.5);
+  width: 2px;
+  background: #0177fb;
   cursor: col-resize;
   user-select: none;
   touch-action: none;
@@ -243,20 +243,22 @@ th,
 }
 
 .splitter {
-  width: 1px;
+  width: 4px;
   height: 100vh;
-  background-color: #fff;
-  border-right: 1px solid #e2e2e2;
+  background-color: transparent;
   cursor: col-resize;
-  max-width: 2px;
-  /* position: absolute; */
-  /* right: -2px; */
+  position: absolute;
+  top: 0;
+  right: -4px;
+  z-index: 3;
+  padding: 0;
 }
 
-.splitter:hover,
+.splitter:hover {
+  background-color: #0177fb;
+}
 .splitter.isDragging {
   background: var(--primary-color);
-  width: 4px;
 }
 
 @media (hover: hover) {

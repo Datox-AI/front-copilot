@@ -53,7 +53,7 @@ const Integration = () => {
   });
 
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
-  const { onText, onQuestions } = usePrompt({ chatId });
+  // const { onText, onQuestions } = usePrompt({ chatId });
   const {
     websockets,
     addWebSocket,
@@ -120,6 +120,12 @@ const Integration = () => {
     [currentWs?.chatId, currentWs?.isAgentConnected]
   );
 
+  const handleWsStopStreaming = () => {
+    sendData(currentWs?.chatId, {
+      command: "stop"
+    });
+  };
+
   useEffect(() => {
     if (!chatId || Number(integrationId) !== 2) return;
 
@@ -137,6 +143,12 @@ const Integration = () => {
             sendData(ws?.chatId, {
               oauth_token: snowflakeToken?.access
             });
+            break;
+
+          case "Agent is stopped":
+            dispatch(stopStreaming({ chatId: ws?.chatId }));
+            refetchSingleAnalyticsChat();
+
             break;
 
           default:
@@ -199,7 +211,7 @@ const Integration = () => {
 
     return () => {
       websockets.forEach((ws) => {
-        ws?.socket?.removeEventListener("message", () => {});
+        ws?.socket?.removeEventListener("message", (e) => console.log(e));
       });
     };
   }, [websockets, chatId, activeIntegration, snowflakeToken?.access]);
@@ -342,12 +354,12 @@ const Integration = () => {
 
   return (
     <Box width="100%" display="flex">
-      <div
-        style={{
-          width: `${width}px`,
-          minWidth: 284,
-          maxWidth: 600
-        }}
+      <Box
+        position="relative"
+        width={width}
+        minWidth={284}
+        maxWidth={600}
+        overflow="visible"
       >
         <FileBar
           title="Chat"
@@ -362,15 +374,16 @@ const Integration = () => {
           selectedDatabase={selectedDatabase}
           activeIntegration={activeIntegration}
         />
-      </div>
-      <button
-        className={"splitter " + (isDragging && "isDragging")}
-        onMouseDown={handleMouseDown}
-      ></button>
+
+        <button
+          className={"splitter " + (isDragging && "isDragging")}
+          onMouseDown={handleMouseDown}
+        ></button>
+      </Box>
 
       <div
         style={{
-          width: `calc(100% - ${width - 1}px)`
+          width: `calc(100% - ${width}px)`
         }}
       >
         <Outlet
@@ -395,7 +408,8 @@ const Integration = () => {
             chatMessages:
               singleAnalyticsChat?.messages || singleRagChat?.messages,
             isSnowflakeChat: activeIntegration?.dataType === "DataAnalytics",
-            sendMessageToAgent: handleWebsocketMessage
+            sendMessageToAgent: handleWebsocketMessage,
+            handleWsStopStreaming
           }}
         />
       </div>

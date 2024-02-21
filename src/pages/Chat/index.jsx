@@ -72,7 +72,13 @@ const Chat = ({ isAudit }) => {
 
   return (
     <Box width="100%" display="flex">
-      <Box position="relative" width={width} minWidth={284} maxWidth={600}>
+      <Box
+        position="relative"
+        width={width}
+        minWidth={284}
+        maxWidth={600}
+        overflow="visible"
+      >
         <FileBar
           activeIntegration={activeIntegration}
           chats={chats}
@@ -83,16 +89,16 @@ const Chat = ({ isAudit }) => {
           hideNewChatBtn={isAudit}
           title="Chat"
         />
-      </Box>
 
-      <button
-        className={"splitter " + (isDragging && "isDragging")}
-        onMouseDown={handleMouseDown}
-      ></button>
+        <button
+          className={"splitter " + (isDragging && "isDragging")}
+          onMouseDown={handleMouseDown}
+        ></button>
+      </Box>
 
       <div
         style={{
-          width: `calc(100% - ${width - 4}px)`
+          width: `calc(100% - ${width}px)`
         }}
       >
         <Outlet

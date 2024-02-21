@@ -12,6 +12,7 @@ import { chatModes } from "../../../../../hooks/useMessages";
 import File from "../../../../../components/File";
 import Dots from "../../../../../components/Dots";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const ReplyMessage = ({ onClickReply, replyMessage }) => {
   return (
@@ -47,6 +48,8 @@ const MessageItem = ({
   storeFileId,
   sqlQuery
 }) => {
+  const [showSqlQueries, setShowSqlQueries] = useState(false);
+
   const onClickReply = (_id) => {
     document.getElementById("message-" + _id).scrollIntoView({
       block: "start"
@@ -121,7 +124,17 @@ const MessageItem = ({
             {showDots && <Dots />}
 
             <CustomMarkdown message={message} />
-            {sqlQuery && <CustomMarkdown message={sqlQuery} />}
+            {sqlQuery && (
+              <button
+                className={styles.sqlToggler}
+                onClick={() => setShowSqlQueries((prev) => !prev)}
+              >
+                Show query {"</>"}
+              </button>
+            )}
+
+            {showSqlQueries && <CustomMarkdown message={sqlQuery} />}
+
             {questions && questions.length > 0 && (
               <QuestionsList
                 questions={questions}

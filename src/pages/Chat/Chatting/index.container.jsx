@@ -30,7 +30,8 @@ const ChattingContainer = ({}) => {
     sendMessageToAgent,
     isSnowflakeChat,
     chatMessages,
-    refetchSingleChat
+    refetchSingleChat,
+    handleWsStopStreaming
   } = useOutletContext();
 
   return (
@@ -57,6 +58,7 @@ const ChattingContainer = ({}) => {
       isSnowflakeChat={isSnowflakeChat}
       chatMessages={chatMessages}
       refetchSingleChat={refetchSingleChat}
+      handleWsStopStreaming={handleWsStopStreaming}
     />
   );
 };

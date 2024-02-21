@@ -137,6 +137,20 @@
       line-height: 140%; /* 19.6px */
       position: relative;
 
+      .sqlToggler {
+        height: 18px;
+        padding: 2px 6px 2px 6px;
+        border-radius: 6px;
+        background-color: #abaaf1;
+        color: #fff;
+
+        font-size: 12px;
+        font-weight: 500;
+        line-height: 14px;
+        letter-spacing: 0em;
+        text-align: left;
+      }
+
       &:hover {
         .more {
           display: block;

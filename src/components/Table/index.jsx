@@ -22,10 +22,10 @@ import {
   horizontalListSortingStrategy
 } from "@dnd-kit/sortable";
 
-// needed for row & cell level scope DnD setup
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Box, CircularProgress } from "@mui/material";
+import { ReactComponent as SwapIcon } from "../../assets/icons/swap.svg?react";
 
 const DragAlongCell = ({ cell }) => {
   const { isDragging, setNodeRef, transform } = useSortable({
@@ -38,7 +38,8 @@ const DragAlongCell = ({ cell }) => {
     transform: CSS.Translate.toString(transform), // translate instead of transform to avoid squishing
     transition: "width transform 0.2s ease-in-out",
     width: cell.column.getSize(),
-    zIndex: isDragging ? 1 : 0
+    zIndex: isDragging ? 1 : 0,
+    borderColor: isDragging && "#0177fb"
   };
 
   // const value = flexRender(cell.column.columnDef.cell, cell.getContext());
@@ -83,6 +84,7 @@ const DraggableTableHeader = ({ header, table }) => {
     whiteSpace: "nowrap",
     // width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,
+    borderColor: isDragging && "#0177fb",
     width: `calc(var(--header-${header?.id}-size) * 1px)`
   };
 
@@ -92,10 +94,9 @@ const DraggableTableHeader = ({ header, table }) => {
         <span>
           {flexRender(header.column.columnDef.header, header.getContext())}
         </span>
-
         {header.id !== "index" && (
           <button {...attributes} {...listeners}>
-            🟰
+            <SwapIcon />
           </button>
         )}
 

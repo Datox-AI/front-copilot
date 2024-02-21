@@ -19,7 +19,8 @@ const useChatting = ({
   setRelatedFiles,
   refetchMessages,
   isSnowflakeChat,
-  isAgentConnected
+  isAgentConnected,
+  handleWsStopStreaming
 }) => {
   const dispatch = useDispatch();
 
@@ -118,8 +119,10 @@ const useChatting = ({
       e.preventDefault();
       setText("");
 
-      if (textGenerator?.isStreaming) dispatch(stopStreaming({ chatId }));
-      else startPrompting(text);
+      if (textGenerator?.isStreaming) {
+        if (isSnowflakeChat) handleWsStopStreaming();
+        else dispatch(stopStreaming({ chatId }));
+      } else startPrompting(text);
     },
     [textGenerator, text, chatId]
   );
