@@ -4,15 +4,17 @@ import ConfigCard from "../../../components/ConfigCard";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { DeleteOutlineRounded } from "@mui/icons-material";
 
 const SnowflakeConfig = () => {
   const navigate = useNavigate();
-  const { initAuth, credentials, deleteAuth } = useSnowflakeAPI({
-    enableUserCredentials: true
-  });
+  const { initAuth, credentials, deleteAuth, refetchCredentials } =
+    useSnowflakeAPI({
+      enableUserCredentials: true
+    });
 
   const { skipOnboarding } = useSelector(
     (store) => store.integrations.snowflake
@@ -48,9 +50,27 @@ const SnowflakeConfig = () => {
             </Button>
           )}
 
-          {/* <Button className={styles.btn} onClick={() => deleteAuth.mutate()}>
-            Delete
-          </Button> */}
+          {credentials && (
+            <Button
+              className={styles.btn}
+              onClick={() => {
+                deleteAuth.mutate(null, {
+                  onSuccess: () => {
+                    refetchCredentials();
+                    window.location.reload();
+                  }
+                });
+              }}
+            >
+              {deleteAuth.isLoading ? (
+                <CircularProgress size={20} />
+              ) : (
+                <>
+                  <DeleteOutlineRounded /> &nbsp; Delete
+                </>
+              )}
+            </Button>
+          )}
         </Box>
       </ConfigWrapper>
     </div>

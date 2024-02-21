@@ -31,7 +31,7 @@ const useSnowflakeAPI = (props) => {
     [snowflakeToken?.access]
   );
 
-  const { data: credentials } = useQuery(
+  const { data: credentials, refetch: refetchCredentials } = useQuery(
     ["GET_SNOWFLAKE_USER_CREDENTIALS"],
     () => snowflakeAPI.get("api/snowflake_integration/get_oauth"),
 
@@ -463,6 +463,7 @@ const useSnowflakeAPI = (props) => {
     deleteAuth,
     changeAuth,
     isLoadingPreviewData,
+    refetchCredentials,
     refetchPreviewData,
     refetchColumns,
     onSelectItem
