@@ -1,10 +1,13 @@
 import styles from "./style.module.scss";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
 import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
-import { ReactComponent as SendIcon } from "../../../../assets/icons/PaperPlaneRight.svg";
 import ReplyState from "./States/Reply";
-import { useSelector } from "react-redux";
 import UploadFiles from "./States/UploadFiles";
+
+import { ReactComponent as SendIcon } from "../../../../assets/icons/PaperPlaneRight.svg";
+import { useSelector } from "react-redux";
+import { useEffect, useRef } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 
 const Input = ({
   chatId,
@@ -20,7 +23,38 @@ const Input = ({
   clearReplyMessage,
   onCancel
 }) => {
+  console.log(text);
+  useHotkeys("command+enter", () => {
+    console.log("asdsa");
+  });
+
+  const textareaRef = useRef(null);
   const files = useSelector((store) => store.chat.files[chatId]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault(); // Prevent the default behavior of adding a new line
+      // Here you can handle whatever you want to do when Enter is pressed without Shift
+
+      onSend();
+    } else if (e.key === "Enter" && e.shiftKey) {
+      // Here you can handle whatever you want to do when Enter is pressed with Shift
+      console.log("Shift+Enter key pressed");
+      onTexting({
+        target: {
+          value: [text, "\n"].join("")
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    // Automatically adjust the height of the textarea when the content changes
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [text]);
 
   return (
     <form className={styles.inputContainer} onSubmit={onSend}>
@@ -31,7 +65,7 @@ const Input = ({
             style={{ display: "none" }}
             id="attach_file"
             multiple
-            accept=".doc, .docx, .xls, .xlsx, .pdf"
+            accept=".doc, .docx, .xls, .xlsx, .pdf, .csv"
             disabled={isStreaming}
             onChange={onFileUpload}
           />
@@ -48,13 +82,16 @@ const Input = ({
         )}
 
         {files?.length > 0 && <UploadFiles files={files} chatId={chatId} />}
-        <input
+        <textarea
+          ref={textareaRef}
           id="input-message"
           placeholder="Ask anything..."
           value={text}
           onChange={onTexting}
           disabled={isStreaming}
+          onKeyDown={handleKeyPress}
           autoComplete="off"
+          rows={1}
         />
       </div>
 

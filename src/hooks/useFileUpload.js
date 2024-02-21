@@ -9,7 +9,7 @@ import {
 import { store } from "../redux/store";
 
 const upload = (data, config) =>
-  request.post("api/files", data, {
+  request.post("api/files/files", data, {
     ...config,
     headers: {
       "Content-Type": "multipart/form-data"

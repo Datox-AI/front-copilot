@@ -116,7 +116,11 @@ const useChatting = ({
 
   const onSend = useCallback(
     (e) => {
-      e.preventDefault();
+      e?.preventDefault();
+      const _text = text.trim();
+
+      if (!_text) return;
+
       setText("");
 
       if (textGenerator?.isStreaming) {
