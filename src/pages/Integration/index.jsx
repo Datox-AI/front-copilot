@@ -192,7 +192,7 @@ const Integration = () => {
                 dispatch(
                   setTextToGenerator({
                     chatId: ws?.chatId,
-                    text: "Unexepected error happened"
+                    text: `Unexepected error happened: ${message?.message}`
                   })
                 );
 
