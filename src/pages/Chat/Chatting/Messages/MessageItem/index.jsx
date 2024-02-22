@@ -129,7 +129,7 @@ const MessageItem = ({
                 className={styles.sqlToggler}
                 onClick={() => setShowSqlQueries((prev) => !prev)}
               >
-                Show query {"</>"}
+                {showSqlQueries ? "Less" : "Show"} query {"</>"}
               </button>
             )}
 

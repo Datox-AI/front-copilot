@@ -16,8 +16,6 @@ const PreviewData = () => {
     enablePreviewData: true
   });
 
-  console.log(previewData);
-
   const cols = useMemo(
     () =>
       previewData?.data_preview?.data_preview?.length > 0
