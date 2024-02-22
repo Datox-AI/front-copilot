@@ -21,7 +21,7 @@ export const refreshSnowflakeToken = async () =>
         .then((res) => resolve(res))
         .catch((err) => {
           store.dispatch(setSnowflakeToken(null));
-          // store.dispatch(setSnowflakeRefreshToken(null));
+
           reject(null);
         });
     else {

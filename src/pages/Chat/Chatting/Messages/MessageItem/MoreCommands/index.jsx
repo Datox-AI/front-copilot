@@ -69,6 +69,7 @@ const MoreCommands = ({
       {
         onSuccess: () => {
           refetch();
+          toggle();
         },
         onError: (err) => {
           toast.error(err.data.detail);
@@ -90,6 +91,7 @@ const MoreCommands = ({
       {
         onSuccess: () => {
           refetch();
+          toggle();
         },
         onError: (err) => {
           toast.error(err.data?.title);

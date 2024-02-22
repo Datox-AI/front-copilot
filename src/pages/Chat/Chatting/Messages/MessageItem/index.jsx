@@ -124,6 +124,7 @@ const MessageItem = ({
             {showDots && <Dots />}
 
             <CustomMarkdown message={message} />
+
             {sqlQuery && (
               <button
                 className={styles.sqlToggler}

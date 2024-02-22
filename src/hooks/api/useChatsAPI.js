@@ -35,7 +35,7 @@ const useChatsAPI = ({
     ["GET_ANALYTICS_CHAT_HISTORY", chatId],
     async () => await request.get(`/api/analytics_agent/${chatId}/messages`),
     {
-      enabled: !!chatId && chatType === "analytics"
+      enabled: !!chatId && chatType === "DataAnalytics"
     }
   );
 
@@ -47,7 +47,7 @@ const useChatsAPI = ({
     ["GET_RAG_CHAT_HISTORY", chatId],
     async () => await request.get(`/api/rag_agent/${chatId}/messages`),
     {
-      enabled: !!chatId && chatType === "rag"
+      enabled: !!chatId && chatType === "FileSearch"
     }
   );
 

@@ -48,10 +48,7 @@ const Integration = () => {
   } = useChatsAPI({
     isGetUsers: true,
     chatId,
-    chatType:
-      activeIntegration?.dataType === "DataAnalytics"
-        ? "analytics"
-        : activeIntegration?.dataType === "FileSearch" && "rag"
+    chatType: activeIntegration?.dataType
   });
 
   const {
@@ -193,10 +190,12 @@ const Integration = () => {
                   refetchSingleAnalyticsChat();
                 }, 300);
               } else {
-                changeSocketStatus(
-                  ws?.chatId,
-                  connectionStatuses.NOT_CONNECTED
-                );
+                // changeSocketStatus(
+                //   ws?.chatId,
+                //   connectionStatuses.NOT_CONNECTED
+                // );
+
+                toast.error(message?.message);
 
                 dispatch(
                   setTextToGenerator({
@@ -210,8 +209,6 @@ const Integration = () => {
                     chatId: ws?.chatId
                   })
                 );
-
-                toggleAgentConnection(ws?.chatId, false);
               }
 
               break;
@@ -405,7 +402,7 @@ const Integration = () => {
             refetch,
             refetchSingleChat:
               activeIntegration?.dataType === "DataAnalytics"
-                ? refetchSingleChat
+                ? refetchSingleAnalyticsChat
                 : refetchSingleRagChat,
             setRelatedFiles,
             snowflakeCredentials: credentials,
