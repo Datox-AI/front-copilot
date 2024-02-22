@@ -34,7 +34,7 @@ const Store = () => {
       },
       {
         onSuccess: (res) => {
-          setPreviewData(res);
+          setPreviewData(res?.data);
         }
       }
     );

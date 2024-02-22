@@ -5,7 +5,7 @@ import { loginRequest } from "../../config/msal";
 import { InteractionStatus } from "@azure/msal-browser";
 import { AuthenticatedTemplate, useMsal } from "@azure/msal-react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setIsAdmin,
   setToken,
@@ -16,6 +16,7 @@ import jwtDecode from "jwt-decode";
 
 function AuthenticatedProvider({ children }) {
   const dispatch = useDispatch();
+  const { token } = useSelector((store) => store.auth);
 
   const { instance, inProgress, accounts } = useMsal();
 
@@ -46,7 +47,7 @@ function AuthenticatedProvider({ children }) {
           console.log(error);
         });
     }
-  }, [instance, accounts, inProgress]);
+  }, [instance, accounts, inProgress, token]);
 
   return <AuthenticatedTemplate>{children}</AuthenticatedTemplate>;
 }
