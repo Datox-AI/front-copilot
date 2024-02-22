@@ -21,6 +21,7 @@ import {
   connectionStatuses,
   snowflakeMessageHandlers
 } from "../../consts/snowflake";
+import usePrompt from "../../hooks/usePrompt";
 
 const Integration = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const Integration = () => {
   const { openedIntegrations } = useSelector((store) => store.integrations);
   const { snowflakeToken } = useSelector((store) => store.auth);
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
+  const { onQuestions } = usePrompt({ chatId });
 
   const [activeIntegration, setActiveIntegration] = useState(
     openedIntegrations[0]
@@ -176,12 +178,7 @@ const Integration = () => {
                 }
 
                 if (message?.followup_questions) {
-                  dispatch(
-                    setQuestionsToGenerator({
-                      chatId: message?.chat_id,
-                      questions: message?.followup_questions
-                    })
-                  );
+                  onQuestions(message?.followup_questions);
                 }
 
                 setTimeout(() => {
@@ -190,11 +187,6 @@ const Integration = () => {
                   refetchSingleAnalyticsChat();
                 }, 300);
               } else {
-                // changeSocketStatus(
-                //   ws?.chatId,
-                //   connectionStatuses.NOT_CONNECTED
-                // );
-
                 toast.error(message?.message);
 
                 dispatch(
