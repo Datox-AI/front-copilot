@@ -83,7 +83,7 @@ const MessagesList = ({
         ))}
       </Box>
 
-      <Box flex={1} style={{ overflowY: "scroll" }}>
+      <Box flex={1} style={{ overflowY: "auto" }}>
         {groupedChats.map((group) => (
           <ExpandMenu title={group.date}>
             <Box

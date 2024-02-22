@@ -153,7 +153,7 @@ const NestedList = ({ data, onSelectItem, parent }) => {
         !parent
           ? {
               "max-height": "calc(100vh - 210px)",
-              overflow: "scroll"
+              overflowY: "auto"
             }
           : {}
       }

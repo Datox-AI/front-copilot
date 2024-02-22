@@ -72,7 +72,7 @@ const ColumnDetails = ({ children }) => {
         style={{
           height: `${height}px`,
           resize: "vertical",
-          overflow: "scroll"
+          overflowY: "auto"
         }}
       >
         {children}

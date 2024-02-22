@@ -45,22 +45,23 @@
     .dropdownDb,
     .dropdownSchema {
       height: 160px;
-      overflow-y: scroll;
+      overflow-y: auto;
 
-      &::-webkit-scrollbar {
-        width: 6px;
-      }
+      // &::-webkit-scrollbar {
+      //   display: none;
+      //   width: 6px;
+      // }
 
-      &::-webkit-scrollbar-track {
-        background-color: transparent;
-        border: 1px solid #c4c4c4;
-        border-radius: 8px;
-      }
+      // &::-webkit-scrollbar-track {
+      //   background-color: transparent;
+      //   border: 1px solid #c4c4c4;
+      //   border-radius: 8px;
+      // }
 
-      &::-webkit-scrollbar-thumb {
-        background-color: darkgrey;
-        border-radius: 8px;
-      }
+      // &::-webkit-scrollbar-thumb {
+      //   background-color: darkgrey;
+      //   border-radius: 8px;
+      // }
     }
 
     .dropdownDb {
