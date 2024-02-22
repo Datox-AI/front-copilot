@@ -65,6 +65,11 @@
       min-width: 100%;
       resize: none;
 
+      &:disabled {
+        background-color: #fff;
+        cursor: no-drop;
+      }
+
       &::placeholder {
         color: #c4c4c4;
       }
