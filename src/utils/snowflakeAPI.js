@@ -42,7 +42,7 @@ const errorHandler = async (error) => {
     if (res.refresh_token)
       store.dispatch(setSnowflakeRefreshToken(res.refresh_token));
 
-    if (!!res) return originalRequest;
+    if (!!res) return snowflakeAPI(originalRequest);
   } else if (status === 401 && error?.config?.url?.includes("refresh_token")) {
     store.dispatch(setSnowflakeToken(null));
     store.dispatch(setSnowflakeRefreshToken(null));
