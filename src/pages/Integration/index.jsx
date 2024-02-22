@@ -148,7 +148,7 @@ const Integration = () => {
             case snowflakeMessageHandlers.NOT_CONNECTED:
               changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTING);
               sendData(ws?.chatId, {
-                oauth_token: snowflakeToken?.access || "adadas"
+                oauth_token: snowflakeToken?.access
               });
               break;
 
