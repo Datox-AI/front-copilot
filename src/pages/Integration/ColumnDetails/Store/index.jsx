@@ -1,7 +1,7 @@
 import ColumnDetails from "..";
 // import Table from "../../../../components/Table";
 
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { normalizeColumn } from "../Columns";
 import { useMutation } from "react-query";

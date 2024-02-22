@@ -154,6 +154,7 @@ const usePrompt = ({
   };
 
   const onParseTypes = (type, data) => {
+    console.log(data);
     switch (type) {
       case "Text":
         onText(data.Text);

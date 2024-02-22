@@ -16,21 +16,23 @@ const PreviewData = () => {
     enablePreviewData: true
   });
 
+  console.log(previewData);
+
   const cols = useMemo(
     () =>
-      previewData?.data_preview?.length > 0
+      previewData?.data_preview?.data_preview?.length > 0
         ? Object.keys(previewData?.data_preview?.[0]).map((name) => ({
             ...normalizeColumn(name, name === "type")
           }))
         : [],
-    [previewData?.data_preview]
+    [previewData?.data_preview?.data_preview]
   );
 
   return (
     <ColumnDetails>
       <Table
         columns={cols}
-        data={previewData?.data_preview || []}
+        data={previewData?.data_preview?.data_preview || []}
         isLoading={isLoadingPreviewData}
       />
     </ColumnDetails>
