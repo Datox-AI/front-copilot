@@ -21,7 +21,8 @@ const Input = ({
   isSnowflakeChat,
   isAgentConnected,
   clearReplyMessage,
-  onCancel
+  onCancel,
+  snowflakeConnectionStatus
 }) => {
   const textareaRef = useRef(null);
   const files = useSelector((store) => store.chat.files[chatId]);
@@ -103,9 +104,10 @@ const Input = ({
 
       {isSnowflakeChat && (
         <p className={styles.log}>
-          {isAgentConnected
+          {snowflakeConnectionStatus}
+          {/* {isAgentConnected
             ? "Agent is connected..."
-            : "Agent is not connected!"}
+            : "Agent is not connected!"} */}
         </p>
       )}
     </form>

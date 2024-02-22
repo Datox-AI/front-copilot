@@ -199,7 +199,7 @@ const ChatItem = ({
                   open={open}
                   anchor={anchor}
                   style={{
-                    zIndex: 4
+                    zIndex: 20
                   }}
                 >
                   <PopupBody>

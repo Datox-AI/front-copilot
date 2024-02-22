@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { connectionStatuses } from "../consts/snowflake";
 
 // Custom hook to manage WebSocket connections
 export const useWebSocket = () => {
@@ -16,7 +17,13 @@ export const useWebSocket = () => {
 
     setWebsockets((prevWebsockets) => [
       ...prevWebsockets,
-      { socket, chatId, isAgentConnected }
+      {
+        socket,
+        chatId,
+        isAgentConnected,
+        hasEventListener: false,
+        status: connectionStatuses.NOT_CONNECTED
+      }
     ]);
   };
 
@@ -36,7 +43,6 @@ export const useWebSocket = () => {
     }
   };
 
-  // Function to toggle the isAgentConnected field for a WebSocket
   const toggleAgentConnection = (chatId, value) => {
     setWebsockets((prevWebsockets) =>
       prevWebsockets.map((ws) =>
@@ -44,6 +50,33 @@ export const useWebSocket = () => {
       )
     );
   };
+
+  const toggleHasEventListener = (chatId, value) => {
+    setWebsockets((prevWebsockets) =>
+      prevWebsockets.map((ws) =>
+        ws.chatId === chatId ? { ...ws, hasEventListener: value } : ws
+      )
+    );
+  };
+
+  const changeSocketStatus = (chatId, status) => {
+    setWebsockets((prevWebsockets) =>
+      prevWebsockets.map((ws) =>
+        ws.chatId === chatId ? { ...ws, status } : ws
+      )
+    );
+  };
+
+  useEffect(() => {
+    return () => {
+      websockets.forEach(({ socket }) => {
+        console.log(`${socket.chatId} - closing`);
+        socket?.socket?.close();
+      });
+
+      setWebsockets([]);
+    };
+  }, []);
 
   useEffect(() => {
     websockets?.forEach((ws) => {
@@ -74,6 +107,8 @@ export const useWebSocket = () => {
     addWebSocket,
     removeWebSocket,
     sendData,
-    toggleAgentConnection
+    toggleAgentConnection,
+    toggleHasEventListener,
+    changeSocketStatus
   };
 };

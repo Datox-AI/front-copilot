@@ -10,3 +10,15 @@ export const SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER =
   process.env.REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER;
 export const SNOWFLAKE_TEST_WAREHOUSE =
   process.env.REACT_APP_SNOWFLAKE_TEST_WAREHOUSE;
+
+export const connectionStatuses = {
+  CONNECTED: "connected",
+  CONNECTING: "connecting",
+  NOT_CONNECTED: "not connected"
+};
+
+export const snowflakeMessageHandlers = {
+  SUCCESSFULY_CONNECTED: "Engine is connected succesfully",
+  NOT_CONNECTED: "Engine is not connected",
+  STOPPED: "Agent is stopped"
+};

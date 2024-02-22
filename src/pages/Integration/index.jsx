@@ -1,6 +1,6 @@
 import FileBar from "../Chat/FileBar";
-import websocket from "../../services/websocket";
 import useChatsAPI from "../../hooks/api/useChatsAPI";
+import toast from "react-hot-toast";
 
 import { Box } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -9,8 +9,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
 import { _integrations } from "../../consts/integrations";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
-import toast from "react-hot-toast";
-import usePrompt from "../../hooks/usePrompt";
 import {
   destroyTextGenerator,
   setQuestionsToGenerator,
@@ -19,6 +17,10 @@ import {
   stopStreaming
 } from "../../redux/chat/chatSlice";
 import { useWebSocket } from "../../hooks/useWebSocket";
+import {
+  connectionStatuses,
+  snowflakeMessageHandlers
+} from "../../consts/snowflake";
 
 const Integration = () => {
   const dispatch = useDispatch();
@@ -26,7 +28,8 @@ const Integration = () => {
 
   const { integrationId, chatId } = useParams();
   const { openedIntegrations } = useSelector((store) => store.integrations);
-  const { token, snowflakeToken } = useSelector((store) => store.auth);
+  const { snowflakeToken } = useSelector((store) => store.auth);
+  const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
 
   const [activeIntegration, setActiveIntegration] = useState(
     openedIntegrations[0]
@@ -35,7 +38,6 @@ const Integration = () => {
   const {
     data,
     refetch,
-    singleChat,
     updateSnowflakeData,
     refetchSingleChat,
     isFetching,
@@ -52,14 +54,14 @@ const Integration = () => {
         : activeIntegration?.dataType === "FileSearch" && "rag"
   });
 
-  const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
-  // const { onText, onQuestions } = usePrompt({ chatId });
   const {
     websockets,
     addWebSocket,
     sendData,
     removeWebSocket,
-    toggleAgentConnection
+    toggleAgentConnection,
+    toggleHasEventListener,
+    changeSocketStatus
   } = useWebSocket();
 
   const [width, setWidth] = useState(284);
@@ -130,84 +132,92 @@ const Integration = () => {
     if (!chatId || Number(integrationId) !== 2) return;
 
     websockets.forEach((ws) => {
-      ws?.socket?.addEventListener("message", (event) => {
-        const message = JSON.parse(event.data);
-        console.log(message);
-        switch (message?.message) {
-          case "Engine is connected succesfully":
-            // setIsAgentConnected(true);
-            toggleAgentConnection(ws?.chatId, true);
-            break;
+      if (!ws.hasEventListener) {
+        toggleHasEventListener(chatId, true);
+        ws.socket.addEventListener("message", (event) => {
+          event.preventDefault();
+          const message = JSON.parse(event.data);
+          console.log(message);
 
-          case "Engine is not connected":
-            sendData(ws?.chatId, {
-              oauth_token: snowflakeToken?.access
-            });
-            break;
+          switch (message?.message) {
+            case snowflakeMessageHandlers.SUCCESSFULY_CONNECTED:
+              changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTED);
+              toggleAgentConnection(ws?.chatId, true);
+              break;
 
-          case "Agent is stopped":
-            dispatch(stopStreaming({ chatId: ws?.chatId }));
-            refetchSingleAnalyticsChat();
+            case snowflakeMessageHandlers.NOT_CONNECTED:
+              changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTING);
+              sendData(ws?.chatId, {
+                oauth_token: snowflakeToken?.access || "adadas"
+              });
+              break;
 
-            break;
+            case snowflakeMessageHandlers.STOPPED:
+              dispatch(stopStreaming({ chatId: ws?.chatId }));
+              refetchSingleAnalyticsChat();
 
-          default:
-            if (message?.status !== "error") {
-              if (message?.output) {
-                // onText(message.output);
+              break;
+
+            default:
+              if (message?.status !== "error") {
+                if (message?.output) {
+                  dispatch(
+                    setTextToGenerator({
+                      chatId: message?.chat_id,
+                      text: message.output
+                    })
+                  );
+                }
+
+                if (message?.sql_query) {
+                  dispatch(
+                    setTextToGenerator({
+                      chatId: message?.chat_id,
+                      text: message.sql_query
+                    })
+                  );
+                }
+
+                if (message?.followup_questions) {
+                  dispatch(
+                    setQuestionsToGenerator({
+                      chatId: message?.chat_id,
+                      questions: message?.followup_questions
+                    })
+                  );
+                }
+
+                setTimeout(() => {
+                  dispatch(stopStreaming({ chatId: ws?.chatId }));
+                  dispatch(destroyTextGenerator({ chatId: ws?.chatId }));
+                  refetchSingleAnalyticsChat();
+                }, 300);
+              } else {
+                changeSocketStatus(
+                  ws?.chatId,
+                  connectionStatuses.NOT_CONNECTED
+                );
+
                 dispatch(
                   setTextToGenerator({
-                    chatId: message?.chat_id,
-                    text: message.output
+                    chatId: ws?.chatId,
+                    text: "Unexepected error happened"
                   })
                 );
-              }
 
-              if (message?.sql_query) {
-                // onText(message.sql_query);
                 dispatch(
-                  setTextToGenerator({
-                    chatId: message?.chat_id,
-                    text: message.sql_query
+                  stopStreaming({
+                    chatId: ws?.chatId
                   })
                 );
+
+                toggleAgentConnection(ws?.chatId, false);
               }
 
-              if (message?.followup_questions) {
-                dispatch(
-                  setQuestionsToGenerator({
-                    chatId: message?.chat_id,
-                    questions: message?.followup_questions
-                  })
-                );
-                // onQuestions(message?.followup_questions);
-              }
-
-              setTimeout(() => {
-                dispatch(stopStreaming({ chatId: ws?.chatId }));
-                dispatch(destroyTextGenerator({ chatId: ws?.chatId }));
-                refetchSingleAnalyticsChat();
-              }, 300);
-            } else {
-              dispatch(
-                setTextToGenerator({
-                  chatId: ws?.chatId,
-                  text: "Unexepected error happened"
-                })
-              );
-
-              dispatch(
-                stopStreaming({
-                  chatId: ws?.chatId
-                })
-              );
-
-              toggleAgentConnection(ws?.chatId, false);
-            }
-
-            break;
-        }
-      });
+              break;
+          }
+        });
+      }
     });
 
     return () => {
@@ -253,10 +263,6 @@ const Integration = () => {
       setActiveIntegration(openedIntegrations?.[0]);
       return;
     }
-    // TODO: check properly integraton page
-    // if (openedIntegrations.length === 0) return;
-    // if (!activeIntegration && openedIntegrations.length === 0)
-    //   return navigate("/chat");
 
     const _integration = openedIntegrations?.find(
       (inte) => inte.id === Number(integrationId)
@@ -405,7 +411,9 @@ const Integration = () => {
             snowflakeCredentials: credentials,
             selectedDatabase,
             selectedSchema,
-            isAgentConnected: currentWs?.isAgentConnected,
+            snowflakeConnectionStatus: currentWs?.status,
+            isAgentConnected:
+              currentWs?.status === connectionStatuses.CONNECTED,
             chatMessages:
               singleAnalyticsChat?.messages || singleRagChat?.messages,
             isSnowflakeChat: activeIntegration?.dataType === "DataAnalytics",

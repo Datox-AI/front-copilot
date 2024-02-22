@@ -121,7 +121,8 @@ const Chatting = ({
   isSnowflakeChat,
   chatMessages,
   refetchSingleChat,
-  handleWsStopStreaming
+  handleWsStopStreaming,
+  snowflakeConnectionStatus
 }) => {
   const listRef = createRef();
 
@@ -283,6 +284,7 @@ const Chatting = ({
               isStreaming={textGenerator?.isStreaming}
               isAgentConnected={isAgentConnected}
               isSnowflakeChat={isSnowflakeChat}
+              snowflakeConnectionStatus={snowflakeConnectionStatus}
             />
           )}
         </div>
