@@ -49,6 +49,7 @@ const SnowflakeConfigAdd = () => {
             location.state?.oauthTokenEndpoint || credentials?.token_endpoint
           }
           roles={roles}
+          initRole={credentials?.user_role}
         />
       </div>
     </div>

@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 export const IntegrationForm = ({
   roles,
+  initRole,
   isCreate,
   initClientId,
   initWarehouse,
@@ -34,7 +35,7 @@ export const IntegrationForm = ({
   const [accountIdentifier, setAccountIdentifier] = useState(
     initAccountIdentifier
   );
-  const [role, setRole] = useState();
+  const [role, setRole] = useState(initRole);
   const [clientId, setClientId] = useState(initClientId);
   const [clientSecret, setClientSecret] = useState(initClientSecret);
   const [tokenEndpoint, setTokenEndpoint] = useState(initOauthTokenEndpoint);
@@ -74,7 +75,8 @@ export const IntegrationForm = ({
           client_secret: clientSecret,
           token_endpoint: tokenEndpoint,
           redirect_uri: SNOWFLAKE_REDIRECT_URL,
-          warehouse: manualWarehouse
+          warehouse: manualWarehouse,
+          user_role: role
         },
         {
           onSuccess: (res) => {
@@ -95,7 +97,8 @@ export const IntegrationForm = ({
           client_secret: clientSecret,
           token_endpoint: tokenEndpoint,
           redirect_uri: SNOWFLAKE_REDIRECT_URL,
-          warehouse: manualWarehouse
+          warehouse: manualWarehouse,
+          user_role: role
         },
         {
           onSuccess: () => {
@@ -110,6 +113,7 @@ export const IntegrationForm = ({
   };
 
   console.log(roles);
+  console.log(role);
 
   return (
     <div className={styles.integrationFormContainer}>
@@ -149,8 +153,16 @@ export const IntegrationForm = ({
 
         <label className={styles.field}>
           <span>Role</span>
-          <Select value="SYSADMIN" disabled={!(roles?.length > 0)}>
-            <MenuItem value="SYSADMIN">SYSADMIN</MenuItem>
+          <Select
+            value={role}
+            disabled={!(roles?.available_roles?.length > 0)}
+            onChange={(e) => setRole(e.target.value)}
+          >
+            {roles?.available_roles?.map((item, idx) => (
+              <MenuItem value={item} key={idx}>
+                {item}
+              </MenuItem>
+            ))}
           </Select>
         </label>
 
