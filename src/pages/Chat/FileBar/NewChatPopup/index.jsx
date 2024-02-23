@@ -86,7 +86,16 @@ export const IntegrationForm = ({
         },
         {
           onSuccess: (res) => {
-            close();
+            if (role)
+              changeRole.mutate(
+                { role: role },
+                {
+                  onSuccess: () => {
+                    close();
+                  }
+                }
+              );
+            else close();
           },
           onError: (err) => {
             console.log(err);
@@ -108,7 +117,16 @@ export const IntegrationForm = ({
         },
         {
           onSuccess: () => {
-            close();
+            if (role)
+              changeRole.mutate(
+                { role: role },
+                {
+                  onSuccess: () => {
+                    close();
+                  }
+                }
+              );
+            else close();
           },
           onError: (err) => {
             toast.err(err.data.detail);
@@ -116,12 +134,7 @@ export const IntegrationForm = ({
         }
       );
     }
-
-    if (role) changeRole.mutate({ role: role });
   };
-
-  console.log(roles);
-  console.log(role);
 
   return (
     <div className={styles.integrationFormContainer}>
