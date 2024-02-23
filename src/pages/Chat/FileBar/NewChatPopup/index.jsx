@@ -30,7 +30,7 @@ export const IntegrationForm = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { initAuth, changeAuth } = useSnowflakeAPI();
+  const { initAuth, changeAuth, changeRole } = useSnowflakeAPI();
 
   const [accountIdentifier, setAccountIdentifier] = useState(
     initAccountIdentifier
@@ -116,6 +116,8 @@ export const IntegrationForm = ({
         }
       );
     }
+
+    if (role) changeRole.mutate({ role: role });
   };
 
   console.log(roles);
@@ -184,10 +186,14 @@ export const IntegrationForm = ({
       <div className={styles.footer}>
         <Button
           variant="contained"
-          disabled={initAuth.isLoading || changeAuth.isLoading}
+          disabled={
+            initAuth.isLoading || changeAuth.isLoading || changeRole.isLoading
+          }
           onClick={onAuth}
         >
-          {initAuth.isLoading || changeAuth.isLoading ? (
+          {initAuth.isLoading ||
+          changeAuth.isLoading ||
+          changeRole.isLoading ? (
             <CircularProgress size={20} />
           ) : (
             "Submit"

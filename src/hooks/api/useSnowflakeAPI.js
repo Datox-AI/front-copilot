@@ -155,6 +155,13 @@ const useSnowflakeAPI = (props) => {
     snowflakeAPI.delete("api/snowflake_integration/delete_oauth")
   );
 
+  const changeRole = useMutation((data) =>
+    snowflakeAPI.put(
+      "api/snowflake_integration/change_role?token=" + snowflakeToken?.access,
+      data
+    )
+  );
+
   const setError = useCallback(
     (dbName, error, schemaName) => {
       if (schemaName)
@@ -476,6 +483,7 @@ const useSnowflakeAPI = (props) => {
     credentials,
     deleteAuth,
     changeAuth,
+    changeRole,
     isLoadingPreviewData,
     refetchCredentials,
     refetchPreviewData,
