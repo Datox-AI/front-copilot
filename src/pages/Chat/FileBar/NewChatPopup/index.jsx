@@ -66,6 +66,12 @@ export const IntegrationForm = ({
     navigate("/configs/snowflake");
   };
 
+  useEffect(() => {
+    if (!role) return;
+
+    setRole(role);
+  }, [role]);
+
   const onAuth = () => {
     if (isCreate)
       initAuth.mutate(
