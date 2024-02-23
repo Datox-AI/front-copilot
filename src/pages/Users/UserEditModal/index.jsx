@@ -33,8 +33,8 @@ const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
   const handleSave = useCallback(async () => {
     updateMutation.mutate(
       {
-        roleIds: !!selectedRole ? [selectedRole] : [],
-        userId: selectedUser?.adId
+        role_ids: !!selectedRole ? [selectedRole] : [],
+        user_id: selectedUser?.azure_object_id
       },
       {
         onSuccess: () => {
@@ -76,7 +76,7 @@ const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
               </Box>
 
               <Select
-                key={selectedUser.adId}
+                key={selectedUser.id}
                 labelId="role-select-label"
                 id="role-select"
                 value={selectedRole}

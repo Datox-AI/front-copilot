@@ -26,7 +26,10 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
 
   useEffect(() => {
     setSelectedUsers(
-      _users.map((_user) => ({ userId: _user.adId, roleId: _user.roles[0].id }))
+      _users.map((_user) => ({
+        userId: _user.azure_object_id,
+        roleId: _user.roles[0].id
+      }))
     );
   }, [_users]);
 
@@ -34,8 +37,8 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
     selectedUsers.map((selectedUser, idx) => {
       updateMutation.mutate(
         {
-          roleIds: [selectedUser.roleId],
-          userId: selectedUser.userId
+          role_ids: [selectedUser.roleId],
+          user_id: selectedUser.userId
         },
         {
           onSuccess: () => {
@@ -81,7 +84,7 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
           {_users.map((user, u) => {
             const foundUser =
               selectedUsers?.length > 0 &&
-              selectedUsers?.find((sel) => sel.userId === user.adId);
+              selectedUsers?.find((sel) => sel.userId === user.azure_object_id);
 
             return (
               <li key={u} className={!!foundUser && styles.selected}>
@@ -103,12 +106,14 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
                 </Box>
 
                 <Select
-                  key={user.adId}
+                  key={user.azure_object_id}
                   labelId="role-select-label"
                   id="role-select"
                   value={foundUser?.roleId || user.roles[0].id}
                   placeholder="Select a role"
-                  onChange={(e) => onChangeRole(user.adId, e.target.value)}
+                  onChange={(e) =>
+                    onChangeRole(user.azure_object_id, e.target.value)
+                  }
                   style={{
                     width: 200
                   }}

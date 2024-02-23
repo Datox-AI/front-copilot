@@ -14,7 +14,7 @@ const useUsersAPI = (status) => {
   );
 
   const updateMutation = useMutation((payload) =>
-    request.put("/api/users/updateuserroles", payload)
+    request.put("/api/users/update_user_roles", payload)
   );
 
   return { data, isLoading, refetch, updateMutation };

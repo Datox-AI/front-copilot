@@ -193,8 +193,8 @@ const UsersTable = ({
                 title="-"
                 onSelect={toggleEditModal}
                 data={user}
-                isSelected={selectedUsers.includes(user.adId)}
-                toggleUser={() => toggleSelectedUsers(user?.adId)}
+                isSelected={selectedUsers.includes(user.azure_object_id)}
+                toggleUser={() => toggleSelectedUsers(user?.azure_object_id)}
                 onDeleteSubmit={() => onDeleteSubmit(user)}
                 role={
                   user?.roles?.length > 1 || user?.roles?.[0]?.name === "Admin"

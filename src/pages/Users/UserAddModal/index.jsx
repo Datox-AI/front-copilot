@@ -35,8 +35,8 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
   const handleSave = useCallback(async () => {
     selectedUsers.map(async (selectedUser, u) => {
       await updateMutation.mutateAsync({
-        roleIds: [selectedUser.roleId],
-        userId: selectedUser.userId
+        role_ids: [selectedUser.roleId],
+        user_id: selectedUser.userId
       });
 
       refetch();
@@ -85,7 +85,9 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
             ?.map((user, u) => {
               const foundUser =
                 selectedUsers.length > 0 &&
-                selectedUsers?.find((sel) => sel.userId === user.adId);
+                selectedUsers?.find(
+                  (sel) => sel.userId === user.azure_object_id
+                );
 
               return (
                 <li key={u} className={!!foundUser && styles.selected}>
@@ -108,12 +110,14 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
                   </Box>
 
                   <Select
-                    key={user.adId}
+                    key={user.azure_object_id}
                     labelId="role-select-label"
                     id="role-select"
                     value={foundUser?.roleId}
                     placeholder="Select a role"
-                    onChange={(e) => onChangeRole(user.adId, e.target.value)}
+                    onChange={(e) =>
+                      onChangeRole(user.azure_object_id, e.target.value)
+                    }
                     style={{
                       width: 200
                     }}

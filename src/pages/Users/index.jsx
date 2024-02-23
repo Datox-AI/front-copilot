@@ -42,7 +42,8 @@ const Users = () => {
 
   const toggleAssignModal = (users) => {
     setAssignableUsers(
-      data?.lists?.filter((_user) => users?.includes(_user.adId)) || null
+      data?.lists?.filter((_user) => users?.includes(_user.azure_object_id)) ||
+        null
     );
   };
 
@@ -54,8 +55,8 @@ const Users = () => {
   const onDeleteSubmit = (data) => {
     updateMutation.mutate(
       {
-        userId: data.adId,
-        roleIds: []
+        user_id: data.azure_object_id,
+        role_ids: []
       },
       {
         onSuccess: () => {
@@ -74,8 +75,8 @@ const Users = () => {
     deletableUsers.forEach((user, u) =>
       updateMutation.mutate(
         {
-          userId: user,
-          roleIds: []
+          user_id: user,
+          role_ids: []
         },
 
         {

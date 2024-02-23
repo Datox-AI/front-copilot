@@ -9,7 +9,10 @@ import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
 const SnowflakeConfigAdd = () => {
   const location = useLocation();
   const { id } = useParams();
-  const { credentials } = useSnowflakeAPI({ enableUserCredentials: !!id });
+  const { credentials, roles } = useSnowflakeAPI({
+    enableUserCredentials: !!id,
+    enableRoles: true
+  });
 
   return (
     <div className={styles.container}>
@@ -45,6 +48,7 @@ const SnowflakeConfigAdd = () => {
           initOauthTokenEndpoint={
             location.state?.oauthTokenEndpoint || credentials?.token_endpoint
           }
+          roles={roles}
         />
       </div>
     </div>

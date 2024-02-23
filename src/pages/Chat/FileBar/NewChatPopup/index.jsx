@@ -4,7 +4,13 @@ import useSnowflakeAPI from "../../../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 
 import { useEffect, useState } from "react";
-import { Button, CircularProgress, TextField } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  MenuItem,
+  Select,
+  TextField
+} from "@mui/material";
 import { useDispatch } from "react-redux";
 import { toggleIntegrationConfig } from "../../../../redux/integrations/integrationsSlice";
 import { integrationIcons } from "../../../../consts/integrations";
@@ -12,6 +18,7 @@ import { SNOWFLAKE_REDIRECT_URL } from "../../../../consts/snowflake";
 import { useNavigate } from "react-router-dom";
 
 export const IntegrationForm = ({
+  roles,
   isCreate,
   initClientId,
   initWarehouse,
@@ -27,6 +34,7 @@ export const IntegrationForm = ({
   const [accountIdentifier, setAccountIdentifier] = useState(
     initAccountIdentifier
   );
+  const [role, setRole] = useState();
   const [clientId, setClientId] = useState(initClientId);
   const [clientSecret, setClientSecret] = useState(initClientSecret);
   const [tokenEndpoint, setTokenEndpoint] = useState(initOauthTokenEndpoint);
@@ -101,6 +109,8 @@ export const IntegrationForm = ({
     }
   };
 
+  console.log(roles);
+
   return (
     <div className={styles.integrationFormContainer}>
       <div className={styles.form}>
@@ -135,6 +145,13 @@ export const IntegrationForm = ({
             value={tokenEndpoint}
             onChange={({ target: { value } }) => setTokenEndpoint(value)}
           />
+        </label>
+
+        <label className={styles.field}>
+          <span>Role</span>
+          <Select value="SYSADMIN" disabled={!(roles?.length > 0)}>
+            <MenuItem value="SYSADMIN">SYSADMIN</MenuItem>
+          </Select>
         </label>
 
         <label className={styles.field}>

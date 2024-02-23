@@ -53,6 +53,19 @@ const useSnowflakeAPI = (props) => {
     }
   );
 
+  const { data: roles } = useQuery(
+    ["GET_SNOWFLAKE_ROLES"],
+    () =>
+      snowflakeAPI.get("api/snowflake_integration/available_roles", {
+        params: {
+          token: snowflakeToken?.access
+        }
+      }),
+    {
+      enabled: !!props?.enableRoles && !!snowflakeToken?.access
+    }
+  );
+
   const { data: schemas } = useQuery(
     ["GET_SCHEMAS", props?.database],
     () =>
@@ -457,6 +470,7 @@ const useSnowflakeAPI = (props) => {
     schemas,
     snowflakeData,
     columns,
+    roles,
     isLoadingColumns,
     previewData,
     credentials,

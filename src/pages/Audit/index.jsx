@@ -48,7 +48,7 @@ const Audit = () => {
         <ul>
           {users?.map((user) => (
             <li
-              key={user.adId}
+              key={user.azure_object_id}
               onClick={() => navigate(user.id)}
               className={classNames({
                 [styles.active]: userId === user.id
