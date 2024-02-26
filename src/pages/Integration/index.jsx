@@ -115,7 +115,7 @@ const Integration = () => {
 
   const handleWebsocketMessage = useCallback(
     (txt) => {
-      if (currentWs?.isAgentConnected) {
+      if (currentWs?.status === connectionStatuses.CONNECTED) {
         dispatch(startStreaming({ chatId: currentWs?.chatId }));
         sendData(currentWs?.chatId, {
           user_input: txt
