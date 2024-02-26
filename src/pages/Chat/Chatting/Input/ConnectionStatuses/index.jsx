@@ -41,7 +41,7 @@ export default function ConnectionStatuses({ status }) {
     case connectionStatuses.CONNECTED:
       return (
         <Tooltip title="Connected">
-          <button className={classNames(styles.CONNECTING, styles.badge)}>
+          <button className={classNames(styles.CONNECTED, styles.badge)}>
             <CheckedIcon />
           </button>
         </Tooltip>
