@@ -23,16 +23,22 @@
       cursor: pointer;
     }
 
-    button {
+    .actions {
       display: flex;
       align-items: center;
-      gap: 4px;
-      background-color: transparent;
-      color: #616161;
-      font-size: 12px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
+      gap: 7px;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background-color: transparent;
+        color: #616161;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+      }
     }
   }
 

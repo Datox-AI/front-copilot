@@ -7,12 +7,27 @@ import { normalizeColumn } from "../Columns";
 import { useMutation } from "react-query";
 import { request } from "../../../../config/request";
 import RCTable from "../../../../components/Table";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+
+const downloadFile = (filename, data) => {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+};
 
 const Store = () => {
   const { fileId, chatId } = useParams();
 
   const mutate = useMutation((data) =>
     request.post(`api/analytics_agent/${chatId}/get_stored_data`, data)
+  );
+
+  const downloadMutate = useMutation((data) =>
+    request.post(`api/analytics_agent/${chatId}/download_stored_data`, data)
   );
 
   const [previewData, setPreviewData] = useState([]);
@@ -40,8 +55,27 @@ const Store = () => {
     );
   }, [fileId]);
 
+  const onDownload = () => {
+    downloadMutate.mutate(
+      { stored_file_id: fileId },
+      {
+        onSuccess: (res) => {
+          downloadFile(fileId, res);
+        }
+      }
+    );
+  };
+
   return (
-    <ColumnDetails>
+    <ColumnDetails
+      actions={
+        <>
+          <button onClick={onDownload}>
+            Download <DownloadRoundedIcon fontSize="16px" />
+          </button>
+        </>
+      }
+    >
       <RCTable
         columns={cols}
         data={previewData || []}

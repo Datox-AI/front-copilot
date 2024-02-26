@@ -6,7 +6,7 @@ import { ReactComponent as CloseI } from "../../../assets/icons/close.svg";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const ColumnDetails = ({ children }) => {
+const ColumnDetails = ({ children, actions }) => {
   const navigate = useNavigate();
 
   const [isOpen, setIsOpen] = useState(true);
@@ -63,9 +63,13 @@ const ColumnDetails = ({ children }) => {
           }}
         />
 
-        <button onClick={() => navigate("../../")}>
-          Close <CloseI />
-        </button>
+        <div className={styles.actions}>
+          {actions}
+
+          <button onClick={() => navigate("../../")}>
+            Close <CloseI />
+          </button>
+        </div>
       </div>
       <div
         className={classNames(styles.content, { [styles.isOpen]: isOpen })}
