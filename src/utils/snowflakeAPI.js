@@ -4,9 +4,10 @@ import {
   setSnowflakeRefreshToken,
   setSnowflakeToken
 } from "../redux/auth/authSlice";
+import { BASE_API_URL } from "../config/request";
 
 export const snowflakeAPI = axios.create({
-  baseURL: "https://newcopilotwebapi.azurewebsites.net/"
+  baseURL: BASE_API_URL
 });
 
 export const refreshSnowflakeToken = async () =>
@@ -34,15 +35,24 @@ const errorHandler = async (error) => {
   const status = error.response?.status;
   const originalRequest = error.config;
 
-  if (status === 401 && !error?.config?.url?.includes("refresh_token")) {
+  if (
+    status === 401 &&
+    !error?.config?.url?.includes("refresh_token") &&
+    !originalRequest._retry
+  ) {
+    originalRequest._retry = true; // Avoid infinite loops
+
     const res = await refreshSnowflakeToken();
+
+    // Retry the failed request with the new token
+    originalRequest.headers.Authorization = `Bearer ${tokenResponse.accessToken}`;
 
     store.dispatch(setSnowflakeToken(res.access_token));
 
     if (res.refresh_token)
       store.dispatch(setSnowflakeRefreshToken(res.refresh_token));
 
-    if (!!res) return snowflakeAPI(originalRequest);
+    return request(originalRequest);
   } else if (status === 401 && error?.config?.url?.includes("refresh_token")) {
     store.dispatch(setSnowflakeToken(null));
     store.dispatch(setSnowflakeRefreshToken(null));

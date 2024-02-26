@@ -457,8 +457,8 @@ const useSnowflakeAPI = (props) => {
   };
 
   useEffect(() => {
-    if (!databases || snowflakeData.length > 0) return;
-    // if (!databases) return;
+    // if (!databases || snowflakeData.length > 0) return;
+    if (!databases) return;
 
     dispatch(
       setSnowflakeData([
@@ -468,7 +468,8 @@ const useSnowflakeAPI = (props) => {
         }))
       ])
     );
-  }, [databases, snowflakeData]);
+    // }, [databases, snowflakeData]);
+  }, [databases]);
 
   return {
     isConnected,
