@@ -20,5 +20,9 @@ export const connectionStatuses = {
 export const snowflakeMessageHandlers = {
   SUCCESSFULY_CONNECTED: "Engine is connected succesfully",
   NOT_CONNECTED: "Engine is not connected",
-  STOPPED: "Agent is stopped"
+  STOPPED: "Agent is stopped",
+  SNOWFLAKE_TOKEN_EXPIRED: "Snowflake token is expired",
+  SNOWFLAKE_TOKEN_INVALID: "Snowflake token is invalid",
+  AZURE_TOKEN_INVALID: "Azure token is invalid",
+  AZURE_TOKEN_EXPIRED: "Azure token is expired"
 };

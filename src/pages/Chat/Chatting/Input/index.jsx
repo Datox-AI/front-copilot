@@ -8,6 +8,7 @@ import { ReactComponent as SendIcon } from "../../../../assets/icons/PaperPlaneR
 import { useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import ConnectionStatuses from "./ConnectionStatuses";
 
 const Input = ({
   chatId,
@@ -54,7 +55,7 @@ const Input = ({
 
   return (
     <form className={styles.inputContainer} onSubmit={onSend}>
-      {!isSnowflakeChat && (
+      {!isSnowflakeChat ? (
         <label htmlFor="attach_file" className={styles.attach}>
           <input
             type="file"
@@ -67,6 +68,8 @@ const Input = ({
           />
           <AttachFileRoundedIcon />
         </label>
+      ) : (
+        <ConnectionStatuses status={snowflakeConnectionStatus} />
       )}
 
       <div className={styles.input}>
@@ -101,15 +104,6 @@ const Input = ({
       >
         {isStreaming ? <PauseCircleOutlineRoundedIcon /> : <SendIcon />}
       </button>
-
-      {isSnowflakeChat && (
-        <p className={styles.log}>
-          {snowflakeConnectionStatus}
-          {/* {isAgentConnected
-            ? "Agent is connected..."
-            : "Agent is not connected!"} */}
-        </p>
-      )}
     </form>
   );
 };

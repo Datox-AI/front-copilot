@@ -22,6 +22,12 @@ import {
   snowflakeMessageHandlers
 } from "../../consts/snowflake";
 import usePrompt from "../../hooks/usePrompt";
+import { refreshSnowflakeToken } from "../../utils/snowflakeAPI";
+import {
+  setSnowflakeRefreshToken,
+  setSnowflakeToken,
+  setToken
+} from "../../redux/auth/authSlice";
 
 const Integration = () => {
   const dispatch = useDispatch();
@@ -29,7 +35,7 @@ const Integration = () => {
 
   const { integrationId, chatId } = useParams();
   const { openedIntegrations } = useSelector((store) => store.integrations);
-  const { snowflakeToken } = useSelector((store) => store.auth);
+  const { snowflakeToken, token } = useSelector((store) => store.auth);
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
   const { onQuestions } = usePrompt({ chatId });
 
@@ -41,7 +47,6 @@ const Integration = () => {
     data,
     refetch,
     updateSnowflakeData,
-    refetchSingleChat,
     isFetching,
     singleAnalyticsChat,
     refetchSingleAnalyticsChat,
@@ -58,7 +63,6 @@ const Integration = () => {
     addWebSocket,
     sendData,
     removeWebSocket,
-    toggleAgentConnection,
     toggleHasEventListener,
     changeSocketStatus
   } = useWebSocket();
@@ -133,7 +137,7 @@ const Integration = () => {
     websockets.forEach((ws) => {
       if (!ws.hasEventListener) {
         toggleHasEventListener(chatId, true);
-        ws.socket.addEventListener("message", (event) => {
+        ws.socket.addEventListener("message", async (event) => {
           event.preventDefault();
           const message = JSON.parse(event.data);
           console.log(message);
@@ -141,7 +145,7 @@ const Integration = () => {
           switch (message?.message) {
             case snowflakeMessageHandlers.SUCCESSFULY_CONNECTED:
               changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTED);
-              toggleAgentConnection(ws?.chatId, true);
+
               break;
 
             case snowflakeMessageHandlers.NOT_CONNECTED:
@@ -149,11 +153,46 @@ const Integration = () => {
               sendData(ws?.chatId, {
                 oauth_token: snowflakeToken?.access
               });
+
               break;
 
             case snowflakeMessageHandlers.STOPPED:
               dispatch(stopStreaming({ chatId: ws?.chatId }));
+
               refetchSingleAnalyticsChat();
+
+              break;
+
+            case snowflakeMessageHandlers.AZURE_TOKEN_EXPIRED:
+            case snowflakeMessageHandlers.AZURE_TOKEN_INVALID:
+              changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTING);
+
+              const azureRes = await refreshSnowflakeToken();
+
+              sendData(ws?.chatId, {
+                oauth_token: snowflakeToken?.access,
+                token: azureRes?.accessToken
+              });
+
+              dispatch(setToken(res?.accessToken));
+
+              break;
+
+            case snowflakeMessageHandlers.SNOWFLAKE_TOKEN_INVALID:
+            case snowflakeMessageHandlers.SNOWFLAKE_TOKEN_EXPIRED:
+              changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTING);
+
+              const res = await refreshSnowflakeToken();
+
+              sendData(ws?.chatId, {
+                oauth_token: res?.access_token,
+                token: token
+              });
+
+              dispatch(setSnowflakeToken(res?.access_token));
+
+              if (res.refresh_token)
+                dispatch(setSnowflakeRefreshToken(res.refresh_token));
 
               break;
 
@@ -214,7 +253,7 @@ const Integration = () => {
         ws?.socket?.removeEventListener("message", (e) => console.log(e));
       });
     };
-  }, [websockets, chatId, activeIntegration, snowflakeToken?.access]);
+  }, [websockets, chatId, activeIntegration, snowflakeToken?.access, token]);
 
   useEffect(() => {
     if (chatId && Number(integrationId) === 2) {

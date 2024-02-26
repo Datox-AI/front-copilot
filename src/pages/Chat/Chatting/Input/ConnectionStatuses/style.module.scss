@@ -1,0 +1,26 @@
+.badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+
+  &.CONNECTED {
+    border: 1px solid #90cdac;
+    background-color: #c1ead4;
+  }
+
+  &.CONNECTING {
+    color: #c4c4c4;
+    background-color: #fff;
+    border: 1px solid #c4c4c4;
+  }
+
+  &.NOT_CONNECTED {
+    color: #df4141;
+    background-color: #ffc1c1;
+    border: 1px solid #df4141;
+  }
+}
