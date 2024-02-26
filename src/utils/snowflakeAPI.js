@@ -45,14 +45,14 @@ const errorHandler = async (error) => {
     const res = await refreshSnowflakeToken();
 
     // Retry the failed request with the new token
-    originalRequest.headers.Authorization = `Bearer ${tokenResponse.accessToken}`;
+    originalRequest.headers.Authorization = `Bearer ${res.access_token}`;
 
     store.dispatch(setSnowflakeToken(res.access_token));
 
     if (res.refresh_token)
       store.dispatch(setSnowflakeRefreshToken(res.refresh_token));
 
-    return request(originalRequest);
+    return snowflakeAPI(originalRequest);
   } else if (status === 401 && error?.config?.url?.includes("refresh_token")) {
     store.dispatch(setSnowflakeToken(null));
     store.dispatch(setSnowflakeRefreshToken(null));
