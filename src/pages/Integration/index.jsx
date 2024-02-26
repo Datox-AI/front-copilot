@@ -227,6 +227,10 @@ const Integration = () => {
                 }, 300);
               } else {
                 toast.error(message?.message);
+                changeSocketStatus(
+                  ws?.chatId,
+                  connectionStatuses.NOT_CONNECTED
+                );
 
                 dispatch(
                   setTextToGenerator({
