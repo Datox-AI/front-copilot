@@ -28,7 +28,7 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
     setSelectedUsers(
       _users.map((_user) => ({
         userId: _user.azure_object_id,
-        roleId: _user.roles[0].id
+        roleId: _user.roles[0].azure_role_id
       }))
     );
   }, [_users]);
@@ -109,7 +109,7 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
                   key={user.azure_object_id}
                   labelId="role-select-label"
                   id="role-select"
-                  value={foundUser?.roleId || user.roles[0].id}
+                  value={foundUser?.roleId || user.roles[0].azure_role_id}
                   placeholder="Select a role"
                   onChange={(e) =>
                     onChangeRole(user.azure_object_id, e.target.value)
@@ -123,8 +123,8 @@ const UserAssignModal = ({ isOpen, close, _users, onClear }) => {
                   </MenuItem>
                   {roles?.map((role) => (
                     <MenuItem
-                      value={role.id}
-                      key={role.id}
+                      value={role.azure_role_id}
+                      key={role.azure_role_id}
                       className="menu-item-select"
                     >
                       {role.name === "Admin" ? <AdminIcon /> : <PeopleIcon />}{" "}

@@ -127,8 +127,8 @@ const UserAddModal = ({ isOpen, close, refetch }) => {
                     </MenuItem>
                     {roles?.map((role) => (
                       <MenuItem
-                        value={role.id}
-                        key={role.id}
+                        value={role.azure_role_id}
+                        key={role.azure_role_id}
                         className="menu-item-select"
                       >
                         {role.name === "Admin" ? <AdminIcon /> : <PeopleIcon />}{" "}

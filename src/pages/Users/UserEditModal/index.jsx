@@ -27,7 +27,7 @@ const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
   useEffect(() => {
     if (!roles || !selectedUser) return;
 
-    setSelectedRole(selectedUser?.roles?.[0].id);
+    setSelectedRole(selectedUser?.roles?.[0].azure_role_id);
   }, [roles, selectedUser]);
 
   const handleSave = useCallback(async () => {
@@ -91,8 +91,8 @@ const UserEditModal = ({ isOpen, close, refetch, selectedUser }) => {
                 </MenuItem>
                 {roles?.map((role) => (
                   <MenuItem
-                    value={role.id}
-                    key={role.id}
+                    value={role.azure_role_id}
+                    key={role.azure_role_id}
                     className="menu-item-select"
                   >
                     {role.name === "Admin" ? <AdminIcon /> : <PeopleIcon />}{" "}
