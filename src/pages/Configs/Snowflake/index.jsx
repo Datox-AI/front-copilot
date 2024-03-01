@@ -3,15 +3,26 @@ import styles from "../style.module.scss";
 import ConfigCard from "../../../components/ConfigCard";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
+import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 
 import { Box, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { DeleteOutlineRounded } from "@mui/icons-material";
+import { useDispatch, useSelector } from "react-redux";
 import { ReactComponent as TrashIcon } from "../../../assets/icons/trash.svg";
+import { ReactComponent as WarningIcon } from "../../../assets/icons/warning.svg";
+import { useRef, useState } from "react";
+import { Close } from "@mui/icons-material";
+import useOutsideClick from "../../../hooks/useOutsideClick";
+import { toggleSkipOnboarding } from "../../../redux/integrations/integrationsSlice";
+import OnboardingSnowflake from "../../../components/OnboardingIntegration/Snowflake";
 
 const SnowflakeConfig = () => {
+  const ref = useRef();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [showDocumentation, setShowDocumentation] = useState(false);
+
   const { credentials, deleteAuth, refetchCredentials } = useSnowflakeAPI({
     enableUserCredentials: true
   });
@@ -28,7 +39,12 @@ const SnowflakeConfig = () => {
     window.location.replace(credentials?.authorization_url);
   };
 
-  // if (!skipOnboarding) return <OnboardingSnowflake />;
+  useOutsideClick(
+    ref,
+    showDocumentation ? () => setShowDocumentation(false) : () => {}
+  );
+
+  if (!skipOnboarding) return <OnboardingSnowflake />;
 
   return (
     <div className={styles.container}>
@@ -71,12 +87,51 @@ const SnowflakeConfig = () => {
             )}
 
             {!credentials && (
-              <Button
-                className={styles.btn}
-                onClick={() => navigate("/configs/snowflake/create")}
+              <Box
+                display="flex"
+                alignItems="center"
+                gap="10px"
+                position="relative"
               >
-                <AddRoundedIcon /> Add Account
-              </Button>
+                <Button
+                  className={styles.btn}
+                  onClick={() => navigate("/configs/snowflake/create")}
+                >
+                  <AddRoundedIcon /> Add Account
+                </Button>
+                <InfoRoundedIcon
+                  style={{ cursor: "pointer", color: "red", marginTop: "5px" }}
+                  onClick={() => setShowDocumentation((prev) => !prev)}
+                />
+
+                {showDocumentation && (
+                  <div className={styles.content}>
+                    <Close onClick={() => setShowDocumentation(false)} />
+                    <div
+                      style={{
+                        paddingBottom: "16px",
+                        borderBottom: "1px solid #E2E2E2"
+                      }}
+                    >
+                      <h4>Welcome to Datox – Snowflake Integration</h4>
+                      <p>
+                        If you are coming here for the first time, please,
+                        follow the documentation on configuring snowflake
+                        integration
+                      </p>
+                    </div>
+
+                    <Box display="flex" justifyContent="flex-end">
+                      <Button
+                        variant="contained"
+                        onClick={() => dispatch(toggleSkipOnboarding())}
+                      >
+                        Let's proceed
+                      </Button>
+                    </Box>
+                  </div>
+                )}
+              </Box>
             )}
           </Box>
         </Box>

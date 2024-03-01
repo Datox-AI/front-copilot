@@ -42,14 +42,6 @@ const PopoverMenu = ({
   const id = open ? "simple-popover" : undefined;
   const ref = useRef();
 
-  // const [open, setOpen] = useState(false);
-
-  const onClick = () => {
-    handleClick();
-    // if (!isClickable) return;
-    // setOpen((prev) => !prev);
-  };
-
   useOutsideClick(ref, () => setAnchorEl(null));
 
   return (
@@ -69,10 +61,6 @@ const PopoverMenu = ({
         >
           {mainIcon}
         </Box>
-
-        {/* {isClickable && open && (
-        
-      )} */}
       </button>
 
       <Popover
