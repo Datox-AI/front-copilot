@@ -117,7 +117,7 @@ export const IntegrationForm = ({
         },
         {
           onSuccess: () => {
-            if (role)
+            if (role && roles?.available_roles?.length > 0)
               changeRole.mutate(
                 { role: role },
                 {

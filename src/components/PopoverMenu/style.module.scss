@@ -18,55 +18,62 @@
       display: block !important;
     }
   }
+}
 
-  .command_context {
-    position: relative;
-    z-index: 10;
+.popover {
+  display: block;
+  div {
+    border-radius: 10px !important;
+  }
+}
 
-    .commands {
-      position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 999;
-      min-width: 141px;
-      display: none;
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      border-radius: 10px;
-      border: 1px solid #0177fb;
-      background: #fff !important;
-      box-shadow: 0px 7px 15px 0px rgba(0, 0, 0, 0.1),
-        0px 27px 27px 0px rgba(0, 0, 0, 0.09),
-        0px 62px 37px 0px rgba(0, 0, 0, 0.05),
-        0px 110px 44px 0px rgba(0, 0, 0, 0.01),
-        0px 171px 48px 0px rgba(0, 0, 0, 0);
-      overflow: hidden;
+.command_context {
+  position: relative;
+  z-index: 10;
 
-      .command {
-        width: 171px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        padding: 0 15px;
-        gap: 12px;
-        cursor: pointer;
+  .commands {
+    // position: absolute;
+    // top: 0;
+    // right: 0;
+    // z-index: 999;
+    min-width: 141px;
+    display: none;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-radius: 10px;
+    border: 1px solid #0177fb;
+    background: #fff !important;
+    box-shadow: 0px 7px 15px 0px rgba(0, 0, 0, 0.1),
+      0px 27px 27px 0px rgba(0, 0, 0, 0.09),
+      0px 62px 37px 0px rgba(0, 0, 0, 0.05),
+      0px 110px 44px 0px rgba(0, 0, 0, 0.01),
+      0px 171px 48px 0px rgba(0, 0, 0, 0);
+    overflow: hidden;
 
-        color: #616161;
-        font-size: 12px;
-        font-weight: 500;
-        border-bottom: 1px solid #f6f5f8;
-        background: #fff;
+    .command {
+      width: 171px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 15px;
+      gap: 12px;
+      cursor: pointer;
 
-        svg {
-          path {
-            stroke: #616161;
-          }
+      color: #616161;
+      font-size: 12px;
+      font-weight: 500;
+      border-bottom: 1px solid #f6f5f8;
+      background: #fff;
+
+      svg {
+        path {
+          stroke: #616161;
         }
+      }
 
-        &:hover {
-          background: #f6f5f8;
-        }
+      &:hover {
+        background: #f6f5f8;
       }
     }
   }

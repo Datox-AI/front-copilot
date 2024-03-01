@@ -5,7 +5,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { ReactComponent as ReplyIcon } from "../../assets/icons/reply.svg";
 import { ReactComponent as PinIcon } from "../../assets/icons/pin.svg";
 
-import { Box } from "@mui/material";
+import { Box, Popover } from "@mui/material";
 import { useRef, useState } from "react";
 import useOutsideClick from "../../hooks/useOutsideClick";
 
@@ -28,30 +28,64 @@ const PopoverMenu = ({
   position = "bottom" | "top",
   isClickable = true
 }) => {
-  const ref = useRef();
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  const [open, setOpen] = useState(false);
-
-  const onClick = () => {
-    if (!isClickable) return;
-    setOpen((prev) => !prev);
+  const handleClick = (event) => {
+    setAnchorEl(event?.currentTarget);
   };
 
-  useOutsideClick(ref, () => setOpen(false));
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+  const ref = useRef();
+
+  // const [open, setOpen] = useState(false);
+
+  const onClick = () => {
+    handleClick();
+    // if (!isClickable) return;
+    // setOpen((prev) => !prev);
+  };
+
+  useOutsideClick(ref, () => setAnchorEl(null));
 
   return (
-    <button className={classNames(styles.more)} onClick={onClick} ref={ref}>
-      <Box
-        display="flex"
-        alignItems="center"
-        gap="10px"
-        position="relative"
-        zIndex={1}
+    <>
+      <button
+        className={classNames(styles.more)}
+        onClick={handleClick}
+        ref={ref}
       >
-        {mainIcon}
-      </Box>
+        <Box
+          display="flex"
+          alignItems="center"
+          gap="10px"
+          position="relative"
+          zIndex={1}
+          aria-describedby={id}
+        >
+          {mainIcon}
+        </Box>
 
-      {isClickable && open && (
+        {/* {isClickable && open && (
+        
+      )} */}
+      </button>
+
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        className={styles.popover}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left"
+        }}
+      >
         <div className={styles.command_context}>
           <ul
             className={styles.commands}
@@ -69,8 +103,8 @@ const PopoverMenu = ({
             ))}
           </ul>
         </div>
-      )}
-    </button>
+      </Popover>
+    </>
   );
 };
 
