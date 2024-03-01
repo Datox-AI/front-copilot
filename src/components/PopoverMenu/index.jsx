@@ -56,8 +56,8 @@ const PopoverMenu = ({
           <ul
             className={styles.commands}
             style={{
-              top: position === "bottom" ? "calc(100% + 40px)" : "auto",
-              bottom: position === "top" ? "calc(100% + 40px)" : "auto",
+              top: position === "bottom" ? "calc(100% + 10px)" : "auto",
+              bottom: position === "top" ? "calc(100% + 10px)" : "auto",
               display: isClickable && "block"
             }}
           >

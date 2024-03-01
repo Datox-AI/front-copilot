@@ -12,13 +12,14 @@ const DeleteChatPopup = ({
   description = "All chat tabs associated with this will be closed."
 }) => {
   return (
-    <Popup isOpen={isOpen} close={close}>
-      <Box
-        width={374}
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-      >
+    <Popup
+      isOpen={isOpen}
+      close={close}
+      wrapperStyle={{
+        width: 374
+      }}
+    >
+      <Box display="flex" flexDirection="column" alignItems="center">
         <img src={newImg || alertImg} width={120} height={120} alt="alert" />
         <Typography
           fontSize="24px"
@@ -40,6 +41,7 @@ const DeleteChatPopup = ({
         <Box
           display="flex"
           alignItems="center"
+          justifyContent="center"
           mt="53px"
           width="100%"
           gap="10px"
@@ -48,7 +50,7 @@ const DeleteChatPopup = ({
             variant="contained"
             style={{
               height: 42,
-              width: "48%"
+              width: "40%"
             }}
             onClick={onSubmit}
             disabled={isLoading}
@@ -59,7 +61,7 @@ const DeleteChatPopup = ({
             variant="outlined"
             style={{
               height: 42,
-              width: "48%"
+              width: "40%"
             }}
             onClick={close}
           >

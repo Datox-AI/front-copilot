@@ -108,13 +108,7 @@ const MessageItem = ({
             )}
 
             {files?.length > 0 && (
-              <Box
-                display="flex"
-                width="480px"
-                flexDirection="column"
-                gap="8px"
-                marginBottom="10px"
-              >
+              <Box className={styles.filesBox}>
                 {files.map((file) => (
                   <File name={file.fileName} type={file.fileType} />
                 ))}

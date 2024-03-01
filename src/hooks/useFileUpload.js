@@ -58,7 +58,7 @@ const useFileUpload = ({ chatId }) => {
           dispatch(
             finishUploadFile({
               chatId,
-              file: { id: foundCreatedFile.id, fileId: res.id }
+              file: { id: foundCreatedFile.id, fileId: res.blob_name }
             })
           );
       });

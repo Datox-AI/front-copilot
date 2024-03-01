@@ -12,7 +12,7 @@ const chatSlice = createSlice({
   reducers: {
     // payload = { chatId , files : [{ file }] }
     finishUploadFile: (state, { payload }) => {
-      state.files[payload.chatId] = state.files[payload.chatId].map((file) =>
+      state.files[payload.chatId] = state.files[payload.chatId]?.map((file) =>
         file.id === payload.file.id
           ? {
               ...file,

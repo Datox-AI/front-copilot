@@ -285,6 +285,8 @@ const usePrompt = ({
         .then((res) => onFetchSuccess(res, message))
         .catch((err) => {
           console.log(err);
+          toast.error(err?.detail);
+          dispatch(clearFiles({ chatId }));
         });
   };
 
