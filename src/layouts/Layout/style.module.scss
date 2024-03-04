@@ -55,7 +55,8 @@
       width: 100%;
       flex-direction: column;
 
-      .activeNavLink {
+      .activeNavLink,
+      .navLink:hover {
         background-color: var(--active-tab) !important;
 
         svg {

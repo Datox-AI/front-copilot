@@ -4,7 +4,14 @@ import MenuItem from "./MenuItem";
 
 import { ReactComponent as Logo } from "../../../assets/images/logo.svg";
 import { elements, userElements } from "./elements";
-import { Box, Button, Typography, Popover, Avatar } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Popover,
+  Avatar,
+  Tooltip
+} from "@mui/material";
 import { useMemo, useState } from "react";
 import { stringAvatar } from "../../../utils";
 import { ReactComponent as RightArrowIcon } from "../../../assets/icons/arrow-right.svg";
