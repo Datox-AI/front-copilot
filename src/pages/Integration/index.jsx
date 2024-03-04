@@ -122,7 +122,7 @@ const Integration = () => {
         });
       }
     },
-    [currentWs?.chatId, currentWs?.isAgentConnected]
+    [currentWs?.chatId, currentWs?.status]
   );
 
   const handleWsStopStreaming = () => {
