@@ -14,7 +14,7 @@ export const useWebSocket = () => {
     if (websockets.find((ws) => ws.chatId === chatId)) return;
 
     const socket = new WebSocket(
-      `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws/${chatId}?token=${token}`
+      `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws_assistant/${chatId}?token=${token}`
     );
 
     setWebsockets((prevWebsockets) => [
