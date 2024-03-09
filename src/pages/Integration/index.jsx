@@ -151,7 +151,7 @@ const Integration = () => {
             case snowflakeMessageHandlers.NOT_CONNECTED:
               changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTING);
               sendData(ws?.chatId, {
-                oauth_token: snowflakeToken?.access
+                snowflake_oauth: snowflakeToken?.access
               });
 
               break;
@@ -170,7 +170,7 @@ const Integration = () => {
               const azureRes = await refreshSnowflakeToken();
 
               sendData(ws?.chatId, {
-                oauth_token: snowflakeToken?.access,
+                snowflake_oauth: snowflakeToken?.access,
                 token: azureRes?.accessToken
               });
 
@@ -185,7 +185,7 @@ const Integration = () => {
               const res = await refreshSnowflakeToken();
 
               sendData(ws?.chatId, {
-                oauth_token: res?.access_token,
+                snowflake_oauth: res?.access_token,
                 token: token
               });
 
