@@ -21,7 +21,7 @@ import {
   connectionStatuses,
   snowflakeMessageHandlers
 } from "../../consts/snowflake";
-import usePrompt from "../../hooks/usePrompt";
+
 import { refreshSnowflakeToken } from "../../utils/snowflakeAPI";
 import {
   setSnowflakeRefreshToken,
@@ -37,7 +37,6 @@ const Integration = () => {
   const { openedIntegrations } = useSelector((store) => store.integrations);
   const { snowflakeToken, token } = useSelector((store) => store.auth);
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
-  const { onQuestions } = usePrompt({ chatId });
 
   const [activeIntegration, setActiveIntegration] = useState(
     openedIntegrations[0]
@@ -217,7 +216,12 @@ const Integration = () => {
                 }
 
                 if (message?.followup_questions) {
-                  onQuestions(message?.followup_questions);
+                  dispatch(
+                    setQuestionsToGenerator({
+                      chatId: ws?.chatId,
+                      questions: message?.followup_questions
+                    })
+                  );
                 }
 
                 setTimeout(() => {
