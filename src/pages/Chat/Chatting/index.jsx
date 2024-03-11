@@ -284,6 +284,7 @@ const Chatting = ({
               isStreaming={textGenerator?.isStreaming}
               isAgentConnected={isAgentConnected}
               isSnowflakeChat={isSnowflakeChat}
+              showUploadFile={isChat}
               snowflakeConnectionStatus={snowflakeConnectionStatus}
             />
           )}
