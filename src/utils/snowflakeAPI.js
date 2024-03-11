@@ -45,7 +45,7 @@ const errorHandler = async (error) => {
     const res = await refreshSnowflakeToken();
 
     // Retry the failed request with the new token
-    originalRequest.headers.Token = `Bearer ${res.access_token}`;
+    originalRequest.headers.Token = res.access_token;
 
     store.dispatch(setSnowflakeToken(res.access_token));
 
