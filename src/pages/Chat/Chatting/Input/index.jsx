@@ -20,9 +20,8 @@ const Input = ({
   replyMessage,
   onFileUpload,
   isSnowflakeChat,
-  isAgentConnected,
+  showUploadFile,
   clearReplyMessage,
-  onCancel,
   snowflakeConnectionStatus
 }) => {
   const textareaRef = useRef(null);
@@ -55,7 +54,7 @@ const Input = ({
 
   return (
     <form className={styles.inputContainer} onSubmit={onSend}>
-      {!isSnowflakeChat ? (
+      {!isSnowflakeChat && showUploadFile ? (
         <label htmlFor="attach_file" className={styles.attach}>
           <input
             type="file"
@@ -69,7 +68,9 @@ const Input = ({
           <AttachFileRoundedIcon />
         </label>
       ) : (
-        <ConnectionStatuses status={snowflakeConnectionStatus} />
+        isSnowflakeChat && (
+          <ConnectionStatuses status={snowflakeConnectionStatus} />
+        )
       )}
 
       <div className={styles.input}>

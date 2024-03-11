@@ -182,6 +182,7 @@ const Integration = () => {
               changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTING);
 
               const res = await refreshSnowflakeToken();
+              console.log(res);
 
               sendData(ws?.chatId, {
                 snowflake_oauth: res?.access_token,
