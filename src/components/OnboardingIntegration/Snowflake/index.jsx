@@ -51,11 +51,13 @@ export default function OnboardingSnowflake() {
 
   const isNextBtnDisabled = useMemo(() => {
     switch (activeStep) {
+      // case 0:
+      //   const findVals = activeContent.keywords.filter((key) => key.value);
+      //   return findVals.length === 2;
       case 0:
-        const findVals = activeContent.keywords.filter((key) => key.value);
-        return findVals.length === 2;
-      case 1:
         return !!accountIdentifier;
+      case 1:
+        return true;
       case 2:
         return true;
       case 3:

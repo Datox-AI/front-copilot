@@ -1,3 +1,4 @@
+import DisablePriviligedRoles from "./DisablePrivilegedRoles";
 import IntegrationDetailsQuery from "./IntegrationDetailsQuery";
 import OAuthSecurityQuery from "./OAuthSecurityQuery";
 import OAuthUserCredentialsQuery from "./OAuthUserCredentialsQuery";
@@ -42,7 +43,15 @@ export const oauthKeywords = [
   },
   {
     type: "default",
-    label: "OR REPLACE SECURITY DATOX_INTEGRATION",
+    label: "OR"
+  },
+  {
+    type: "key",
+    label: "REPLACE"
+  },
+  {
+    type: "default",
+    label: "SECURITY INTEGRATION DATOX",
     br: true
   },
   {
@@ -118,13 +127,37 @@ export const credentialKeywords = [
   }
 ];
 
-export const _content = [
+export const privilegedBlockKeywods = [
   {
-    title: "User Role Configuration",
-    description: `Copy and run the below query in your Snowflake account. Replace the values in the <br/>[brackets] with your username and desired role respectively before copying.<br/><span style="color: #FF3232;">Note: You can not choose ACCOUNTADMIN or ORGADMIN for security purposes. </span>`,
-    keywords: [..._keywords],
-    component: UserRoleConfiguration
+    type: "key",
+    label: "ALTER ACCOUNT"
   },
+  {
+    type: "default",
+    label: "kiprdnq-kl02065"
+  },
+  {
+    type: "key",
+    label: "SET"
+  },
+  {
+    type: "default",
+    label: "OAUTH_ADD_PRIVILEGED_ROLES_TO_BLOCKED_LIST ="
+  },
+  {
+    type: "default",
+    label: "FALSE",
+    color: "#4ADA95"
+  }
+];
+
+export const _content = [
+  // {
+  //   title: "User Role Configuration",
+  //   description: `Copy and run the below query in your Snowflake account. Replace the values in the <br/>[brackets] with your username and desired role respectively before copying.<br/><span style="color: #FF3232;">Note: You can not choose ACCOUNTADMIN or ORGADMIN for security purposes. </span>`,
+  //   keywords: [..._keywords],
+  //   component: UserRoleConfiguration
+  // },
   {
     title: "Entering Snowflake Account Identifier",
     description: `You can navigate to the bottom left of your screen, clock on the drop-down, hover over to your account name and select the copy option`,
@@ -136,6 +169,12 @@ export const _content = [
     description: `In a new line in the same worksheet, please copy and run the below query.`,
     keywords: [...oauthKeywords],
     component: OAuthSecurityQuery
+  },
+  {
+    title: "Disable Blocking of Privileged Roles",
+    description: `Run the query below to allow ACCOUNTADMIN and SECURITY ADMIN roles<br/> to be used for OAuth authentication without being blocked`,
+    keywords: [...privilegedBlockKeywods],
+    component: DisablePriviligedRoles
   },
   {
     title: "Retrieving Integration Details",
