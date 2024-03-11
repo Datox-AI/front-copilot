@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import ConnectionStatuses from "./ConnectionStatuses";
+import { connectionStatuses } from "../../../../consts/snowflake";
 
 const Input = ({
   chatId,
@@ -88,7 +89,11 @@ const Input = ({
           placeholder="Ask anything..."
           value={text}
           onChange={onTexting}
-          disabled={isStreaming}
+          disabled={
+            isStreaming ||
+            (isSnowflakeChat &&
+              snowflakeConnectionStatus !== connectionStatuses.CONNECTED)
+          }
           onKeyDown={handleKeyPress}
           autoComplete="off"
           rows={1}

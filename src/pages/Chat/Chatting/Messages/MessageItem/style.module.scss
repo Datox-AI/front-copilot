@@ -244,8 +244,14 @@
       .codeContainer {
         position: relative;
         width: 100%;
+        &:hover {
+          .copyBtn {
+            display: block;
+          }
+        }
 
         .copyBtn {
+          display: none;
           position: absolute;
           top: 2px;
           right: 5px;

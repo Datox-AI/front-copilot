@@ -34,6 +34,9 @@ const ColumnDetails = ({ children, actions }) => {
     if (isDragging) {
       document.addEventListener("mousemove", handleMouseMove);
       document.addEventListener("mouseup", handleMouseUp);
+      document.addEventListener("click", () => {
+        if (isDragging) handleMouseUp();
+      });
 
       return () => {
         document.removeEventListener("mousemove", handleMouseMove);
@@ -54,7 +57,11 @@ const ColumnDetails = ({ children, actions }) => {
 
   return (
     <div className={styles.container}>
-      <div className={styles.togglerWrapper} onMouseDown={handleMouseDown}>
+      <div
+        className={styles.togglerWrapper}
+        onMouseDown={handleMouseDown}
+        // onMouseLeave={() => setIsDragging(false)}
+      >
         <span></span>
         <ChevronDownI
           onClick={() => setIsOpen((prev) => !prev)}

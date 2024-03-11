@@ -11,7 +11,7 @@ import SelectedMessages from "./SelectedMessages";
 import useChatting from "../../../hooks/useChatting";
 
 import { useSelector } from "react-redux";
-import { createRef, useEffect, useState } from "react";
+import { createRef, useEffect, useMemo, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 import useChatsAPI from "../../../hooks/api/useChatsAPI";
@@ -68,24 +68,34 @@ const EmptyMessages = ({
     });
   };
 
+  const title = useMemo(() => {
+    if (activeIntegration.dataType === "Analytics") return "Ask a Question";
+    if (activeIntegration.dataType === "FileSearch") return "Search Files";
+
+    return "Ask Questions";
+  }, [activeIntegration]);
+
+  const subtitle = useMemo(() => {
+    if (activeIntegration.dataType === "Analytics")
+      return "Effective questioning involves more than just forming inquiries; itrequires a thoughtful approach.";
+    if (activeIntegration.dataType === "FileSearch")
+      return "Ask me where your files are at and extract document contents and summaries.";
+
+    return "Ask me about your data in Snowflake to get instant insights and summaries.";
+  }, [activeIntegration]);
+
   return (
     <div
-      className={classNames(styles.emptyMessages, {
-        [styles.hasChats]: hasChats,
-        [styles.hasIntegrations]: hasIntegrations
-      })}
+      key={activeIntegration.dataType}
+      className={classNames(styles.emptyMessages)}
     >
-      {isChat ? (
-        <CommentIcon />
-      ) : (
+      {activeIntegration.dataType === "FileSearch" ? (
         <img src={searchFileIcon} width={150} height={150} />
+      ) : (
+        <CommentIcon />
       )}
-      <h3>{!isChat ? "Search Files" : "Ask a question!"}</h3>
-      <p>
-        {isChat
-          ? "Effective questioning involves more than just forming inquiries; itrequires a thoughtful approach."
-          : "Ask me where your files are at and extract document contents and summaries."}
-      </p>
+      <h3>{title}</h3>
+      <p>{subtitle}</p>
       {showButton && (
         <Button
           variant="contained"
