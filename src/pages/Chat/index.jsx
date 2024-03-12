@@ -6,6 +6,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 import { _integrations } from "../../consts/integrations";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
+import { useSelector } from "react-redux";
 
 const Chat = ({ isAudit }) => {
   const { chatId, userId } = useParams();
@@ -15,6 +16,7 @@ const Chat = ({ isAudit }) => {
   });
 
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
+  const { isOpen } = useSelector((store) => store.toggle);
 
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [width, setWidth] = useState(284);
@@ -32,7 +34,7 @@ const Chat = ({ isAudit }) => {
     const handleMouseMove = (e) => {
       if (!isDragging) return;
 
-      const _width = e.clientX;
+      const _width = isOpen ? e.clientX - 280 : e.clientX - 90;
 
       if (_width > 284 && _width < 600) {
         setWidth(_width);
@@ -52,7 +54,7 @@ const Chat = ({ isAudit }) => {
         document.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [isDragging, width]);
+  }, [isDragging, width, isOpen]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
