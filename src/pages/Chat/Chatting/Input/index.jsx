@@ -80,14 +80,19 @@ const Input = ({
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
               style={{
-                width: 20,
-                height: 20,
+                width: 18,
+                height: 18,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center"
               }}
             >
-              <AutorenewRoundedIcon />
+              <AutorenewRoundedIcon
+                style={{
+                  width: 18,
+                  height: 18
+                }}
+              />
             </motion.span>
           ),
           title: "Connecting..."
