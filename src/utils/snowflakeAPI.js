@@ -45,7 +45,7 @@ const errorHandler = async (error) => {
     const res = await refreshSnowflakeToken();
 
     // Retry the failed request with the new token
-    originalRequest.headers.Token = res.access_token;
+    originalRequest.headers.token = res.access_token;
 
     store.dispatch(setSnowflakeToken(res.access_token));
 
@@ -71,7 +71,7 @@ snowflakeAPI.interceptors?.request.use(
     const apiToken = store.getState()?.auth?.token;
 
     if (token) {
-      config.headers["Token"] = `Bearer ${token}`;
+      config.headers["token"] = `Bearer ${token}`;
     }
 
     if (apiToken) {
