@@ -42,40 +42,26 @@ const useSnowflakeAPI = (props) => {
 
   const { data: databases } = useQuery(
     ["GET_DATABASES"],
-    () =>
-      snowflakeAPI.get("api/snowflake_integration/databases", {
-        params: {
-          token: snowflakeToken?.access
-        }
-      }),
+    () => snowflakeAPI.get("api/snowflake_integration/databases"),
     {
-      enabled: !!props?.enableDatabases && !!snowflakeToken?.access
+      enabled: !!props?.enableDatabases
     }
   );
 
   const { data: roles } = useQuery(
     ["GET_SNOWFLAKE_ROLES"],
-    () =>
-      snowflakeAPI.get("api/snowflake_integration/available_roles", {
-        params: {
-          token: snowflakeToken?.access
-        }
-      }),
+    () => snowflakeAPI.get("api/snowflake_integration/available_roles"),
     {
-      enabled: !!props?.enableRoles && !!snowflakeToken?.access
+      enabled: !!props?.enableRoles
     }
   );
 
   const { data: schemas } = useQuery(
     ["GET_SCHEMAS", props?.database],
     () =>
-      snowflakeAPI.get("api/snowflake_integration/schemas/" + props?.database, {
-        params: {
-          token: snowflakeToken?.access
-        }
-      }),
+      snowflakeAPI.get("api/snowflake_integration/schemas/" + props?.database),
     {
-      enabled: !!props?.database && !!snowflakeToken?.access
+      enabled: !!props?.database
     }
   );
 
@@ -94,20 +80,14 @@ const useSnowflakeAPI = (props) => {
       snowflakeAPI(
         `api/snowflake_integration/columns/${props?.database}/${
           props?.schema
-        }/${props?.table || props?.view}`,
-        {
-          params: {
-            token: snowflakeToken?.access
-          }
-        }
+        }/${props?.table || props?.view}`
       ),
     {
       enabled:
         !!props?.enableColumns &&
         !!props?.database &&
         !!props?.schema &&
-        !!(props?.table || props?.view) &&
-        !!snowflakeToken?.access
+        !!(props?.table || props?.view)
     }
   );
 
@@ -126,20 +106,14 @@ const useSnowflakeAPI = (props) => {
       snowflakeAPI(
         `api/snowflake_integration/preview/${props?.database}/${
           props?.schema
-        }/${props?.table || props?.view}`,
-        {
-          params: {
-            token: snowflakeToken?.access
-          }
-        }
+        }/${props?.table || props?.view}`
       ),
     {
       enabled:
         !!props?.enablePreviewData &&
         !!props?.database &&
         !!props?.schema &&
-        !!(props?.table || props?.view) &&
-        !!snowflakeToken?.access
+        !!(props?.table || props?.view)
     }
   );
 
@@ -156,10 +130,7 @@ const useSnowflakeAPI = (props) => {
   );
 
   const changeRole = useMutation((data) =>
-    snowflakeAPI.put(
-      "api/snowflake_integration/change_role?token=" + snowflakeToken?.access,
-      data
-    )
+    snowflakeAPI.put("api/snowflake_integration/change_role", data)
   );
 
   const setError = useCallback(
@@ -206,11 +177,7 @@ const useSnowflakeAPI = (props) => {
   const getSchemas = (dbName) => {
     dispatch(setStatusIsFetching({ itemName: dbName, status: true }));
     snowflakeAPI
-      .get("api/snowflake_integration/schemas/" + dbName, {
-        params: {
-          token: snowflakeToken?.access
-        }
-      })
+      .get("api/snowflake_integration/schemas/" + dbName)
       .then((res) => {
         const mutatedData = snowflakeData.map((db) =>
           db.name === dbName
@@ -246,7 +213,6 @@ const useSnowflakeAPI = (props) => {
     snowflakeAPI
       .get("api/snowflake_integration/select_schema", {
         params: {
-          token: snowflakeToken?.access,
           db_name: dbName,
           schema_name: schemaName
         }
@@ -307,11 +273,7 @@ const useSnowflakeAPI = (props) => {
 
   const getTables = (dbName, schemaName) =>
     snowflakeAPI
-      .get(`api/snowflake_integration/tables/${dbName}/${schemaName}`, {
-        params: {
-          token: snowflakeToken?.access
-        }
-      })
+      .get(`api/snowflake_integration/tables/${dbName}/${schemaName}`)
       .then((res) => {
         dispatch(
           setSnowflakeData([
@@ -366,11 +328,7 @@ const useSnowflakeAPI = (props) => {
 
   const getViews = (dbName, schemaName) =>
     snowflakeAPI
-      .get(`api/snowflake_integration/views/${dbName}/${schemaName}`, {
-        params: {
-          token: snowflakeToken?.access
-        }
-      })
+      .get(`api/snowflake_integration/views/${dbName}/${schemaName}`)
       .then((res) => {
         dispatch(
           setSnowflakeData([
