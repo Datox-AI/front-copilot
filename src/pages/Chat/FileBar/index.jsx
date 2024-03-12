@@ -143,9 +143,13 @@ const FilesList = ({ relatedFiles, search }) => {
     >
       {mutatedFiles?.map((file, f) => (
         <FileItem
-          name={file.ItemName || file.itemName}
-          type={file.ContentType || file.contentType}
-          url={file.ItemUrl || file.itemUrl}
+          name={file.ItemName || file.itemName || file.item_name}
+          type={
+            file.ContentType ||
+            file.contentType ||
+            file.item_name.split(".")[file.item_name.split(".")?.length - 1]
+          }
+          url={file.ItemUrl || file.itemUrl || file.item_url}
         />
       ))}
     </Box>
