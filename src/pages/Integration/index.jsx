@@ -36,6 +36,7 @@ const Integration = () => {
   const { integrationId, chatId } = useParams();
   const { openedIntegrations } = useSelector((store) => store.integrations);
   const { snowflakeToken, token } = useSelector((store) => store.auth);
+  const { isOpen } = useSelector((store) => store.toggle);
   const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
 
   const [activeIntegration, setActiveIntegration] = useState(
@@ -350,9 +351,9 @@ const Integration = () => {
     const handleMouseMove = (e) => {
       if (!isDragging) return;
 
-      const _width = e.clientX;
+      const _width = isOpen ? e.clientX - 280 : e.clientX - 90;
 
-      if (_width > 284 && _width < 600) {
+      if (_width < 600) {
         setWidth(_width);
       }
     };
@@ -370,7 +371,7 @@ const Integration = () => {
         document.removeEventListener("mouseup", handleMouseUp);
       };
     }
-  }, [isDragging, width]);
+  }, [isDragging, width, isOpen]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
