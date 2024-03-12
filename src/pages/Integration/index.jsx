@@ -199,32 +199,32 @@ const Integration = () => {
 
             default:
               if (message?.status !== "error") {
-                if (message?.output) {
-                  dispatch(
-                    setTextToGenerator({
-                      chatId: message?.chat_id,
-                      text: message.output
-                    })
-                  );
-                }
+                // if (message?.output) {
+                //   dispatch(
+                //     setTextToGenerator({
+                //       chatId: message?.chat_id,
+                //       text: message.output
+                //     })
+                //   );
+                // }
 
-                if (message?.sql_query) {
-                  dispatch(
-                    setTextToGenerator({
-                      chatId: message?.chat_id,
-                      text: message.sql_query
-                    })
-                  );
-                }
+                // if (message?.sql_query) {
+                //   dispatch(
+                //     setTextToGenerator({
+                //       chatId: message?.chat_id,
+                //       text: message.sql_query
+                //     })
+                //   );
+                // }
 
-                if (message?.followup_questions) {
-                  dispatch(
-                    setQuestionsToGenerator({
-                      chatId: ws?.chatId,
-                      questions: message?.followup_questions
-                    })
-                  );
-                }
+                // if (message?.followup_questions) {
+                //   dispatch(
+                //     setQuestionsToGenerator({
+                //       chatId: ws?.chatId,
+                //       questions: message?.followup_questions
+                //     })
+                //   );
+                // }
 
                 setTimeout(() => {
                   dispatch(stopStreaming({ chatId: ws?.chatId }));
