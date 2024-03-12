@@ -71,7 +71,7 @@ snowflakeAPI.interceptors?.request.use(
     const apiToken = store.getState()?.auth?.token;
 
     if (token) {
-      config.headers["token"] = `Bearer ${token}`;
+      config.headers["token"] = token;
     }
 
     if (apiToken) {
