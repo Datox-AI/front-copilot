@@ -50,6 +50,8 @@
     opacity: 0;
     overflow: scroll;
     position: relative;
+    display: flex;
+    padding: 0;
 
     &.isOpen {
       height: 243px;

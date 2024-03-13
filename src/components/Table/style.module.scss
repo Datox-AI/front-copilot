@@ -1,7 +1,7 @@
 .table {
   width: 100%;
-  // overflow: scroll;
   overflow-x: auto;
+  flex: 1;
 
   table {
     thead {
