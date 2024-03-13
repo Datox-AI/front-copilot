@@ -353,7 +353,7 @@ const Integration = () => {
 
       const _width = isOpen ? e.clientX - 280 : e.clientX - 90;
 
-      if (_width < 600) {
+      if (_width < 600 && _width > 284) {
         setWidth(_width);
       }
     };
