@@ -31,6 +31,9 @@ const Input = ({
           accept=".doc, .docx, .xls, .xlsx, .pdf"
           disabled={isStreaming}
           onChange={onFileUpload}
+          onClick={(event) => {
+            event.target.value = null;
+          }}
         />
         <AttachFileRoundedIcon />
       </label>
