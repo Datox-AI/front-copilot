@@ -40,7 +40,6 @@ const Input = ({
       onSend();
     } else if (e.key === "Enter" && e.shiftKey) {
       // Here you can handle whatever you want to do when Enter is pressed with Shift
-      console.log("Shift+Enter key pressed");
       onTexting({
         target: {
           value: [text, "\n"].join("")
@@ -135,6 +134,9 @@ const Input = ({
               accept=".doc, .docx, .xls, .xlsx, .pdf, .csv"
               disabled={isStreaming}
               onChange={onFileUpload}
+              onClick={(event) => {
+                event.target.value = null;
+              }}
             />
             <AttachFileRoundedIcon />
           </label>
