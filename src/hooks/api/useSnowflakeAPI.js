@@ -7,6 +7,7 @@ import {
   setSnowflakeData,
   setStatusIsFetching
 } from "../../redux/integrations/integrationsSlice";
+import { store } from "../../redux/store";
 
 const normalizer = (item, level, idx) => ({
   name: item,
@@ -416,8 +417,10 @@ const useSnowflakeAPI = (props) => {
 
   useEffect(() => {
     if (
-      (!databases || snowflakeData.length > 0) &&
-      snowflakeData?.length === databases?.databases?.length
+      (!databases ||
+        store.getState().integrations.snowflake.data?.length > 0) &&
+      store.getState().integrations.snowflake.data?.length ===
+        databases?.databases?.length
     )
       return;
     // if (!databases) return;
@@ -431,7 +434,7 @@ const useSnowflakeAPI = (props) => {
       ])
     );
     // }, [databases, snowflakeData]);
-  }, [databases, snowflakeData]);
+  }, [databases]);
 
   return {
     isConnected,
