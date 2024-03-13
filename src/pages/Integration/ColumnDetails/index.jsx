@@ -82,7 +82,6 @@ const ColumnDetails = ({ children, actions }) => {
         className={classNames(styles.content, { [styles.isOpen]: isOpen })}
         style={{
           height: `${height}px`,
-          resize: "vertical",
           overflowY: "auto"
         }}
       >
