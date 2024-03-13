@@ -23,6 +23,6 @@ export const snowflakeMessageHandlers = {
   STOPPED: "Agent is stopped",
   SNOWFLAKE_TOKEN_EXPIRED: "Snowflake token is expired",
   SNOWFLAKE_TOKEN_INVALID: "Snowflake token is invalid",
-  AZURE_TOKEN_INVALID: "Azure token is invalid",
-  AZURE_TOKEN_EXPIRED: "Azure token is expired"
+  AZURE_TOKEN_INVALID: "Azure Token signature is invalid",
+  AZURE_TOKEN_EXPIRED: "Azure Token signature has expired"
 };
