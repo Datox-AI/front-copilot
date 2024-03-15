@@ -91,7 +91,7 @@ const Messages = forwardRef(
 
                   return (
                     <MessageItem
-                      key={m}
+                      key={message?.id}
                       mode={mode}
                       isAudit={isAudit}
                       chatId={chatId}

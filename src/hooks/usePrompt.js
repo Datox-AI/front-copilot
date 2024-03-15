@@ -15,7 +15,7 @@ import {
   startStreaming,
   stopStreaming
 } from "../redux/chat/chatSlice";
-import { BASE_API_URL, COPILOT_API_KEY, request } from "../config/request";
+import { request } from "../config/request";
 
 const usePrompt = ({
   chatId,
@@ -49,7 +49,7 @@ const usePrompt = ({
 
   const clearReplyMessage = () => setReplyMessage(null);
 
-  const getCachedMessages = () => {
+  const getCachedMessages = useCallback(() => {
     let _cachedMsgs;
 
     switch (activeIntegration?.dataType) {
@@ -75,31 +75,34 @@ const usePrompt = ({
     }
 
     return _cachedMsgs;
-  };
+  }, [chatId]);
 
-  const pushToCachedMessages = (elements) => {
-    switch (activeIntegration?.dataType) {
-      case "FileSearch":
-        queryClient.setQueryData(["GET_RAG_CHAT_HISTORY", chatId], {
-          ...queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId]),
-          messages: [...elements]
-        });
-        break;
+  const pushToCachedMessages = useCallback(
+    (elements) => {
+      switch (activeIntegration?.dataType) {
+        case "FileSearch":
+          queryClient.setQueryData(["GET_RAG_CHAT_HISTORY", chatId], {
+            ...queryClient.getQueryData(["GET_RAG_CHAT_HISTORY", chatId]),
+            messages: [...elements]
+          });
+          break;
 
-      case "DataAnalytics":
-        queryClient.setQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId], {
-          ...queryClient.getQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId]),
-          messages: [...elements]
-        });
-        break;
+        case "DataAnalytics":
+          queryClient.setQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId], {
+            ...queryClient.getQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId]),
+            messages: [...elements]
+          });
+          break;
 
-      default:
-        queryClient.setQueryData(["GET_MESSAGES", chatId], [...elements]);
-        break;
-    }
-  };
+        default:
+          queryClient.setQueryData(["GET_MESSAGES", chatId], [...elements]);
+          break;
+      }
+    },
+    [chatId]
+  );
 
-  const updateLastMessage = (text) => {
+  const updateLastMessage = (text, data = {}) => {
     const _cachedMsgs = [...getCachedMessages()];
 
     const lastIndex = _cachedMsgs.length - 1;
@@ -107,7 +110,8 @@ const usePrompt = ({
     _cachedMsgs[lastIndex] = {
       ..._cachedMsgs[lastIndex],
       text,
-      isTyping: true
+      isTyping: true,
+      ...data
     };
 
     pushToCachedMessages(_cachedMsgs);
@@ -248,6 +252,7 @@ const usePrompt = ({
 
   const fetchStream = (message) => {
     let newMSG = {
+      id: 2,
       prompt: "",
       created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
@@ -290,7 +295,10 @@ const usePrompt = ({
             }
           }
         )
-        .then((err) => {
+        .then((res) => {
+          updateLastMessage(res?.text, res);
+        })
+        .catch((err) => {
           console.log(err);
 
           if (err) toast.error(err.data?.detail || err.detail || err);
@@ -330,16 +338,10 @@ const usePrompt = ({
   const startPrompting = (text) => {
     // creating mock message before fetching
     let newMSG = {
+      id: 1,
       prompt: text,
       created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
-      // files: [
-      //   ...(files || []).map((file) => ({
-      //     fileName: file.file.name,
-      //     fileType:
-      //       file.file.name.split(".")[file.file.name.split(".").length - 1]
-      //   }))
-      // ],
       files: [
         ...(files || []).map((file) => ({
           fileName: file.name,
