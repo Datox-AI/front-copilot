@@ -290,14 +290,14 @@ const usePrompt = ({
             }
           }
         )
-        .then(() => {
-          dispatch(stopStreaming({ chatId }));
-          refetchMessages();
-        })
         .then((err) => {
           console.log(err);
-          dispatch(stopStreaming({ chatId }));
+
           if (err) toast.error(err.data?.detail || err.detail || err);
+        })
+        .finally(() => {
+          dispatch(stopStreaming({ chatId }));
+          refetchMessages();
         });
       // fetch(
       //   `${BASE_API_URL}api/${
