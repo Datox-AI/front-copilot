@@ -137,6 +137,7 @@ const Chatting = ({
   const listRef = createRef();
 
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [uploadFiles, setUploadFiles] = useState([]);
 
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
@@ -157,10 +158,12 @@ const Chatting = ({
     selectReplyMessage,
     scrollToTheEndOfTheChat
   } = usePrompt({
+    clearFiles: () => setUploadFiles([]),
     isRagType: activeIntegration?.dataType === "FileSearch",
     chatId,
     refetchMessages: refetchSingleChat || refetchMessages,
     listRef,
+    files: uploadFiles,
     setRelatedFiles,
     isAgentConnected,
     sendMessageToAgent,
@@ -194,6 +197,7 @@ const Chatting = ({
     isSnowflakeChat,
     isAgentConnected,
     startPrompting,
+    setUploadFiles,
     refetchMessages: refetchSingleChat || refetchMessages,
     handleWsStopStreaming
   });
@@ -295,6 +299,8 @@ const Chatting = ({
               isAgentConnected={isAgentConnected}
               isSnowflakeChat={isSnowflakeChat}
               showUploadFile={isChat}
+              files={uploadFiles}
+              setUploadFiles={setUploadFiles}
               snowflakeConnectionStatus={snowflakeConnectionStatus}
             />
           )}

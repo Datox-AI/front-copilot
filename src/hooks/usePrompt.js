@@ -7,7 +7,7 @@ import { store } from "../redux/store";
 import { queryClient } from "../config/queryClient";
 import { arrayUniqueByKey, focusOnInput, makeLowerCase } from "../utils";
 import {
-  clearFiles,
+  // clearFiles,
   createTextGenerator,
   destroyTextGenerator,
   setQuestionsToGenerator,
@@ -15,7 +15,7 @@ import {
   startStreaming,
   stopStreaming
 } from "../redux/chat/chatSlice";
-import { BASE_API_URL, COPILOT_API_KEY } from "../config/request";
+import { BASE_API_URL, COPILOT_API_KEY, request } from "../config/request";
 
 const usePrompt = ({
   chatId,
@@ -25,13 +25,15 @@ const usePrompt = ({
   isAgentConnected,
   sendMessageToAgent,
   isRagType,
+  files,
+  clearFiles,
   activeIntegration
 }) => {
   const dispatch = useDispatch();
   const textGenerator = useSelector(
     (store) => store.chat.textGenerator[chatId]
   );
-  const files = useSelector((store) => store.chat.files[chatId]);
+  // const files = useSelector((store) => store.chat.files[chatId]);
 
   const { token } = useSelector((store) => store.auth);
 
@@ -259,35 +261,70 @@ const usePrompt = ({
 
     pushToCachedMessages([..._cachedMsgs, { ...newMSG }]);
 
-    dispatch(clearFiles({ chatId }));
+    // dispatch(clearFiles({ chatId }))
+    clearFiles();
+
+    const formData = new FormData();
+
+    formData.append("prompt", message);
+
+    files?.forEach((file) => formData.append("file", file));
+
+    const ragData = {
+      prompt: message,
+      replyTo: replyMessage?.id
+    };
 
     // Messaging via websocket when agent connected
     if (isAgentConnected) sendMessageToAgent(message);
-    else
-      fetch(
-        `${BASE_API_URL}api/${
-          isRagType ? "rag_agent" : "chats"
-        }/${chatId}/messages`,
-        {
-          method: "POST",
-          headers: {
-            ApiKey: COPILOT_API_KEY,
-            Authorization: "Bearer " + token,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            prompt: message,
-            replyTo: replyMessage?.id,
-            files: [...(files || []).map((file) => file.fileId)]
-          })
-        }
-      )
-        .then((res) => onFetchSuccess(res, message))
-        .catch((err) => {
+    else {
+      request
+        .post(
+          `api/${isRagType ? "rag_agent" : "chats"}/${chatId}/messages`,
+          isRagType ? ragData : formData,
+          {
+            headers: {
+              "Content-Type": isRagType
+                ? "application/json"
+                : "multipart/form-data"
+            }
+          }
+        )
+        .then(() => {
+          dispatch(stopStreaming({ chatId }));
+          refetchMessages();
+        })
+        .then((err) => {
           console.log(err);
-          toast.error(err?.detail);
-          dispatch(clearFiles({ chatId }));
+          dispatch(stopStreaming({ chatId }));
+          if (err) toast.error(err.data?.detail || err.detail || err);
         });
+      // fetch(
+      //   `${BASE_API_URL}api/${
+      //     isRagType ? "rag_agent" : "chats"
+      //   }/${chatId}/messages`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       // ApiKey: COPILOT_API_KEY,
+      //       Authorization: "Bearer " + token
+      //       // "Content-Type": "multipart/form-data"
+      //     },
+      //     // body: JSON.stringify({
+      //     //   prompt: message,
+      //     //   replyTo: replyMessage?.id,
+      //     //   files: [...(files || []).map((file) => file.fileId)]
+      //     // })
+      //     body: JSON.stringify(formData)
+      //   }
+      // )
+      //   .then((res) => onFetchSuccess(res, message))
+      //   .catch((err) => {
+      //     console.log(err);
+      //     toast.error(err?.detail);
+      //     dispatch(clearFiles({ chatId }));
+      //   });
+    }
   };
 
   const startPrompting = (text) => {
@@ -296,11 +333,17 @@ const usePrompt = ({
       prompt: text,
       created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
+      // files: [
+      //   ...(files || []).map((file) => ({
+      //     fileName: file.file.name,
+      //     fileType:
+      //       file.file.name.split(".")[file.file.name.split(".").length - 1]
+      //   }))
+      // ],
       files: [
         ...(files || []).map((file) => ({
-          fileName: file.file.name,
-          fileType:
-            file.file.name.split(".")[file.file.name.split(".").length - 1]
+          fileName: file.name,
+          fileType: file.name.split(".")[file.name.split(".").length - 1]
         }))
       ],
       reply_to: replyMessage?.id,

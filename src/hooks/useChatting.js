@@ -16,6 +16,7 @@ const useChatting = ({
   textGenerator,
   deleteMutation,
   startPrompting,
+  setUploadFiles,
   setRelatedFiles,
   refetchMessages,
   isSnowflakeChat,
@@ -153,8 +154,8 @@ const useChatting = ({
 
   const onFileUpload = (e) => {
     const _files = e.target.files;
-
-    handleUpload(_files);
+    setUploadFiles([..._files]);
+    // handleUpload(_files);
   };
 
   const onSelectQuestion = (question) => {
