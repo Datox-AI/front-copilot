@@ -69,6 +69,8 @@ const errorHandler = async (error) => {
     }
   }
 
+  console.log(error);
+
   return Promise.reject(error.response);
 };
 

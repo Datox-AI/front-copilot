@@ -8,8 +8,6 @@ import { motion } from "framer-motion";
 import { ReactComponent as SendIcon } from "../../../../assets/icons/PaperPlaneRight.svg";
 import { useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
-import ConnectionStatuses from "./ConnectionStatuses";
 import { connectionStatuses } from "../../../../consts/snowflake";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import AutorenewRoundedIcon from "@mui/icons-material/AutorenewRounded";
@@ -27,10 +25,12 @@ const Input = ({
   isSnowflakeChat,
   showUploadFile,
   clearReplyMessage,
-  snowflakeConnectionStatus
+  snowflakeConnectionStatus,
+  files,
+  setUploadFiles
 }) => {
   const textareaRef = useRef(null);
-  const files = useSelector((store) => store.chat.files[chatId]);
+  // const files = useSelector((store) => store.chat.files[chatId]);
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -150,7 +150,13 @@ const Input = ({
             />
           )}
 
-          {files?.length > 0 && <UploadFiles files={files} chatId={chatId} />}
+          {files?.length > 0 && (
+            <UploadFiles
+              setUploadFiles={setUploadFiles}
+              files={files}
+              chatId={chatId}
+            />
+          )}
           <textarea
             ref={textareaRef}
             id="input-message"
