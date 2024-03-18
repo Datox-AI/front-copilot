@@ -11,7 +11,29 @@ export const useWebSocket = () => {
 
   // Function to add a new WebSocket connection
   const addWebSocket = (chatId, isAgentConnected = false) => {
-    if (websockets.find((ws) => ws.chatId === chatId)) return;
+    const foundWs = websockets.find((ws) => ws.chatId === chatId);
+    if (foundWs) {
+      if (foundWs.socket.readyState === WebSocket.CLOSED) {
+        const socket = new WebSocket(
+          `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws_assistant/${chatId}?token=${token}`
+        );
+
+        setWebsockets((prevWebsockets) =>
+          prevWebsockets.map((ws) =>
+            ws.chatId === chatId
+              ? {
+                  socket,
+                  chatId,
+                  isAgentConnected,
+                  hasEventListener: false,
+                  status: connectionStatuses.NOT_CONNECTED
+                }
+              : ws
+          )
+        );
+      }
+      return;
+    }
 
     const socket = new WebSocket(
       `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws_assistant/${chatId}?token=${token}`
