@@ -270,6 +270,8 @@ const Integration = () => {
 
     const interval = setInterval(() => {
       if (currentWs?.status === connectionStatuses.NOT_CONNECTED) {
+        console.log(snowflakeToken?.access, snowflakeToken);
+
         if (currentWs.socket.readyState === WebSocket.CLOSED) {
           addWebSocket(chatId);
         } else {
