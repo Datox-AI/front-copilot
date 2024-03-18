@@ -268,16 +268,23 @@ const Integration = () => {
   useEffect(() => {
     if (!chatId || Number(integrationId) !== 2) return;
 
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (currentWs?.status === connectionStatuses.NOT_CONNECTED) {
         console.log(snowflakeToken?.access, snowflakeToken);
+        let snowflakeAccessToken;
+        if (!snowflakeToken.access) {
+          const res = await refreshSnowflakeToken();
+
+          dispatch(setSnowflakeToken(res.access_token));
+          snowflakeAccessToken = res.access_token;
+        }
 
         if (currentWs.socket.readyState === WebSocket.CLOSED) {
           addWebSocket(chatId);
         } else {
           changeSocketStatus(currentWs?.chatId, connectionStatuses.CONNECTING);
           sendData(currentWs?.chatId, {
-            snowflake_oauth: snowflakeToken?.access
+            snowflake_oauth: snowflakeToken?.access || snowflakeAccessToken
           });
         }
       }
