@@ -266,6 +266,33 @@ const Integration = () => {
   }, [websockets, chatId, activeIntegration, snowflakeToken?.access, token]);
 
   useEffect(() => {
+    if (!chatId || Number(integrationId) !== 2) return;
+
+    const interval = setInterval(() => {
+      if (currentWs?.status === connectionStatuses.NOT_CONNECTED) {
+        if (currentWs.socket.readyState === WebSocket.CLOSED) {
+          addWebSocket(chatId);
+        } else {
+          changeSocketStatus(currentWs?.chatId, connectionStatuses.CONNECTING);
+          sendData(currentWs?.chatId, {
+            snowflake_oauth: snowflakeToken?.access
+          });
+        }
+      }
+    }, 5000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [
+    chatId,
+    integrationId,
+    currentWs?.status,
+    currentWs?.chatId,
+    snowflakeToken?.access
+  ]);
+
+  useEffect(() => {
     if (chatId && Number(integrationId) === 2) {
       addWebSocket(chatId);
       return;
