@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { connectionStatuses } from "../consts/snowflake";
-import { stopStreaming } from "../redux/chat/chatSlice";
+import { setTextToGenerator, stopStreaming } from "../redux/chat/chatSlice";
 
 // Custom hook to manage WebSocket connections
-export const useWebSocket = () => {
+export const useWebSocket = ({ refetch }) => {
   const dispatch = useDispatch();
   const [websockets, setWebsockets] = useState([]);
   const { token, snowflakeToken } = useSelector((store) => store.auth);
@@ -113,10 +113,12 @@ export const useWebSocket = () => {
         toggleAgentConnection(ws.chatId, false);
         changeSocketStatus(ws?.chatId, connectionStatuses.NOT_CONNECTED);
         dispatch(stopStreaming({ chatId: ws.chatId }));
+        refetch();
       };
 
       ws.socket.onerror = (error) => {
         console.error("WebSocket error:", error);
+        refetch();
       };
     });
 
