@@ -169,12 +169,11 @@ const Integration = () => {
 
               const azureRes = await refreshSnowflakeToken();
 
-              sendData(ws?.chatId, {
-                snowflake_oauth: snowflakeToken?.access,
-                token: azureRes?.accessToken
-              });
+              dispatch(setToken(azureRes?.accessToken));
 
-              dispatch(setToken(res?.accessToken));
+              sendData(ws?.chatId, {
+                snowflake_oauth: snowflakeToken?.access
+              });
 
               break;
 
@@ -183,11 +182,9 @@ const Integration = () => {
               changeSocketStatus(ws?.chatId, connectionStatuses.CONNECTING);
 
               const res = await refreshSnowflakeToken();
-              console.log(res);
 
               sendData(ws?.chatId, {
-                snowflake_oauth: res?.access_token,
-                token: token
+                snowflake_oauth: res?.access_token
               });
 
               dispatch(setSnowflakeToken(res?.access_token));
