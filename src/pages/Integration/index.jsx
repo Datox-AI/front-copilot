@@ -270,9 +270,9 @@ const Integration = () => {
 
     const interval = setInterval(async () => {
       if (currentWs?.status === connectionStatuses.NOT_CONNECTED) {
-        console.log(snowflakeToken?.access, snowflakeToken);
         let snowflakeAccessToken;
-        if (!snowflakeToken.access) {
+
+        if (!snowflakeToken.access && snowflakeToken.refresh) {
           const res = await refreshSnowflakeToken();
 
           dispatch(setSnowflakeToken(res.access_token));
