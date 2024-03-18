@@ -65,7 +65,7 @@ const Integration = () => {
     removeWebSocket,
     toggleHasEventListener,
     changeSocketStatus
-  } = useWebSocket();
+  } = useWebSocket({ refetch: refetchSingleAnalyticsChat });
 
   const [width, setWidth] = useState(284);
   const [activeChat, setActiveChat] = useState(null);
