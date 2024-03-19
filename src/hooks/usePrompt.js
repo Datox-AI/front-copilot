@@ -160,7 +160,6 @@ const usePrompt = ({
   };
 
   const onParseTypes = (type, data) => {
-    console.log(data);
     switch (type) {
       case "Text":
         onText(data.Text);
@@ -250,7 +249,7 @@ const usePrompt = ({
     [chatId, listRef, scrollToTheEndOfTheChat]
   );
 
-  const fetchStream = (message) => {
+  const fetchStream = (message, uploadedFiles) => {
     let newMSG = {
       id: 2,
       prompt: "",
@@ -273,7 +272,7 @@ const usePrompt = ({
 
     formData.append("prompt", message);
 
-    files?.forEach((file) => formData.append("files", file));
+    uploadedFiles?.forEach((file) => formData.append("files", file));
 
     const ragData = {
       prompt: message,
@@ -335,7 +334,7 @@ const usePrompt = ({
     }
   };
 
-  const startPrompting = (text) => {
+  const startPrompting = (text, uploadedFiles) => {
     // creating mock message before fetching
     let newMSG = {
       id: 1,
@@ -343,7 +342,7 @@ const usePrompt = ({
       created_at: moment(new Date()).format("yyyy-MM-DDTHH:mm:ss"),
       response: "",
       files: [
-        ...(files || []).map((file) => ({
+        ...(uploadedFiles || []).map((file) => ({
           fileName: file.name,
           fileType: file.name.split(".")[file.name.split(".").length - 1]
         }))
@@ -359,7 +358,7 @@ const usePrompt = ({
     setQuestions([]);
     setReplyMessage(null);
     dispatch(createTextGenerator({ chatId }));
-    fetchStream(text);
+    fetchStream(text, uploadedFiles);
   };
 
   return {

@@ -13,6 +13,7 @@ const useChatting = ({
   isChat,
   chatId,
   isLoading,
+  uploadFiles,
   textGenerator,
   deleteMutation,
   startPrompting,
@@ -128,9 +129,9 @@ const useChatting = ({
       if (textGenerator?.isStreaming) {
         if (isSnowflakeChat) handleWsStopStreaming();
         else dispatch(stopStreaming({ chatId }));
-      } else startPrompting(text);
+      } else startPrompting(text, uploadFiles);
     },
-    [textGenerator, text, chatId]
+    [textGenerator, text, chatId, uploadFiles]
   );
 
   const handleCopySelectedMessages = async () => {
@@ -154,7 +155,7 @@ const useChatting = ({
 
   const onFileUpload = (e) => {
     const _files = e.target.files;
-    setUploadFiles([..._files]);
+    setUploadFiles((prev) => [...prev, ..._files]);
     // handleUpload(_files);
   };
 
