@@ -8,6 +8,7 @@ import { useMutation } from "react-query";
 import { request } from "../../../../config/request";
 import RCTable from "../../../../components/Table";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import { CircularProgress } from "@mui/material";
 
 const downloadFile = (filename, data) => {
   const url = window.URL.createObjectURL(new Blob([data]));
@@ -70,8 +71,13 @@ const Store = () => {
     <ColumnDetails
       actions={
         <>
-          <button onClick={onDownload}>
-            Download <DownloadRoundedIcon fontSize="16px" />
+          <button onClick={onDownload} disabled={downloadMutate.isLoading}>
+            Download{" "}
+            {downloadMutate.isLoading ? (
+              <CircularProgress size={10} />
+            ) : (
+              <DownloadRoundedIcon fontSize="16px" />
+            )}
           </button>
         </>
       }
