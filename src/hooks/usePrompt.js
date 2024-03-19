@@ -273,7 +273,7 @@ const usePrompt = ({
 
     formData.append("prompt", message);
 
-    files?.forEach((file) => formData.append("file", file));
+    files?.forEach((file) => formData.append("files", file));
 
     const ragData = {
       prompt: message,
