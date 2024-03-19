@@ -71,7 +71,7 @@ const errorHandler = async (error) => {
 
   console.log(error);
 
-  return Promise.reject(error.response);
+  return Promise.reject(error?.response || error);
 };
 
 request.interceptors?.request.use(
