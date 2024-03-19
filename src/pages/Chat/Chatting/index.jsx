@@ -195,6 +195,7 @@ const Chatting = ({
     deleteMutation,
     setRelatedFiles,
     isSnowflakeChat,
+    uploadFiles,
     isAgentConnected,
     startPrompting,
     setUploadFiles,
