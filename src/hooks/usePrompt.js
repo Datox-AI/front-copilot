@@ -300,7 +300,10 @@ const usePrompt = ({
         .catch((err) => {
           console.log(err);
 
-          if (err) toast.error(err.data?.detail || err.detail || err);
+          if (err)
+            toast.error(
+              err.data?.detail || err.detail || "Something wrong happened"
+            );
         })
         .finally(() => {
           dispatch(stopStreaming({ chatId }));
