@@ -22,6 +22,7 @@ export const refreshSnowflakeToken = async () =>
         .then((res) => resolve(res))
         .catch((err) => {
           store.dispatch(setSnowflakeToken(null));
+          store.dispatch(setSnowflakeRefreshToken(null));
 
           reject(null);
         });
@@ -49,13 +50,10 @@ const errorHandler = async (error) => {
 
     store.dispatch(setSnowflakeToken(res.access_token));
 
-    if (res.refresh_token)
+    if (!!res.refresh_token)
       store.dispatch(setSnowflakeRefreshToken(res.refresh_token));
 
     return snowflakeAPI(originalRequest);
-  } else if (status === 401 && error?.config?.url?.includes("refresh_token")) {
-    store.dispatch(setSnowflakeToken(null));
-    store.dispatch(setSnowflakeRefreshToken(null));
   }
 
   return Promise.reject(error.response);
