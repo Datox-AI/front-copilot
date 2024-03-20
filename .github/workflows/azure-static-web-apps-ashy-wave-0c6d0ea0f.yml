@@ -93,11 +93,11 @@ jobs:
           app_build_command: "CI=false && yarn build"
           production_branch: "main"
         env:
-          REACT_APP_MSAL_REDIRECT_URI: https://ashy-wave-0c6d0ea0f-dev.eastus2.4.azurestaticapps.net/
+          REACT_APP_MSAL_REDIRECT_URI: https://ashy-wave-0c6d0ea0f-staging.eastus2.4.azurestaticapps.net/
           REACT_APP_MSAL_CLIENT_ID: 7f305e21-db8c-462d-994d-1fae315b9bf0
           REACT_APP_BASE_API_URL: https://newcopilotwebapi.azurewebsites.net/
           REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER=kiprdnq-kl02065
-          REACT_APP_SNOWFLAKE_REDIRECT_URL: https://ashy-wave-0c6d0ea0f-dev.eastus2.4.azurestaticapps.net/callback/snowflake
+          REACT_APP_SNOWFLAKE_REDIRECT_URL: https://ashy-wave-0c6d0ea0f-staging.eastus2.4.azurestaticapps.net/callback/snowflake
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
