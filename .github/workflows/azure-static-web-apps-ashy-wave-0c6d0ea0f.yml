@@ -5,12 +5,42 @@ on:
     branches:
       - main
       - dev
+      - staing
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
       - main
+      - dev
 
 jobs:
+  build_and_deploy_staging_job:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    name: Build and Deploy Staging Job
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+      - name: Build And Deploy
+        id: builddeploymain
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_LEMON_STONE_0ECA63510 }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: "upload"
+          app_location: "/"
+          api_location: ""
+          output_location: "build"
+          app_build_command: "CI=false && yarn build"
+          production_branch: "main"
+        env:
+          REACT_APP_MSAL_REDIRECT_URI: https://lemon-stone-0eca63510.4.azurestaticapps.net/
+          REACT_APP_MSAL_CLIENT_ID: 4b27aceb-ba01-4d7e-bb3b-bc114c8d1726
+          REACT_APP_BASE_API_URL: https://newcopilotwebapi-newcopilotwebapi-staging.azurewebsites.net/
+          REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER=kiprdnq-kl02065
+          REACT_APP_SNOWFLAKE_REDIRECT_URL: https://lemon-stone-0eca63510.4.azurestaticapps.net/callback/snowflake
+
   build_and_deploy_main_job:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -39,11 +69,6 @@ jobs:
           REACT_APP_BASE_API_URL: https://copilotwebapi.azurewebsites.net/
           REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=
           REACT_APP_SNOWFLAKE_REDIRECT_URL: https://copilot.datox.ai/callback/snowflake
-          REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER: FIZOAJF-XY77892
-          REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: 5iCqHiT0gnQUNBWuKqpM4a1KuPQ=
-          REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: BXW4/UNLl84g5/Gq+fYLZSeSCKzFsGUWmXsAG52+kWI=
-          REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://bq20682.uae-north.azure.snowflakecomputing.com/oauth/token-request
-          REACT_APP_SNOWFLAKE_TEST_WAREHOUSE: TEST_WH
 
   build_and_deploy_dev_job:
     if: github.event_name == 'push' && github.ref == 'refs/heads/dev'
@@ -73,11 +98,6 @@ jobs:
           REACT_APP_BASE_API_URL: https://newcopilotwebapi.azurewebsites.net/
           REACT_APP_COPILOT_API_KEY: mGXWZKWNIDa5BEm8QvpTg+36AIpAA+6HfitgGTZHYus=REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER=kiprdnq-kl02065
           REACT_APP_SNOWFLAKE_REDIRECT_URL: https://ashy-wave-0c6d0ea0f-dev.eastus2.4.azurestaticapps.net/callback/snowflake
-          REACT_APP_SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER: FIZOAJF-XY77892
-          REACT_APP_SNOWFLAKE_TEST_CLIENT_ID: JpplZAhbA0qaTUD4VjYYNMm/8Do=
-          REACT_APP_SNOWFLAKE_TEST_CLIENT_SECRET: twhicB4QxZFlZ5h8F1BBJvKtRHHGGKV8m0iEdhGpVOw=
-          REACT_APP_SNOWFLAKE_TEST_TOKEN_ENDPOINT: https://bq20682.uae-north.azure.snowflakecomputing.com/oauth/token-request
-          REACT_APP_SNOWFLAKE_TEST_WAREHOUSE: TEST_WH
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
