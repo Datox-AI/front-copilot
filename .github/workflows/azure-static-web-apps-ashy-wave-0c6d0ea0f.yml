@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - dev
-      - staing
+      - staging
   pull_request:
     types: [opened, synchronize, reopened, closed]
     branches:
