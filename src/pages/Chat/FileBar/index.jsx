@@ -11,16 +11,23 @@ import NestedListContainer from "../../../components/NestedList";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
 import { useCallback, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { groupItemsByDate } from "../../../utils/group";
+import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
+import { integrationIcons } from "../../../consts/integrations";
+import ToggleButton from "../../../components/ToggleButton";
+import classNames from "classnames";
 
 const MessagesList = ({
+  activeIntegration,
   chats,
   refetch,
   activeChat,
   onDelete,
   search,
-  isAudit
+  isAudit,
+  isOpenContainer
 }) => {
   const mutatedChats = useMemo(() => {
     const _chats = chats?.filter((chat) =>
@@ -72,18 +79,30 @@ const MessagesList = ({
             chatId={chat.id}
             maxWidth={true}
             isPinned={chat.pinned}
+            link={
+              activeIntegration?.id !== 1
+                ? `/integration/${activeIntegration.id}/${chat.id}`
+                : chat.id
+            }
             active={activeChat?.id === chat.id}
             refetchChatList={refetch}
             onDelete={onDelete}
             isAudit={isAudit}
+            isMinimized={!isOpenContainer}
             style={{
+              width: !isOpenContainer && 36,
+              maxWidth: !isOpenContainer && 36,
+              minWidth: !isOpenContainer && 36,
               height: 37
             }}
           />
         ))}
       </Box>
 
-      <Box flex={1} style={{ overflowY: "auto" }}>
+      <Box
+        flex={1}
+        style={{ overflowY: "auto", maxHeight: "calc(100vh - 160px)" }}
+      >
         {groupedChats.map((group) => (
           <ExpandMenu title={group.date}>
             <Box
@@ -99,12 +118,22 @@ const MessagesList = ({
                   isAudit={isAudit}
                   name={chat.name}
                   chatId={chat.id}
+                  icon={integrationIcons[activeIntegration?.iconType]}
                   maxWidth={true}
                   isPinned={chat.pinned}
                   active={activeChat?.id === chat.id}
                   refetchChatList={refetch}
+                  isMinimized={!isOpenContainer}
                   onDelete={onDelete}
+                  link={
+                    activeIntegration?.id !== 1
+                      ? `/integration/${activeIntegration.id}/${chat.id}`
+                      : chat.id
+                  }
                   style={{
+                    width: !isOpenContainer && 33,
+                    maxWidth: !isOpenContainer && 33,
+                    minWidth: !isOpenContainer && 33,
                     height: 37
                   }}
                 />
@@ -117,68 +146,26 @@ const MessagesList = ({
   );
 };
 
-const FilesList = ({ relatedFiles, search }) => {
-  const mutatedFiles = useMemo(() => {
-    return relatedFiles.filter((file) =>
-      search
-        ? file.itemName.toLowerCase().includes(search?.toLowerCase())
-        : file
-    );
-  }, [search, relatedFiles]);
-
-  if (!relatedFiles || relatedFiles?.length === 0)
-    return (
-      <Typography mt={2} fontWeight={500}>
-        No Related Files
-      </Typography>
-    );
-
-  return (
-    <Box
-      width="100%"
-      display="flex"
-      flexDirection="column"
-      gap="10px"
-      marginTop="20px"
-    >
-      {mutatedFiles?.map((file, f) => (
-        <FileItem
-          name={file.ItemName || file.itemName || file.item_name}
-          type={
-            file.ContentType ||
-            file.contentType ||
-            file.item_name.split(".")[file.item_name.split(".")?.length - 1]
-          }
-          url={file.ItemUrl || file.itemUrl || file.item_url}
-        />
-      ))}
-    </Box>
-  );
-};
-
-const RenderTypes = {
-  messages: MessagesList,
-  files: FilesList,
-  sql: NestedListContainer
-};
-
 const FileBar = ({
-  activeIntegration,
+  title,
   chats,
+  isAudit,
   refetch,
   activeChat,
   relatedFiles,
   hideNewChatBtn,
-  title,
-  isAudit,
-  snowflakeCredentials,
-  selectSchema,
-  selectDatabase,
   selectedSchema,
-  selectedDatabase
+  isOpenContainer,
+  toggleContainer,
+  selectedDatabase,
+  activeIntegration,
+  snowflakeCredentials
 }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+
   const { createChat, deleteChat } = useChatsAPI({});
+  const { snowflakeToken } = useSelector((store) => store.auth);
 
   const [isOpen, setIsOpen] = useState(false);
   const [deletableChatId, setDeletableChatId] = useState(null);
@@ -186,18 +173,41 @@ const FileBar = ({
 
   const toggle = () => setIsOpen((prev) => !prev);
 
-  const Renderer = RenderTypes[activeIntegration?.type || "messages"];
-
   const onCreate = () => {
-    createChat.mutate(
-      { type: "Analytics" },
-      {
-        onSuccess: (res) => {
-          navigate(res.id);
-          refetch();
-        }
+    const payload = {
+      type: activeIntegration?.dataType,
+      snowflake_data: {
+        ...snowflakeCredentials,
+        snowflake_account: snowflakeCredentials?.account_identifier,
+        database_name: selectedDatabase,
+        snowflake_schema: selectedSchema
       }
-    );
+    };
+
+    if (activeIntegration?.dataType !== "Analytics")
+      if (activeIntegration?.dataType !== "DataAnalytics")
+        delete payload.snowflake_data;
+      else {
+        if (!snowflakeToken?.access)
+          return toast.error(
+            "Please connect to snowflake , using connect button in left bar"
+          );
+        if (!selectedDatabase)
+          return toast.error("Please select database to create chat");
+        if (!selectedSchema)
+          return toast.error("Please select schema to create chat");
+      }
+    else delete payload.snowflake_data;
+
+    createChat.mutate(payload, {
+      onSuccess: (res) => {
+        refetch();
+
+        navigate(`${pathname}/${res.id}`, {
+          relative: "route"
+        });
+      }
+    });
   };
 
   const handleDelete = useCallback(() => {
@@ -211,9 +221,14 @@ const FileBar = ({
   }, [deletableChatId]);
 
   return (
-    <div className={styles.filebarContainer}>
+    <div
+      className={classNames(styles.filebarContainer, {
+        [styles.isOpenContainer]: !isOpenContainer
+      })}
+    >
       <header>
         <Box display="flex" alignItems="center" gap="10px">
+          <ToggleButton onClick={toggleContainer} isOpen={isOpenContainer} />
           <h2>{title}</h2>
           {!hideNewChatBtn && (
             <Button
@@ -237,7 +252,10 @@ const FileBar = ({
         </Box>
 
         {!isAudit && (
-          <ChatTypeSelect snowflakeCredentials={snowflakeCredentials} />
+          <ChatTypeSelect
+            activeIntegration={activeIntegration}
+            snowflakeCredentials={snowflakeCredentials}
+          />
         )}
       </header>
       <section className={styles.searchSection}>
@@ -250,21 +268,22 @@ const FileBar = ({
           />
         </label>
       </section>
-      <section className={styles.contentSection}>
+      <section
+        className={classNames(styles.contentSection, {
+          [styles.isOpenContainer]: !isOpenContainer
+        })}
+      >
         <div className={styles.contentList}>
-          <Renderer
+          <MessagesList
             chats={chats}
+            activeIntegration={activeIntegration}
             refetch={refetch}
             activeChat={activeChat}
             onDelete={setDeletableChatId}
             relatedFiles={relatedFiles}
             search={search}
             isAudit={isAudit}
-            snowflakeCredentials={snowflakeCredentials}
-            selectSchema={selectSchema}
-            selectedSchema={selectedSchema}
-            selectDatabase={selectDatabase}
-            selectedDatabase={selectedDatabase}
+            isOpenContainer={isOpenContainer}
           />
         </div>
       </section>

@@ -5,7 +5,7 @@ import useChatsAPI from "../../../../../hooks/api/useChatsAPI";
 import PopoverMenu from "../../../../../components/PopoverMenu";
 
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as DotsIcon } from "../../../../../assets/icons/vertical-dots.svg";
 import { ReactComponent as PencilIcon } from "../../../../../assets/icons/edit.svg";
 import { ReactComponent as PinIcon } from "../../../../../assets/icons/pin.svg";
@@ -18,9 +18,12 @@ const ChatItem = ({
   active,
   maxWidth,
   isPinned,
+  icon,
   refetchChatList,
   onDelete,
+  isMinimized,
   isVerticalMoreIcon,
+  link,
   isAudit,
   ...props
 }) => {
@@ -94,11 +97,16 @@ const ChatItem = ({
           />
         ) : (
           <>
-            <div className={styles.meta}>
-              {isPinned && <PinIcon />}
-              <p onClick={() => navigate(chatId)}>{newName}</p>
+            <div className={styles.meta} onClick={() => navigate(link)}>
+              {isMinimized ? icon || <PinIcon /> : icon}
+              {!isMinimized && (
+                <>
+                  {isPinned && <PinIcon />}
+                  <p>{newName}</p>
+                </>
+              )}
             </div>
-            {!isAudit && (
+            {!isAudit && !isMinimized && (
               <>
                 <PopoverMenu
                   position="bottom"

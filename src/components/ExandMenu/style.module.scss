@@ -14,8 +14,11 @@
     font-size: 14px;
     font-weight: 400;
     background-color: transparent;
-
     outline: none;
+
+    p {
+      white-space: nowrap;
+    }
 
     &.isOpen {
       border-bottom-color: transparent;

@@ -210,22 +210,6 @@ const Chatting = ({
   return (
     <>
       <div className={styles.chattingContainer}>
-        {!isChat && !isAudit && (
-          <TopChatList
-            chats={chats}
-            integrations={integrations}
-            activeChat={activeChat}
-            activeIntegration={activeIntegration}
-            handleSelectChat={handleSelectChat}
-            handleSelectIntegration={handleSelectIntegration}
-            onCloseIntegration={onCloseIntegration}
-            refetch={refetch}
-            snowflakeCredentials={snowflakeCredentials}
-            selectedDatabase={selectedDatabase}
-            selectedSchema={selectedSchema}
-          />
-        )}
-
         {!isAudit && (
           <>
             <SelectedMessages

@@ -7,6 +7,7 @@ import { Outlet, useParams } from "react-router-dom";
 import { _integrations } from "../../consts/integrations";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import { useSelector } from "react-redux";
+import ExpandableContainer from "../../components/ExpandableContainer";
 
 const Chat = ({ isAudit }) => {
   const { chatId, userId } = useParams();
@@ -22,6 +23,7 @@ const Chat = ({ isAudit }) => {
   const [width, setWidth] = useState(284);
   const [activeIntegration] = useState(_integrations[0]);
   const [activeChat, setActiveChat] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const chats = useMemo(
     () => (isAudit ? data : data?.filter((chat) => chat?.type === "Analytics")),
@@ -74,12 +76,17 @@ const Chat = ({ isAudit }) => {
 
   return (
     <Box width="100%" display="flex">
-      <Box
-        position="relative"
+      <ExpandableContainer
         width={width}
-        minWidth={284}
+        setWidth={setWidth}
+        initWidth={284}
         maxWidth={600}
-        overflow="visible"
+        isOpen={isOpen}
+        style={{
+          maxWidth: !isExpanded && "50px",
+          minWidth: !isExpanded && "50px",
+          overflow: !isExpanded && "hidden"
+        }}
       >
         <FileBar
           activeIntegration={activeIntegration}
@@ -90,13 +97,17 @@ const Chat = ({ isAudit }) => {
           snowflakeCredentials={credentials}
           hideNewChatBtn={isAudit}
           title="Chat"
-        />
+          isOpenContainer={isExpanded}
+          toggleContainer={() => {
+            setIsExpanded((prev) => {
+              if (prev) setWidth(50);
+              else setWidth(284);
 
-        <button
-          className={"splitter " + (isDragging && "isDragging")}
-          onMouseDown={handleMouseDown}
-        ></button>
-      </Box>
+              return !prev;
+            });
+          }}
+        />
+      </ExpandableContainer>
 
       <div
         style={{

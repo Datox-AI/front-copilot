@@ -7,19 +7,15 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { SelectIntegrations } from "../../../../components/Popups/SelectIntegrations";
 import { Box } from "@mui/material";
-import {
-  _integrations,
-  integrationIcons
-} from "../../../../consts/integrations";
 
-const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
+const ChatTypeSelect = ({ snowflakeCredentials }) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { openedIntegrations } = useSelector((store) => store.integrations);
 
   const onSelectIntegration = (type) => {
-    // if (type.link !== "/chat" && openedIntegrations.length === 0)
-    //   return setIsOpenPopup(true);
+    if (type.link !== "/chat" && openedIntegrations.length === 0)
+      return setIsOpenPopup(true);
 
     navigate(type.link);
   };
@@ -32,33 +28,23 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
         icon: <ChatIcon />,
         onClick: onSelectIntegration
       },
-      // {
-      //   link:
-      //     openedIntegrations?.length > 0
-      //       ? `/integration/${openedIntegrations?.[0]?.id}`
-      //       : "/integration",
-      //   label: "Connections",
-      //   icon: <SettingsIcon />,
-      //   onClick: onSelectIntegration
-      // },
-      ..._integrations.slice(1).map((int) => ({
-        id: int.id,
+      {
         link:
           openedIntegrations?.length > 0
-            ? `/integration/${int.id}`
+            ? `/integration/${openedIntegrations?.[0]?.id}`
             : "/integration",
-        label: int.name,
-        icon: integrationIcons[int.iconType],
+        label: "Connections",
+        icon: <SettingsIcon />,
         onClick: onSelectIntegration
-      }))
+      }
     ];
   }, [openedIntegrations, onSelectIntegration]);
 
   const selectedType = useMemo(() => {
     if (pathname.includes("chat")) return types[0];
 
-    return types.find((type) => type.id === activeIntegration.id);
-  }, [pathname, activeIntegration]);
+    return types[1];
+  }, [pathname]);
 
   const [isOpenPopup, setIsOpenPopup] = useState(false);
 

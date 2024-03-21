@@ -3,7 +3,7 @@ import styles from "./style.module.scss";
 import { fileTypes } from "../../consts/fileTypes";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 
-const FileItem = ({ type = "word", name, url }) => {
+const FileItem = ({ type = "word", name, url, hideArrow }) => {
   return (
     <a className={styles.fileItem} target="_blank" href={url}>
       <Box display="flex" alignItems="center" gap="8px" maxWidth="93%">
@@ -11,7 +11,7 @@ const FileItem = ({ type = "word", name, url }) => {
         <h4>{name}</h4>
       </Box>
 
-      <ArrowForwardIosRoundedIcon />
+      {!hideArrow && <ArrowForwardIosRoundedIcon />}
     </a>
   );
 };

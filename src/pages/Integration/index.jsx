@@ -11,7 +11,6 @@ import { _integrations } from "../../consts/integrations";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import {
   destroyTextGenerator,
-  setQuestionsToGenerator,
   setTextToGenerator,
   startStreaming,
   stopStreaming
@@ -28,6 +27,8 @@ import {
   setSnowflakeToken,
   setToken
 } from "../../redux/auth/authSlice";
+import ExpandableContainer from "../../components/ExpandableContainer";
+import OptionsBar from "./OptionsBar";
 
 const Integration = () => {
   const dispatch = useDispatch();
@@ -68,6 +69,7 @@ const Integration = () => {
   } = useWebSocket({ refetch: refetchSingleAnalyticsChat });
 
   const [width, setWidth] = useState(284);
+  const [width2, setWidth2] = useState(284);
   const [activeChat, setActiveChat] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [selectedSchema, setSelectedSchema] = useState("");
@@ -378,47 +380,10 @@ const Integration = () => {
     [activeIntegration, data]
   );
 
-  const [isDragging, setIsDragging] = useState(false);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (!isDragging) return;
-
-      const _width = isOpen ? e.clientX - 280 : e.clientX - 90;
-
-      if (_width < 600 && _width > 284) {
-        setWidth(_width);
-      }
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-    };
-
-    if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-
-      return () => {
-        document.removeEventListener("mousemove", handleMouseMove);
-        document.removeEventListener("mouseup", handleMouseUp);
-      };
-    }
-  }, [isDragging, width, isOpen]);
-
-  const handleMouseDown = (e) => {
-    setIsDragging(true);
-  };
-
   useEffect(() => {
     if ((!chatId && !filteredChats) || isFetching) return;
 
     const foundChat = filteredChats?.find((chat) => chat.id === chatId);
-
-    // if (integrationId && filteredChats?.length > 0 && !foundChat) {
-    //   navigate(`/integration/${integrationId}/${filteredChats[0]?.id || ""}`);
-    //   return;
-    // }
 
     handleSelectChat(foundChat);
   }, [chatId, filteredChats, integrationId, activeIntegration, isFetching]);
@@ -428,40 +393,87 @@ const Integration = () => {
       navigate(`/integration/${activeIntegration?.id}`);
   }, [filteredChats, activeIntegration]);
 
+  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded2, setIsExpanded2] = useState(true);
+
   if (!integrationId) return <Navigate to="../" />;
 
   return (
     <Box width="100%" display="flex">
-      <Box
-        position="relative"
+      <ExpandableContainer
         width={width}
-        minWidth={284}
+        setWidth={setWidth}
+        initWidth={284}
         maxWidth={600}
-        overflow="visible"
+        isOpen={isOpen}
+        style={{
+          maxWidth: !isExpanded && "50px",
+          minWidth: !isExpanded && "50px",
+          overflow: !isExpanded && "hidden"
+        }}
       >
         <FileBar
           title="Chat"
+          isOpenContainer={isExpanded}
+          toggleContainer={() => {
+            setIsExpanded((prev) => {
+              if (prev) setWidth(50);
+              else setWidth(284);
+
+              return !prev;
+            });
+          }}
           refetch={refetch}
-          hideNewChatBtn={true}
           activeChat={activeChat}
           relatedFiles={relatedFiles}
-          selectSchema={selectSchema}
-          selectDatabase={selectDatabase}
-          selectedSchema={selectedSchema}
+          chats={filteredChats}
           snowflakeCredentials={credentials}
+          selectedSchema={selectedSchema}
           selectedDatabase={selectedDatabase}
           activeIntegration={activeIntegration}
         />
+      </ExpandableContainer>
 
-        <button
-          className={"splitter " + (isDragging && "isDragging")}
-          onMouseDown={handleMouseDown}
-        ></button>
-      </Box>
+      {!!chatId && (
+        <ExpandableContainer
+          width={width2}
+          setWidth={setWidth2}
+          extraOffset={width}
+          initWidth={284}
+          maxWidth={600}
+          isOpen={isOpen}
+          style={{
+            maxWidth: !isExpanded2 && "50px",
+            minWidth: !isExpanded2 && "50px",
+            overflow: !isExpanded2 && "hidden"
+          }}
+        >
+          <OptionsBar
+            title={null}
+            isOpenContainer={isExpanded2}
+            toggleContainer={() => {
+              setIsExpanded2((prev) => {
+                if (prev) setWidth2(50);
+                else setWidth2(284);
+
+                return !prev;
+              });
+            }}
+            hideNewChatBtn={true}
+            relatedFiles={relatedFiles}
+            selectSchema={selectSchema}
+            selectDatabase={selectDatabase}
+            selectedSchema={selectedSchema}
+            selectedDatabase={selectedDatabase}
+            snowflakeCredentials={credentials}
+            activeIntegration={activeIntegration}
+          />
+        </ExpandableContainer>
+      )}
 
       <div
         style={{
-          width: `calc(100% - ${width}px)`
+          width: `calc(100% - ${width + (!!chatId ? width2 : 0)}px)`
         }}
       >
         <Outlet
