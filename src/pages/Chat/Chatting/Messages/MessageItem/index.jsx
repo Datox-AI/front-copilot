@@ -46,7 +46,9 @@ const MessageItem = ({
   isHighlightedMessage,
   onHighlightMessage,
   storeFileId,
-  sqlQuery
+  sqlQuery,
+  referenceFiles,
+  setReferenceFiles
 }) => {
   const [showSqlQueries, setShowSqlQueries] = useState(false);
 
@@ -125,6 +127,15 @@ const MessageItem = ({
                 onClick={() => setShowSqlQueries((prev) => !prev)}
               >
                 {showSqlQueries ? "Less" : "Show"} query {"</>"}
+              </button>
+            )}
+
+            {referenceFiles?.length > 0 && (
+              <button
+                className={styles.sqlToggler}
+                onClick={() => setReferenceFiles(referenceFiles)}
+              >
+                Show references
               </button>
             )}
 

@@ -18,8 +18,8 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
   const { openedIntegrations } = useSelector((store) => store.integrations);
 
   const onSelectIntegration = (type) => {
-    // if (type.link !== "/chat" && openedIntegrations.length === 0)
-    //   return setIsOpenPopup(true);
+    if (type.link !== "/chat" && openedIntegrations.length === 0)
+      return setIsOpenPopup(true);
 
     navigate(type.link);
   };
@@ -57,7 +57,7 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
   const selectedType = useMemo(() => {
     if (pathname.includes("chat")) return types[0];
 
-    return types.find((type) => type.id === activeIntegration.id);
+    return types.find((type) => type?.id === activeIntegration?.id);
   }, [pathname, activeIntegration]);
 
   const [isOpenPopup, setIsOpenPopup] = useState(false);

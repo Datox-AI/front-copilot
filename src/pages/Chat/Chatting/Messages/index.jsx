@@ -17,17 +17,18 @@ const Messages = forwardRef(
       data,
       mode,
       chatId,
-      isAudit,
-      questions,
-      onSelectQuestion,
-      activeChat,
       refetch,
+      isAudit,
       isLoading,
-      refetchMessages,
+      questions,
+      activeChat,
       isStreaming,
-      selectedMessages,
-      selectReplyMessage,
       toggleMessage,
+      setRelatedFiles,
+      refetchMessages,
+      selectedMessages,
+      onSelectQuestion,
+      selectReplyMessage,
       onHighlightMessage,
       isHighlightedMessage
     },
@@ -111,6 +112,8 @@ const Messages = forwardRef(
                       author_fullname={author}
                       message={realMessage}
                       files={message.files}
+                      referenceFiles={message.searched_files}
+                      setReferenceFiles={setRelatedFiles}
                       storeFileId={message.stored_file_id}
                       showDots={!realMessage.trim()}
                       sqlQuery={message.sql_query}

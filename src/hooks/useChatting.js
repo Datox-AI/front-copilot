@@ -99,13 +99,20 @@ const useChatting = ({
 
     const _files = [];
 
-    data
-      ?.filter((message) => message.searched_files?.length > 0)
-      ?.forEach((message) =>
-        message.searched_files?.map((file) => _files.push(file))
-      );
+    const _filteredData = data?.filter(
+      (message) => message.searched_files?.length > 0
+    );
 
-    setRelatedFiles((prev) => arrayUniqueByKey([...prev, ..._files], "id"));
+    _filteredData?.forEach((message) =>
+      message.searched_files?.map((file) => _files.push(file))
+    );
+
+    setRelatedFiles(
+      arrayUniqueByKey(
+        [...(_filteredData[_filteredData?.length - 1]?.searched_files || [])],
+        "id"
+      )
+    );
   }, [data]);
 
   useEffect(() => {

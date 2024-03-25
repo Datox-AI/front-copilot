@@ -19,9 +19,6 @@ import { Button, CircularProgress } from "@mui/material";
 import toast from "react-hot-toast";
 
 const EmptyMessages = ({
-  hasChats,
-  hasIntegrations,
-  isChat,
   snowflakeCredentials,
   selectedDatabase,
   selectedSchema,
@@ -69,16 +66,16 @@ const EmptyMessages = ({
   };
 
   const title = useMemo(() => {
-    if (activeIntegration.dataType === "Analytics") return "Ask a Question";
-    if (activeIntegration.dataType === "FileSearch") return "Search Files";
+    if (activeIntegration?.dataType === "Analytics") return "Ask a Question";
+    if (activeIntegration?.dataType === "FileSearch") return "Search Files";
 
     return "Ask Questions";
   }, [activeIntegration]);
 
   const subtitle = useMemo(() => {
-    if (activeIntegration.dataType === "Analytics")
+    if (activeIntegration?.dataType === "Analytics")
       return "Effective questioning involves more than just forming inquiries; itrequires a thoughtful approach.";
-    if (activeIntegration.dataType === "FileSearch")
+    if (activeIntegration?.dataType === "FileSearch")
       return "Ask me where your files are at and extract document contents and summaries.";
 
     return "Ask me about your data in Snowflake to get instant insights and summaries.";
@@ -86,10 +83,10 @@ const EmptyMessages = ({
 
   return (
     <div
-      key={activeIntegration.dataType}
+      key={activeIntegration?.dataType}
       className={classNames(styles.emptyMessages)}
     >
-      {activeIntegration.dataType === "FileSearch" ? (
+      {activeIntegration?.dataType === "FileSearch" ? (
         <img src={searchFileIcon} width={150} height={150} />
       ) : (
         <CommentIcon />
@@ -114,9 +111,6 @@ const Chatting = ({
   integrations,
   activeChat,
   activeIntegration,
-  onCloseIntegration,
-  handleSelectChat,
-  handleSelectIntegration,
   isChat,
   chatId,
   refetch,
@@ -248,6 +242,7 @@ const Chatting = ({
                 isStreaming={textGenerator?.isStreaming}
                 isHighlightedMessage={isHighlightedMessage}
                 toggleMessage={toggleMessage}
+                setRelatedFiles={setRelatedFiles}
                 refetchMessages={refetchSingleChat || refetchMessages}
                 onSelectQuestion={onSelectQuestion}
                 clearReplyMessage={clearReplyMessage}
