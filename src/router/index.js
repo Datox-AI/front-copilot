@@ -12,6 +12,8 @@ import SnowflakeConfigAdd from "../pages/Configs/Snowflake/add";
 import ColumnsTable from "../pages/Integration/ColumnDetails/Columns";
 import PreviewData from "../pages/Integration/ColumnDetails/PreviewData";
 import Store from "../pages/Integration/ColumnDetails/Store";
+import AssistantChat from "../pages/Assistant/Chat";
+import AssistantConfig from "../pages/Assistant/Config";
 
 export const userRouter = createBrowserRouter([
   {
@@ -143,6 +145,25 @@ export const userRouter = createBrowserRouter([
         ]
       },
       {
+        path: "assistant",
+        children: [
+          {
+            path: "chat",
+            element: <AssistantChat />,
+            children: [
+              {
+                path: ":chatId",
+                element: <ChattingContainer />
+              }
+            ]
+          },
+          {
+            path: "config/:id",
+            element: <AssistantConfig />
+          }
+        ]
+      },
+      {
         path: "*",
         element: <Navigate to="/chat" />
       }
@@ -269,6 +290,25 @@ export const adminRouter = createBrowserRouter([
                 element: <SnowflakeConfigAdd />
               }
             ]
+          }
+        ]
+      },
+      {
+        path: "assistant",
+        children: [
+          {
+            path: "chat",
+            element: <AssistantChat />,
+            children: [
+              {
+                path: ":chatId",
+                element: <ChattingContainer />
+              }
+            ]
+          },
+          {
+            path: "config/:id",
+            element: <AssistantConfig />
           }
         ]
       }

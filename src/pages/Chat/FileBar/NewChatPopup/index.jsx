@@ -100,7 +100,7 @@ export const IntegrationForm = ({
           onError: (err) => {
             console.log(err);
 
-            toast.err(err.data.detail);
+            toast.error(err?.data?.detail);
           }
         }
       );
@@ -129,7 +129,7 @@ export const IntegrationForm = ({
             else close();
           },
           onError: (err) => {
-            toast.err(err.data.detail);
+            toast.error(err.data.detail);
           }
         }
       );
