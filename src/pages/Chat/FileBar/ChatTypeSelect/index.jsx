@@ -2,11 +2,12 @@ import CustomSelect from "../../../../components/CustomSelect";
 
 import { useMemo, useState } from "react";
 import { ReactComponent as ChatIcon } from "../../../../assets/icons/chat.svg";
-import { ReactComponent as SettingsIcon } from "../../../../assets/icons/settins.svg";
+import { ReactComponent as AssitantIcon } from "../../../../assets/icons/assistant.svg";
+import { ReactComponent as GeminiIcon } from "../../../../assets/icons/gemini.svg";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { SelectIntegrations } from "../../../../components/Popups/SelectIntegrations";
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {
   _integrations,
   integrationIcons
@@ -32,15 +33,6 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
         icon: <ChatIcon />,
         onClick: onSelectIntegration
       },
-      // {
-      //   link:
-      //     openedIntegrations?.length > 0
-      //       ? `/integration/${openedIntegrations?.[0]?.id}`
-      //       : "/integration",
-      //   label: "Connections",
-      //   icon: <SettingsIcon />,
-      //   onClick: onSelectIntegration
-      // },
       ..._integrations.slice(1).map((int) => ({
         id: int.id,
         link:
@@ -50,7 +42,27 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
         label: int.name,
         icon: integrationIcons[int.iconType],
         onClick: onSelectIntegration
-      }))
+      })),
+      {
+        link: null,
+        label: "Assitant",
+        icon: <AssitantIcon />,
+        children: [
+          {
+            link: "/assistant/config/create",
+            label: (
+              <Button
+                variant="contained"
+                fullWidth
+                style={{ maxWidth: "100%" }}
+              >
+                Create Assitant
+              </Button>
+            ),
+            onClick: () => navigate("/assistant/config/create")
+          }
+        ]
+      }
     ];
   }, [openedIntegrations, onSelectIntegration]);
 

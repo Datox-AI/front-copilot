@@ -28,6 +28,7 @@ const Messages = forwardRef(
       refetchMessages,
       selectedMessages,
       onSelectQuestion,
+      isAssistantConfig,
       selectReplyMessage,
       onHighlightMessage,
       isHighlightedMessage
@@ -56,7 +57,11 @@ const Messages = forwardRef(
               {Array(4)
                 .fill(4)
                 .map((item, idx) => (
-                  <MessageItemSkeleton key={idx} isBot={idx % 2 !== 0} />
+                  <MessageItemSkeleton
+                    key={idx}
+                    isAssistantConfig={isAssistantConfig}
+                    isBot={idx % 2 !== 0}
+                  />
                 ))}
             </div>
           </div>
@@ -95,6 +100,7 @@ const Messages = forwardRef(
                       key={message?.id}
                       mode={mode}
                       isAudit={isAudit}
+                      isAssistantConfig={isAssistantConfig}
                       chatId={chatId}
                       refetch={refetchMessages}
                       isHighlightedMessage={isHighlightedMessage}

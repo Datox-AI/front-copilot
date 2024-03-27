@@ -6,6 +6,24 @@
   padding: 0 20px;
   position: relative;
 
+  &.isAssistantConfig {
+    .attach {
+      border-color: transparent;
+      background-color: #c1ead4;
+    }
+
+    .input {
+      border-color: transparent;
+      background-color: #c1ead4;
+
+      textarea {
+        &::placeholder {
+          color: #000;
+        }
+      }
+    }
+  }
+
   .attach {
     width: 48px;
     height: 48px;
@@ -32,7 +50,7 @@
     align-items: center;
     border-radius: 10px;
     border: 1px solid #c4c4c4;
-    background: #fff;
+    background-color: #fff;
 
     .files {
       width: 100%;
@@ -86,9 +104,10 @@
       max-width: 100%;
       min-width: 100%;
       resize: none;
+      background-color: transparent;
 
       &:disabled {
-        background-color: #fff;
+        background-color: transparent;
         cursor: no-drop;
       }
 

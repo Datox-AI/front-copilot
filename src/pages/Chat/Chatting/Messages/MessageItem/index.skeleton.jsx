@@ -19,7 +19,7 @@ function generateRandom(min, max) {
   return rand;
 }
 
-const MessageItemSkeleton = ({ isBot }) => {
+const MessageItemSkeleton = ({ isBot, isAssistantConfig }) => {
   const width = useMemo(() => {
     if (!isBot) return generateRandom(250, 700);
 
@@ -52,8 +52,8 @@ const MessageItemSkeleton = ({ isBot }) => {
           <Skeleton
             animation="wave"
             variant="circular"
-            width={42}
-            height={42}
+            width={isAssistantConfig ? 26 : 42}
+            height={isAssistantConfig ? 26 : 42}
           />
         </div>
         <div className={styles.content}>

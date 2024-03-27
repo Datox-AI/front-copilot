@@ -39,6 +39,7 @@ const MessageItem = ({
   replyMessage,
   author_fullname,
   onSelectQuestion,
+  isAssistantConfig,
   toggleMessage,
   isSelected,
   fullData,
@@ -59,6 +60,8 @@ const MessageItem = ({
     onHighlightMessage(_id);
   };
 
+  const avatarAttributes = stringAvatar(isBot ? "Datox GPT" : author_fullname);
+
   return (
     <div
       id={`message-${messageId}`}
@@ -66,7 +69,8 @@ const MessageItem = ({
       className={classNames(styles.container, {
         [styles.isBot]: isBot,
         [styles.isSelected]: isSelected,
-        [styles.isHighlighted]: isHighlightedMessage === messageId
+        [styles.isHighlighted]: isHighlightedMessage === messageId,
+        [styles.isAssistantConfig]: isAssistantConfig
       })}
     >
       <Box
@@ -85,7 +89,16 @@ const MessageItem = ({
               checkedIcon={<CheckCircleIcon />}
             />
           )}
-          {<Avatar {...stringAvatar(isBot ? "Datox GPT" : author_fullname)} />}
+          {
+            <Avatar
+              {...avatarAttributes}
+              sx={{
+                ...avatarAttributes,
+                height: isAssistantConfig ? 26 : 42,
+                width: isAssistantConfig ? 26 : 42
+              }}
+            />
+          }
         </div>
         <div className={styles.content}>
           <p className={styles.message}>

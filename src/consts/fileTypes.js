@@ -18,5 +18,6 @@ export const fileTypes = {
   "application/word": word,
   "application/xlsx": excel,
   "application/excel": excel,
+  "text/csv": excel,
   other: file
 };

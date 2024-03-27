@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: column;
   padding: 12px;
+  gap: 15px;
 
   .header {
     background-color: #fff;
@@ -24,11 +25,198 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      border-radius: 10px;
     }
   }
 
   .body {
     display: flex;
-    flex-direction: column;
+    background-color: #fff;
+    border-radius: 10px;
+    height: calc(100vh - 94px);
+    overflow: hidden;
+
+    .form {
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 16px;
+      width: 65%;
+
+      .label {
+        width: 52px;
+        height: 52px;
+        border-radius: 26px;
+        border: 1px #c1c1c1;
+        border-style: dashed;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #c1c1c1;
+        cursor: pointer;
+
+        input {
+          display: none;
+        }
+      }
+
+      textarea {
+        border: 1px solid #e2e2e2;
+        border-radius: 10px;
+        padding: 10px;
+        outline: none;
+
+        &:focus {
+          border-color: rgba(104, 111, 237, 0.482);
+        }
+      }
+
+      .default_btn {
+        background: #edf0f5;
+        height: 33px;
+        border-radius: 8px;
+
+        &.active {
+          background-color: var(--primary-color);
+          color: #fff;
+        }
+      }
+
+      .icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 16px;
+        background-color: #edf0f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .filesBox {
+        width: 100%;
+        padding: 5px 5px 8px 8px;
+        border-radius: 10px;
+        border: 1px solid #e2e2e2;
+        max-height: 138px;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+
+        .file {
+          position: relative;
+          width: 141px;
+          height: 26px;
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          background: #edf0f5;
+          border-radius: 5px;
+          overflow: hidden;
+          gap: 4px;
+          padding: 0 6px;
+
+          p {
+            text-wrap: nowrap;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 20px;
+            text-align: left;
+          }
+
+          &:hover {
+            .close {
+              display: block;
+            }
+          }
+
+          .close {
+            display: none;
+            position: absolute;
+            right: 4px;
+            top: 5px;
+            background: #edf0f5;
+            cursor: pointer;
+
+            svg {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+
+      .uploadBtn {
+        cursor: pointer;
+        padding: 8px;
+        gap: 0px;
+        border-radius: 8px;
+        justify-content: space-between;
+        background: #3d3bff33;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 22px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.preview {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  background: #dff2e8;
+  padding: 14px 16px;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .header {
+    width: 100%;
+    padding-bottom: 14px;
+    background-color: transparent;
+    border-radius: 0;
+    border-bottom: 1px solid #90cdac;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+
+    .icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 20px;
+      background: #90cdac;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    h4 {
+      font-size: 20px;
+      font-weight: 500;
+      line-height: 23.87px;
+      text-align: left;
+    }
+  }
+
+  .messages {
+    display: flex;
+    flex: 1;
+  }
+
+  .input {
+    display: flex;
+    width: 100%;
+    max-height: 50px;
+
+    form {
+      padding: 0;
+    }
   }
 }

@@ -1,5 +1,6 @@
 import styles from "./style.module.scss";
 import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
+import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import useOutsideClick from "../../hooks/useOutsideClick";
 
 import { useRef, useState } from "react";
@@ -55,18 +56,49 @@ const CustomSelect = ({
       </button>
       {isOpen && (
         <ul>
-          {options.map((option, t) => (
-            <li key={t} onClick={() => option.onClick(option)}>
-              <NavLink to="#">
+          {options.map((option, t) =>
+            option.children?.length > 0 ? (
+              <li key={t} className={styles.listItem}>
                 <Box display="flex" alignItems="center" gap="10px">
                   {option.icon}
                   {option.label}
                 </Box>
 
-                {selectedValue.label === option.label && <SelectedIcon />}
-              </NavLink>
-            </li>
-          ))}
+                <ChevronRightRoundedIcon />
+
+                <ul>
+                  {option.children.map((item, idx) => (
+                    <li key={idx} onClick={() => item.onClick(item)}>
+                      <NavLink to="#">
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          gap="10px"
+                          width="100%"
+                        >
+                          {item.icon}
+                          {item.label}
+                        </Box>
+
+                        {selectedValue.label === item.label && <SelectedIcon />}
+                      </NavLink>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ) : (
+              <li key={t} onClick={() => option.onClick(option)}>
+                <NavLink to="#">
+                  <Box display="flex" alignItems="center" gap="10px">
+                    {option.icon}
+                    {option.label}
+                  </Box>
+
+                  {selectedValue.label === option.label && <SelectedIcon />}
+                </NavLink>
+              </li>
+            )
+          )}
         </ul>
       )}
     </div>

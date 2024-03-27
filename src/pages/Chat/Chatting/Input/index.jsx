@@ -12,6 +12,7 @@ import { connectionStatuses } from "../../../../consts/snowflake";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import AutorenewRoundedIcon from "@mui/icons-material/AutorenewRounded";
 import { ReactComponent as CheckedIcon } from "../../../../assets/icons/checked.svg";
+import classNames from "classnames";
 
 const Input = ({
   chatId,
@@ -23,11 +24,13 @@ const Input = ({
   replyMessage,
   onFileUpload,
   isSnowflakeChat,
+  isAssistantConfig,
   showUploadFile,
   clearReplyMessage,
   snowflakeConnectionStatus,
   files,
-  setUploadFiles
+  setUploadFiles,
+  placeholder = "Ask anything..."
 }) => {
   const textareaRef = useRef(null);
   // const files = useSelector((store) => store.chat.files[chatId]);
@@ -123,7 +126,12 @@ const Input = ({
         </p>
       )}
 
-      <form className={styles.inputContainer} onSubmit={onSend}>
+      <form
+        className={classNames(styles.inputContainer, {
+          [styles.isAssistantConfig]: isAssistantConfig
+        })}
+        onSubmit={onSend}
+      >
         {!isSnowflakeChat && showUploadFile && (
           <label htmlFor="attach_file" className={styles.attach}>
             <input
@@ -160,7 +168,7 @@ const Input = ({
           <textarea
             ref={textareaRef}
             id="input-message"
-            placeholder="Ask anything..."
+            placeholder={placeholder}
             value={text}
             onChange={onTexting}
             disabled={
