@@ -61,7 +61,7 @@ const MessageItem = ({
   };
 
   const avatarAttributes = stringAvatar(isBot ? "Datox GPT" : author_fullname);
-
+  console.log(avatarAttributes);
   return (
     <div
       id={`message-${messageId}`}
@@ -93,7 +93,7 @@ const MessageItem = ({
             <Avatar
               {...avatarAttributes}
               sx={{
-                ...avatarAttributes,
+                ...avatarAttributes.sx,
                 height: isAssistantConfig ? 26 : 42,
                 width: isAssistantConfig ? 26 : 42
               }}
