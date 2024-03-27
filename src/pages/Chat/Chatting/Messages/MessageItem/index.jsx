@@ -61,7 +61,7 @@ const MessageItem = ({
   };
 
   const avatarAttributes = stringAvatar(isBot ? "Datox GPT" : author_fullname);
-  console.log(avatarAttributes);
+
   return (
     <div
       id={`message-${messageId}`}
