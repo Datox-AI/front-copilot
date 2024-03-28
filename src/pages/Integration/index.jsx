@@ -63,7 +63,6 @@ const Integration = () => {
     websockets,
     addWebSocket,
     sendData,
-    removeWebSocket,
     toggleHasEventListener,
     changeSocketStatus
   } = useWebSocket({ refetch: refetchSingleAnalyticsChat });

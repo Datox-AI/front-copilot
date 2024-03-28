@@ -15,7 +15,7 @@ export default function ToggleButton({ isOpen, ...props }) {
         justifyContent: "center",
         background: "#3D3BFF33",
         borderRadius: "5px",
-        margin: "0 5px"
+        margin: "0 5px 0 0"
       }}
     >
       {isOpen ? <ChevronLeftRoundedIcon /> : <ChevronRightRoundedIcon />}

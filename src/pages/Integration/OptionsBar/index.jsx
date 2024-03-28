@@ -9,10 +9,11 @@ import ToggleButton from "../../../components/ToggleButton";
 import classNames from "classnames";
 
 const FilesList = ({ relatedFiles, search, isOpenContainer }) => {
+  console.log(relatedFiles);
   const mutatedFiles = useMemo(() => {
-    return relatedFiles.filter((file) =>
+    return relatedFiles?.filter((file) =>
       search
-        ? file.itemName.toLowerCase().includes(search?.toLowerCase())
+        ? file.item_name?.toLowerCase()?.includes(search?.toLowerCase())
         : file
     );
   }, [search, relatedFiles]);
