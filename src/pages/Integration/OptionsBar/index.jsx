@@ -9,7 +9,6 @@ import ToggleButton from "../../../components/ToggleButton";
 import classNames from "classnames";
 
 const FilesList = ({ relatedFiles, search, isOpenContainer }) => {
-  console.log(relatedFiles);
   const mutatedFiles = useMemo(() => {
     return relatedFiles?.filter((file) =>
       search

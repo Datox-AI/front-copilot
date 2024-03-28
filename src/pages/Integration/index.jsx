@@ -406,6 +406,7 @@ const Integration = () => {
         maxWidth={600}
         isOpen={isOpen}
         bgcolor="#fff"
+        zIndex={100}
         style={{
           maxWidth: !isExpanded && "50px",
           minWidth: !isExpanded && "50px",
@@ -415,14 +416,6 @@ const Integration = () => {
         <FileBar
           title="Chat"
           isOpenContainer={isExpanded}
-          toggleContainer={() => {
-            setIsExpanded((prev) => {
-              if (prev) setWidth(50);
-              else setWidth(284);
-
-              return !prev;
-            });
-          }}
           refetch={refetch}
           activeChat={activeChat}
           relatedFiles={relatedFiles}
@@ -431,6 +424,14 @@ const Integration = () => {
           selectedSchema={selectedSchema}
           selectedDatabase={selectedDatabase}
           activeIntegration={activeIntegration}
+          toggleContainer={() => {
+            setIsExpanded((prev) => {
+              if (prev) setWidth(50);
+              else setWidth(284);
+
+              return !prev;
+            });
+          }}
         />
       </ExpandableContainer>
 
@@ -442,6 +443,7 @@ const Integration = () => {
           initWidth={284}
           bgcolor="transparent"
           maxWidth={600}
+          zIndex={99}
           isOpen={isOpen}
           style={{
             maxWidth: !isExpanded2 && "50px",
@@ -452,14 +454,6 @@ const Integration = () => {
           <OptionsBar
             title={null}
             isOpenContainer={isExpanded2}
-            toggleContainer={() => {
-              setIsExpanded2((prev) => {
-                if (prev) setWidth2(50);
-                else setWidth2(284);
-
-                return !prev;
-              });
-            }}
             hideNewChatBtn={true}
             relatedFiles={relatedFiles}
             selectSchema={selectSchema}
@@ -468,6 +462,14 @@ const Integration = () => {
             selectedDatabase={selectedDatabase}
             snowflakeCredentials={credentials}
             activeIntegration={activeIntegration}
+            toggleContainer={() => {
+              setIsExpanded2((prev) => {
+                if (prev) setWidth2(50);
+                else setWidth2(284);
+
+                return !prev;
+              });
+            }}
           />
         </ExpandableContainer>
       )}

@@ -10,7 +10,8 @@ export default function ExpandableContainer({
   setWidth,
   extraOffset = 0,
   style,
-  bgcolor
+  bgcolor,
+  zIndex
 }) {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -61,7 +62,7 @@ export default function ExpandableContainer({
         display="flex"
         height="100%"
         position="relative"
-        zIndex="100"
+        zIndex={zIndex}
         style={{
           width: "calc(100% - 5px)"
         }}

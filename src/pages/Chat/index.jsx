@@ -83,6 +83,7 @@ const Chat = ({ isAudit }) => {
         maxWidth={600}
         isOpen={isOpen}
         bgcolor="transparent"
+        zIndex={100}
         style={{
           maxWidth: !isExpanded && "50px",
           minWidth: !isExpanded && "50px",
