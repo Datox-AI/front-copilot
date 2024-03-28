@@ -45,7 +45,7 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
       })),
       {
         link: null,
-        label: "Assitant",
+        label: "Assistant",
         icon: <AssitantIcon />,
         children: [
           {
@@ -81,7 +81,7 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
         snowflakeCredentials={snowflakeCredentials}
         toggle={() => setIsOpenPopup((prev) => !prev)}
       />
-      <Box maxWidth="200px">
+      <Box maxWidth="200px" position="relative">
         <CustomSelect options={types} selectedValue={selectedType} />
       </Box>
     </>

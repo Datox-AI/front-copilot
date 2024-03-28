@@ -121,16 +121,17 @@
         }
       }
 
-      &:first-child {
-        border-bottom: 1px solid #f6f5f8;
+      border-bottom: 1px solid #f6f5f8;
 
-        a {
-          svg {
-            width: 17px;
-            height: 17px;
-            margin-left: -2px;
-          }
+      a {
+        svg {
+          width: 17px;
+          height: 17px;
+          margin-left: -2px;
         }
+      }
+      &:last-child {
+        border: none;
       }
     }
   }

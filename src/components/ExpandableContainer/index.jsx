@@ -9,7 +9,8 @@ export default function ExpandableContainer({
   width,
   setWidth,
   extraOffset = 0,
-  style
+  style,
+  bgcolor
 }) {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -48,13 +49,25 @@ export default function ExpandableContainer({
   return (
     <Box
       position="relative"
+      display="flex"
       width={width}
       minWidth={initWidth}
       maxWidth={maxWidth}
       overflow="visible"
+      bgcolor={bgcolor}
       style={style}
     >
-      {children}
+      <Box
+        display="flex"
+        height="100%"
+        position="relative"
+        zIndex="100"
+        style={{
+          width: "calc(100% - 5px)"
+        }}
+      >
+        {children}
+      </Box>
 
       <button
         className={"splitter " + (isDragging && "isDragging")}

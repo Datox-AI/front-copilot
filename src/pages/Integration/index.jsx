@@ -406,6 +406,7 @@ const Integration = () => {
         initWidth={284}
         maxWidth={600}
         isOpen={isOpen}
+        bgcolor="#fff"
         style={{
           maxWidth: !isExpanded && "50px",
           minWidth: !isExpanded && "50px",
@@ -440,6 +441,7 @@ const Integration = () => {
           setWidth={setWidth2}
           extraOffset={width}
           initWidth={284}
+          bgcolor="transparent"
           maxWidth={600}
           isOpen={isOpen}
           style={{

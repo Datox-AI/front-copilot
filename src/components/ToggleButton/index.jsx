@@ -7,14 +7,15 @@ export default function ToggleButton({ isOpen, ...props }) {
     <IconButton
       {...props}
       style={{
-        width: 34,
-        height: 34,
-        minWidth: 34,
+        width: 26,
+        height: 26,
+        minWidth: 26,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         background: "#3D3BFF33",
-        borderRadius: "5px"
+        borderRadius: "5px",
+        margin: "0 5px"
       }}
     >
       {isOpen ? <ChevronLeftRoundedIcon /> : <ChevronRightRoundedIcon />}

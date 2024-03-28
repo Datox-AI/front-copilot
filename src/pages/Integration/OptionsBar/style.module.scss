@@ -24,7 +24,8 @@
       width: calc(100% - 40px);
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 10px;
       // width: 254px;
       height: 42px;
       flex-shrink: 0;
