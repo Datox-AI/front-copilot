@@ -104,7 +104,7 @@ const MessagesList = ({
         style={{ overflowY: "auto", maxHeight: "calc(100vh - 160px)" }}
       >
         {groupedChats.map((group) => (
-          <ExpandMenu title={group.date}>
+          <ExpandMenu title={group.date} hideTitle={!isOpenContainer}>
             <Box
               width="100%"
               display="flex"

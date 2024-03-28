@@ -3,7 +3,7 @@ import styles from "./style.module.scss";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import classNames from "classnames";
 
-const ExpandMenu = ({ title = "Today", children }) => {
+const ExpandMenu = ({ title = "Today", children, hideTitle }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -12,7 +12,7 @@ const ExpandMenu = ({ title = "Today", children }) => {
         className={classNames(styles.toggleBtn, { [styles.isOpen]: isOpen })}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <p>{title}</p>
+        {!hideTitle && <p>{title}</p>}
 
         <ExpandMoreRoundedIcon
           style={{

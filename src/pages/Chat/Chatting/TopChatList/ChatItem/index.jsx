@@ -84,7 +84,8 @@ const ChatItem = ({
       <button
         className={classNames(styles.chatItem, {
           [styles.maxWidth]: maxWidth,
-          [styles.active]: active
+          [styles.active]: active,
+          [styles.isMinimized]: isMinimized
         })}
         type="button"
         {...props}
