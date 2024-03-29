@@ -82,9 +82,8 @@ request.interceptors?.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    if (config.headers["Content-Type"] !== "multipart/form-data")
-      config.headers.set("Content-Type", "application/json");
-    // config.headers.set("ApiKey", COPILOT_API_KEY);
+    // if (config.headers["Content-Type"] !== "multipart/form-data")
+    //   config.headers.set("Content-Type", "application/json");
 
     return config;
   },

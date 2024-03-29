@@ -3,10 +3,9 @@ import NewChatPopup from "./NewChatPopup";
 import ChatItem from "../Chatting/TopChatList/ChatItem";
 import useChatsAPI from "../../../hooks/api/useChatsAPI";
 import DeleteChatPopup from "./DeleteChatPopup";
-import FileItem from "../../../components/FileItem";
+
 import ChatTypeSelect from "./ChatTypeSelect";
 import ExpandMenu from "../../../components/ExandMenu";
-import NestedListContainer from "../../../components/NestedList";
 
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
@@ -16,8 +15,10 @@ import { groupItemsByDate } from "../../../utils/group";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { integrationIcons } from "../../../consts/integrations";
+import { ReactComponent as GeminiIcon } from "../../../assets/icons/gemini.svg";
 import ToggleButton from "../../../components/ToggleButton";
 import classNames from "classnames";
+import useGetAssistantsAPI from "../../../hooks/api/useGetAssistantsAPI";
 
 const MessagesList = ({
   activeIntegration,
@@ -151,7 +152,9 @@ const FileBar = ({
   chats,
   isAudit,
   refetch,
+  assistant,
   activeChat,
+  assistantId,
   relatedFiles,
   hideNewChatBtn,
   selectedSchema,
@@ -166,6 +169,8 @@ const FileBar = ({
 
   const { createChat, deleteChat } = useChatsAPI({});
   const { snowflakeToken } = useSelector((store) => store.auth);
+
+  const assistants = useGetAssistantsAPI({});
 
   const [isOpen, setIsOpen] = useState(false);
   const [deletableChatId, setDeletableChatId] = useState(null);
@@ -253,12 +258,38 @@ const FileBar = ({
 
         {!isAudit && (
           <ChatTypeSelect
+            assistantId={assistantId}
+            assistants={assistants?.data}
             activeIntegration={activeIntegration}
             snowflakeCredentials={snowflakeCredentials}
           />
         )}
       </header>
       <section className={styles.searchSection}>
+        {assistant && (
+          <>
+            <button
+              className={styles.assistant}
+              onClick={() =>
+                navigate(`/assistant/config/${assistant.assistant_id}`)
+              }
+            >
+              <Box display="flex" gap="8px" alignItems="center">
+                <GeminiIcon />
+                <span>{assistant.name}</span>
+              </Box>
+            </button>
+
+            <Box
+              display="flex"
+              bgcolor="#E2E2E2"
+              height="1px"
+              width="100%"
+              marginBottom="14px"
+            ></Box>
+          </>
+        )}
+
         <label>
           <Search />
           <input

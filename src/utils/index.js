@@ -58,3 +58,8 @@ export const makeLowerCase = (data) => {
 export const focusOnInput = () => {
   document.querySelector("#input-message")?.focus();
 };
+
+export const getImageUrl = (preview) => {
+  if (!preview) return "";
+  return URL.createObjectURL(preview);
+};

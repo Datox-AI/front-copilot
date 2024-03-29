@@ -32,6 +32,7 @@ const SelectedIcon = () => (
 
 const CustomSelect = ({
   options,
+  assistantId,
   selectedValue,
   placeholder = "No defaul values"
 }) => {
@@ -80,7 +81,7 @@ const CustomSelect = ({
                           {item.label}
                         </Box>
 
-                        {selectedValue.label === item.label && <SelectedIcon />}
+                        {assistantId === item.id && <SelectedIcon />}
                       </NavLink>
                     </li>
                   ))}

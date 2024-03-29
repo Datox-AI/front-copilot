@@ -1,26 +1,77 @@
 import {
   Box,
   Button,
+  CircularProgress,
   TextField,
   TextareaAutosize,
   Typography
 } from "@mui/material";
 import { ReactComponent as FolderIcon } from "../../../assets/icons/folder.svg";
+import geminiIcon from "../../../assets/icons/gemini.svg";
 import { fileTypes } from "../../../consts/fileTypes";
 import styles from "./style.module.scss";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PreviewChat from "./PreviewChat";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import useCreateAssistantAPI from "../../../hooks/api/useCreateAssistantAPI";
+import toast from "react-hot-toast";
+import useGetAssistantAPI from "../../../hooks/api/useGetAssistantAPI";
+import useUpdateAssistantFileAPI from "../../../hooks/api/useUpdateAssistantFilesAPI";
+import useUpdateAssistantAPI from "../../../hooks/api/useUpdateAssistantAPI";
+import { getImageUrl } from "../../../utils";
+import classNames from "classnames";
+
+async function getImageFileFromUrl(url) {
+  let response = await fetch(url);
+  let data = await response.blob();
+  let metadata = {
+    type: "image/svg"
+  };
+  return new File([data], "gemini.svg", metadata);
+}
 
 export default function AssistantConfig() {
+  const { id } = useParams();
   const navigate = useNavigate();
 
+  const createAssistant = useCreateAssistantAPI();
+  const updateAssistantFiles = useUpdateAssistantFileAPI({ assistantId: id });
+  const updateAssistant = useUpdateAssistantAPI({ assistantId: id });
+
+  const isCreate = id === "create";
+
+  const { data, refetch } = useGetAssistantAPI({
+    assistantId: !isCreate && id,
+    queryParams: {
+      enabed: !isCreate
+    }
+  });
+
   const [name, setName] = useState();
+  const [icon, setIcon] = useState();
   const [description, setDescription] = useState();
+  const [instructions, setInstructions] = useState();
   const [uploadFiles, setUploadFiles] = useState([]);
+  const [deletedFiles, setDeletedFiles] = useState([]);
+  const [isUseGPTIcon, setIsUseGPTIcon] = useState(false);
+
+  const isSaving =
+    createAssistant.isLoading ||
+    updateAssistantFiles.isLoading ||
+    updateAssistant.isLoading;
+
+  useEffect(() => {
+    if (!data) return;
+
+    setName(data.name);
+    setIcon(data.icon_file_path);
+    setDescription(data.description);
+    setInstructions(data.instructions);
+    setUploadFiles(data.knowledge_files);
+  }, [data]);
 
   const onUploadFiles = (e) => {
     const files = e.target.files;
@@ -28,8 +79,77 @@ export default function AssistantConfig() {
     setUploadFiles((prev) => [...prev, ...files]);
   };
 
-  const onRemove = (idx) => {
+  const onRemove = (idx, id) => {
+    if (id) {
+      setDeletedFiles((prev) => [...prev, id]);
+    }
+
     setUploadFiles((prev) => prev.filter((_, index) => index !== idx));
+  };
+
+  const handleSave = () => {
+    if (isCreate) return onCreate();
+
+    onEdit();
+  };
+
+  const onEdit = async () => {
+    const fileFormData = new FormData();
+    const formData = new FormData();
+    const newFiles = [...uploadFiles].filter((file) => !file.id);
+
+    const file = await getImageFileFromUrl(geminiIcon, "image/svg");
+
+    if (isUseGPTIcon) formData.append("icon", file);
+    else formData.append("icon", icon);
+
+    formData.append("assistant_name", name);
+    formData.append("assistant_description", description);
+    formData.append("assistant_instruction", instructions);
+
+    deletedFiles.forEach((fileId) =>
+      fileFormData.append("files_to_delete", fileId)
+    );
+
+    newFiles.forEach((file) => fileFormData.append("new_files", file));
+
+    updateAssistant.mutate(formData, {
+      onSuccess: () => {
+        refetch();
+        toast.success("Assistant updated successfuly!");
+      },
+      onError: () => {
+        toast.error("Error on updating an assistant");
+      }
+    });
+
+    updateAssistantFiles.mutate(fileFormData);
+  };
+
+  const onCreate = async () => {
+    const formData = new FormData();
+
+    const file = await getImageFileFromUrl(geminiIcon, "image/svg");
+
+    if (isUseGPTIcon) formData.append("icon", file);
+    else formData.append("icon", icon);
+
+    formData.append("assistant_name", name);
+    formData.append("assistant_description", description);
+    formData.append("assistant_instruction", instructions);
+
+    uploadFiles.forEach((file) => formData.append("knowledge_files", file));
+
+    createAssistant.mutate(formData, {
+      onSuccess: (res) => {
+        navigate(`/assistant/config/${res.assistant_id}`);
+        toast.success("New Assistant created successfuly!");
+      },
+      onError: (err) => {
+        console.log(err);
+        toast.error("Error on creating a new assistant");
+      }
+    });
   };
 
   return (
@@ -57,8 +177,22 @@ export default function AssistantConfig() {
           >
             <Box display="flex" gap="20px" alignItems="center">
               <label htmlFor="uploadAvatar" className={styles.label}>
-                <CloudUploadOutlinedIcon />
-                <input type="file" id="uploadAvatar" />
+                {icon ? (
+                  <img
+                    src={typeof icon === "string" ? icon : getImageUrl(icon)}
+                    width="100%"
+                    height="100%"
+                  />
+                ) : (
+                  <CloudUploadOutlinedIcon />
+                )}
+
+                <input
+                  type="file"
+                  id="uploadAvatar"
+                  accept="image/*"
+                  onChange={(e) => setIcon(e.target.files[0])}
+                />
               </label>
 
               <Typography fontSize="20px" lineHeight="24px">
@@ -67,7 +201,14 @@ export default function AssistantConfig() {
               </Typography>
             </Box>
 
-            <button className={styles.default_btn}>Use GPT Icon</button>
+            <button
+              onClick={() => setIsUseGPTIcon((prev) => !prev)}
+              className={classNames(styles.default_btn, {
+                [styles.active]: isUseGPTIcon
+              })}
+            >
+              Use GPT Icon
+            </button>
           </Box>
 
           <Box width="100%" display="flex" flexDirection="column" gap="8px">
@@ -90,7 +231,11 @@ export default function AssistantConfig() {
 
           <Box width="100%" display="flex" flexDirection="column" gap="8px">
             <span>Instructions</span>
-            <TextareaAutosize minRows={4} />
+            <TextareaAutosize
+              minRows={4}
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+            />
           </Box>
 
           <Box width="100%" display="flex" flexDirection="column" gap="8px">
@@ -118,7 +263,7 @@ export default function AssistantConfig() {
                     <p>{file.name}</p>
                     <span
                       className={styles.close}
-                      onClick={() => onRemove(fIdx)}
+                      onClick={() => onRemove(fIdx, file.id)}
                     >
                       <CloseRoundedIcon />
                     </span>
@@ -140,13 +285,22 @@ export default function AssistantConfig() {
                   type="file"
                   id="uploadFiles"
                   onChange={onUploadFiles}
+                  onClick={(event) => {
+                    event.target.value = null;
+                  }}
                   style={{
                     display: "none"
                   }}
                 />
               </label>
 
-              <Button variant="contained">Save</Button>
+              <Button
+                variant="contained"
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                {isSaving ? <CircularProgress size={20} /> : "Save"}
+              </Button>
             </Box>
           </Box>
         </div>

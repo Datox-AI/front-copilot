@@ -59,6 +59,34 @@
     width: 100%;
     align-items: center;
     margin-top: 20px;
+    flex-direction: column;
+
+    .assistant {
+      display: flex;
+      outline: none;
+      background-color: #dff2e8;
+      height: 42px;
+      width: 100%;
+      align-items: center;
+      border-radius: 6px;
+      padding: 8px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+
+      span {
+        color: #2b313d;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 16.71px;
+        text-align: left;
+      }
+
+      svg {
+        width: 26px;
+        height: 26px;
+      }
+    }
 
     label {
       width: 100%;

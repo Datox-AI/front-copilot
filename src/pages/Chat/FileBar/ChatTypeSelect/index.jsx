@@ -13,7 +13,12 @@ import {
   integrationIcons
 } from "../../../../consts/integrations";
 
-const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
+const ChatTypeSelect = ({
+  snowflakeCredentials,
+  activeIntegration,
+  assistants,
+  assistantId
+}) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { openedIntegrations } = useSelector((store) => store.integrations);
@@ -44,11 +49,21 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
         onClick: onSelectIntegration
       })),
       {
+        id: 4,
         link: null,
         label: "Assistant",
         icon: <AssitantIcon />,
         children: [
+          ...(assistants || []).map((assistant) => ({
+            id: assistant?.assistant_id,
+            link: `/assistant/chat/${assistant?.assistant_id}`,
+            label: <p>{assistant.name}</p>,
+            icon: <GeminiIcon />,
+            onClick: () =>
+              navigate(`/assistant/chat/${assistant?.assistant_id}`)
+          })),
           {
+            id: 123,
             link: "/assistant/config/create",
             label: (
               <Button
@@ -67,6 +82,7 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
   }, [openedIntegrations, onSelectIntegration]);
 
   const selectedType = useMemo(() => {
+    if (pathname.includes("assistant/chat")) return types[3];
     if (pathname.includes("chat")) return types[0];
 
     return types.find((type) => type?.id === activeIntegration?.id);
@@ -82,7 +98,11 @@ const ChatTypeSelect = ({ snowflakeCredentials, activeIntegration }) => {
         toggle={() => setIsOpenPopup((prev) => !prev)}
       />
       <Box maxWidth="200px" position="relative">
-        <CustomSelect options={types} selectedValue={selectedType} />
+        <CustomSelect
+          options={types}
+          selectedValue={selectedType}
+          assistantId={assistantId}
+        />
       </Box>
     </>
   );

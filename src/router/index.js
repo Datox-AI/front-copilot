@@ -297,7 +297,7 @@ export const adminRouter = createBrowserRouter([
         path: "assistant",
         children: [
           {
-            path: "chat",
+            path: "chat/:assistantId",
             element: <AssistantChat />,
             children: [
               {

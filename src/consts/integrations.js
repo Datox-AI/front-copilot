@@ -3,6 +3,7 @@ import { ReactComponent as DropboxIcon } from "../assets/icons/dropbox.svg";
 import { ReactComponent as GDriveIcon } from "../assets/icons/gdrive.svg";
 import { ReactComponent as ChatsIcon } from "../assets/icons/chats.svg";
 import { ReactComponent as SharepoingIcon } from "../assets/icons/sharepoint.svg";
+import { ReactComponent as AssistantIcon } from "../assets/icons/assistant.svg";
 
 export const _integrations = [
   {
@@ -33,10 +34,21 @@ export const _integrations = [
   }
 ];
 
+export const _assistantIntegrations = {
+  id: 4,
+  name: "Assistant",
+  to: null,
+  type: "assistant",
+  iconType: "assistant",
+  searchBy: "itemName",
+  dataType: "assistant"
+};
+
 export const integrationIcons = {
   chat: <ChatsIcon />,
   snowflake: <SnowflakeIcon />,
   sharepoint: <SharepoingIcon />,
   dropbox: <DropboxIcon />,
-  gdrive: <GDriveIcon />
+  gdrive: <GDriveIcon />,
+  assistant: <AssistantIcon />
 };

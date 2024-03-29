@@ -19,5 +19,6 @@ export const fileTypes = {
   "application/xlsx": excel,
   "application/excel": excel,
   "text/csv": excel,
-  other: file
+  other: file,
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": excel
 };
