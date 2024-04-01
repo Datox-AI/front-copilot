@@ -8,7 +8,7 @@ export default function useGetAssistantChatMessagesAPI({
   queryParams
 }) {
   return useQuery(
-    ["GET_ASSISTANTS_CHAT", chatId],
+    ["GET_ASSISTANTS_CHAT_MESSAGES", chatId],
     () =>
       request.get(`api/assistants/${assistantId}/chats/${chatId}/messages`, {
         ...params

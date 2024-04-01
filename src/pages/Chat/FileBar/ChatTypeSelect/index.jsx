@@ -57,6 +57,7 @@ const ChatTypeSelect = ({
           ...(assistants || []).map((assistant) => ({
             id: assistant?.assistant_id,
             link: `/assistant/chat/${assistant?.assistant_id}`,
+            img: assistant?.icon_file_path,
             label: <p>{assistant.name}</p>,
             icon: <GeminiIcon />,
             onClick: () =>

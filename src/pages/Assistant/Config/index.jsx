@@ -100,8 +100,8 @@ export default function AssistantConfig() {
 
     const file = await getImageFileFromUrl(geminiIcon, "image/svg");
 
-    if (isUseGPTIcon) formData.append("icon", file);
-    else formData.append("icon", icon);
+    if (isUseGPTIcon) formData.append("icon_file", file);
+    else formData.append("icon_file", icon);
 
     formData.append("assistant_name", name);
     formData.append("assistant_description", description);
@@ -131,8 +131,8 @@ export default function AssistantConfig() {
 
     const file = await getImageFileFromUrl(geminiIcon, "image/svg");
 
-    if (isUseGPTIcon) formData.append("icon", file);
-    else formData.append("icon", icon);
+    if (isUseGPTIcon) formData.append("icon_file", file);
+    else formData.append("icon_file", icon);
 
     formData.append("assistant_name", name);
     formData.append("assistant_description", description);

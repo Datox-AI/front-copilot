@@ -30,6 +30,7 @@ const ChattingContainer = ({}) => {
     sendMessageToAgent,
     isSnowflakeChat,
     chatMessages,
+    assistantId,
     refetchSingleChat,
     handleWsStopStreaming,
     snowflakeConnectionStatus
@@ -51,6 +52,7 @@ const ChattingContainer = ({}) => {
       columnName={columnName}
       setRelatedFiles={setRelatedFiles}
       isAudit={isAudit}
+      assistantId={assistantId}
       snowflakeCredentials={snowflakeCredentials}
       selectedDatabase={selectedDatabase}
       selectedSchema={selectedSchema}

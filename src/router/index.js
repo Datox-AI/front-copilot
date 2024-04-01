@@ -148,7 +148,7 @@ export const userRouter = createBrowserRouter([
         path: "assistant",
         children: [
           {
-            path: "chat",
+            path: "chat/:assistantId",
             element: <AssistantChat />,
             children: [
               {

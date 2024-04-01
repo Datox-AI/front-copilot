@@ -104,6 +104,11 @@
                 margin-left: -2px;
               }
 
+              img {
+                object-fit: cover;
+                border-radius: 20px;
+              }
+
               p {
                 overflow: hidden;
                 display: -webkit-box;

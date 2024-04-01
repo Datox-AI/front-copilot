@@ -117,6 +117,7 @@ const Chatting = ({
   setRelatedFiles,
   isAudit,
   columnName,
+  assistantId,
   snowflakeCredentials,
   selectedDatabase,
   selectedSchema,
@@ -161,6 +162,7 @@ const Chatting = ({
     setRelatedFiles,
     isAgentConnected,
     sendMessageToAgent,
+    assistantId,
     activeIntegration
   });
 
@@ -192,6 +194,7 @@ const Chatting = ({
     uploadFiles,
     isAgentConnected,
     startPrompting,
+
     setUploadFiles,
     refetchMessages: refetchSingleChat || refetchMessages,
     handleWsStopStreaming

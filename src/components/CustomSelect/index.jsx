@@ -77,7 +77,11 @@ const CustomSelect = ({
                           gap="10px"
                           width="100%"
                         >
-                          {item.icon}
+                          {item.img ? (
+                            <img src={item.img} width={17} height={17} />
+                          ) : (
+                            item.icon
+                          )}
                           {item.label}
                         </Box>
 

@@ -41,7 +41,7 @@ export const _assistantIntegrations = {
   type: "assistant",
   iconType: "assistant",
   searchBy: "itemName",
-  dataType: "assistant"
+  dataType: "Assistant"
 };
 
 export const integrationIcons = {

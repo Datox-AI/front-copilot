@@ -26,6 +26,7 @@ const usePrompt = ({
   sendMessageToAgent,
   isRagType,
   files,
+  assistantId,
   clearFiles,
   activeIntegration
 }) => {
@@ -67,6 +68,13 @@ const usePrompt = ({
         ];
         break;
 
+      case "Assistant":
+        _cachedMsgs = [
+          ...(queryClient.getQueryData(["GET_ASSISTANTS_CHAT_MESSAGES", chatId])
+            ?.messages || [])
+        ];
+        break;
+
       default:
         _cachedMsgs = [
           ...(queryClient.getQueryData(["GET_MESSAGES", chatId]) || [])
@@ -90,6 +98,15 @@ const usePrompt = ({
         case "DataAnalytics":
           queryClient.setQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId], {
             ...queryClient.getQueryData(["GET_ANALYTICS_CHAT_HISTORY", chatId]),
+            messages: [...elements]
+          });
+          break;
+        case "Assistant":
+          queryClient.setQueryData(["GET_ASSISTANTS_CHAT_MESSAGES", chatId], {
+            ...queryClient.getQueryData([
+              "GET_ASSISTANTS_CHAT_MESSAGES",
+              chatId
+            ]),
             messages: [...elements]
           });
           break;
@@ -260,6 +277,11 @@ const usePrompt = ({
       text: " ",
       role: "Assistant"
     };
+    let apiPath;
+
+    if (isRagType) apiPath = "rag_agent";
+    else if (!!assistantId) apiPath = `assistants/${assistantId}/chats`;
+    else apiPath = "rag_agent";
 
     const _cachedMsgs = [...getCachedMessages()];
 
@@ -284,13 +306,14 @@ const usePrompt = ({
     else {
       request
         .post(
-          `api/${isRagType ? "rag_agent" : "chats"}/${chatId}/messages`,
-          isRagType ? ragData : formData,
+          `api/${apiPath}/${chatId}/messages`,
+          isRagType || assistantId ? ragData : formData,
           {
             headers: {
-              "Content-Type": isRagType
-                ? "application/json"
-                : "multipart/form-data"
+              "Content-Type":
+                isRagType || assistantId
+                  ? "application/json"
+                  : "multipart/form-data"
             }
           }
         )

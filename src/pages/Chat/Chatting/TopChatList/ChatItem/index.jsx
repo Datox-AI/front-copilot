@@ -5,7 +5,7 @@ import useChatsAPI from "../../../../../hooks/api/useChatsAPI";
 import PopoverMenu from "../../../../../components/PopoverMenu";
 
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ReactComponent as DotsIcon } from "../../../../../assets/icons/vertical-dots.svg";
 import { ReactComponent as PencilIcon } from "../../../../../assets/icons/edit.svg";
 import { ReactComponent as PinIcon } from "../../../../../assets/icons/pin.svg";

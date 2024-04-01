@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useParams } from "react-router-dom";
 
 import { useSelector } from "react-redux";
@@ -8,47 +8,42 @@ import {
   _assistantIntegrations,
   _integrations
 } from "../../../consts/integrations";
-import useSnowflakeAPI from "../../../hooks/api/useSnowflakeAPI";
-import useChatsAPI from "../../../hooks/api/useChatsAPI";
+
 import FileBar from "../../Chat/FileBar";
 import ExpandableContainer from "../../../components/ExpandableContainer";
 import useGetAssistantAPI from "../../../hooks/api/useGetAssistantAPI";
+import useGetAssistantChatsAPI from "../../../hooks/api/useGetAssistantChatsAPI";
+import useGetAssistantChatMessagesAPI from "../../../hooks/api/useGetAssistantChatMessagesAPI";
 
-const AssistantChat = ({ isAudit }) => {
-  const { assistantId, chatId, userId } = useParams();
+const AssistantChat = () => {
+  const { assistantId, chatId } = useParams();
 
   const { data: assistant } = useGetAssistantAPI({ assistantId });
+  const { data: chats, refetch } = useGetAssistantChatsAPI({ assistantId });
+  const { data: singleChat, refetch: refetchSingleChat } =
+    useGetAssistantChatMessagesAPI({
+      assistantId,
+      chatId
+    });
 
-  const { data, refetch } = useChatsAPI({
-    isGetUsers: true,
-    userId
-  });
-
-  const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
   const { isOpen } = useSelector((store) => store.toggle);
 
-  const [relatedFiles, setRelatedFiles] = useState([]);
   const [width, setWidth] = useState(284);
   const [activeIntegration] = useState(_assistantIntegrations);
   const [activeChat, setActiveChat] = useState(null);
   const [isExpanded, setIsExpanded] = useState(true);
-
-  const chats = useMemo(
-    () => (isAudit ? data : data?.filter((chat) => chat?.type === "Analytics")),
-    [data, isAudit]
-  );
 
   const handleSelectChat = (chat) => {
     setActiveChat(chat);
   };
 
   useEffect(() => {
-    if (!chatId || !data) return;
+    if (!chatId || !chats) return;
 
-    const foundChat = data?.find((chat) => chat.id === chatId);
+    const foundChat = chats?.find((chat) => chat.id === chatId);
 
     handleSelectChat(foundChat);
-  }, [chatId, data]);
+  }, [chatId, chats]);
 
   return (
     <Box width="100%" display="flex">
@@ -70,13 +65,11 @@ const AssistantChat = ({ isAudit }) => {
           title="Chat"
           chats={chats}
           refetch={refetch}
-          isAudit={isAudit}
+          chatId={chatId}
           assistant={assistant}
           activeChat={activeChat}
-          hideNewChatBtn={isAudit}
           assistantId={assistantId}
           activeIntegration={activeIntegration}
-          snowflakeCredentials={credentials}
           isOpenContainer={isExpanded}
           toggleContainer={() => {
             setIsExpanded((prev) => {
@@ -102,9 +95,9 @@ const AssistantChat = ({ isAudit }) => {
             handleSelectChat,
             chatId,
             refetch,
-            setRelatedFiles,
-            isAudit
-            // snowflakeCredentials: credentials
+            assistantId,
+            refetchSingleChat: refetchSingleChat,
+            chatMessages: singleChat?.messages
           }}
         />
       </div>
