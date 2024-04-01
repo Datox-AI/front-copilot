@@ -1,6 +1,35 @@
-# Getting Started with Create React App
+# Datox Copilot
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a React-based application that utilizes the Copilot GPT model to facilitate conversations with users. It provides an interactive interface for users to engage in conversations with the AI model.
+
+## Project Description
+
+The React Copilot GPT Conversation Project is designed to offer an intuitive interface for users to interact with the Copilot GPT model. Users can input text prompts, and the model generates responses based on the input. The project leverages React for building the user interface and integrates the Copilot GPT model for natural language processing.
+
+## Setting Environment Variables
+
+Before running the project, you need to set up environment variables. These variables may include sensitive information or configuration details. Follow the steps below to set the environment variables:
+
+1. Create a `.env` file in the root directory of the project if it doesn't already exist.
+
+2. Define the required environment variables in the `.env` file. Here's an example of how you can structure your `.env` file:
+
+```plaintext
+REACT_APP_API_KEY=your_copilot_gpt_api_key
+REACT_APP_MSAL_REDIRECT_URI=http://localhost:3000/
+REACT_APP_MSAL_CLIENT_ID=
+
+REACT_APP_BASE_API_URL=
+REACT_APP_COPILOT_API_KEY=
+
+REACT_APP_GOOGLE_CLIENT_ID=
+REACT_APP_GOOGLE_CLIENT_SECRET=
+REACT_APP_OAUTH_REDIRECT_URL=
+
+REACT_APP_CLIENT_URL=http://localhost:3000
+REACT_APP_TOKEN_SECRET=datox.ai
+REACT_APP_SNOWFLAKE_REDIRECT_URL=
+```
 
 ## Available Scripts
 
@@ -68,3 +97,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+```
+
+```
