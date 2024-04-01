@@ -91,6 +91,7 @@ const AssistantChat = () => {
           context={{
             chats: chats,
             activeChat,
+            gptIcon: assistant?.icon_file_path,
             activeIntegration,
             handleSelectChat,
             chatId,

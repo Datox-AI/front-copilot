@@ -28,6 +28,7 @@ const MessageItem = ({
   isBot,
   chatId,
   message,
+  gptIcon,
   isAudit,
   refetch,
   onClick,
@@ -89,7 +90,17 @@ const MessageItem = ({
               checkedIcon={<CheckCircleIcon />}
             />
           )}
-          {
+          {isBot && gptIcon ? (
+            <img
+              src={gptIcon}
+              width={isAssistantConfig ? 26 : 42}
+              height={isAssistantConfig ? 26 : 42}
+              style={{
+                objectFit: "cover",
+                borderRadius: "30px"
+              }}
+            />
+          ) : (
             <Avatar
               {...avatarAttributes}
               sx={{
@@ -98,7 +109,7 @@ const MessageItem = ({
                 width: isAssistantConfig ? 26 : 42
               }}
             />
-          }
+          )}
         </div>
         <div className={styles.content}>
           <p className={styles.message}>

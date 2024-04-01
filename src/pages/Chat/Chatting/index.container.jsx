@@ -33,7 +33,8 @@ const ChattingContainer = ({}) => {
     assistantId,
     refetchSingleChat,
     handleWsStopStreaming,
-    snowflakeConnectionStatus
+    snowflakeConnectionStatus,
+    gptIcon
   } = useOutletContext();
 
   return (
@@ -52,6 +53,7 @@ const ChattingContainer = ({}) => {
       columnName={columnName}
       setRelatedFiles={setRelatedFiles}
       isAudit={isAudit}
+      gptIcon={gptIcon}
       assistantId={assistantId}
       snowflakeCredentials={snowflakeCredentials}
       selectedDatabase={selectedDatabase}

@@ -124,6 +124,7 @@ const Chatting = ({
   isAgentConnected,
   sendMessageToAgent,
   isSnowflakeChat,
+  gptIcon,
   chatMessages,
   refetchSingleChat,
   handleWsStopStreaming,
@@ -233,6 +234,7 @@ const Chatting = ({
                 ref={listRef}
                 data={data || chatMessages}
                 mode={mode}
+                gptIcon={gptIcon}
                 files={files}
                 isAudit={isAudit}
                 chatId={chatId}

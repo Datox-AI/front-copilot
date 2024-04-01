@@ -22,6 +22,7 @@ const Messages = forwardRef(
       isLoading,
       questions,
       activeChat,
+      gptIcon,
       isStreaming,
       toggleMessage,
       setRelatedFiles,
@@ -100,6 +101,7 @@ const Messages = forwardRef(
                       key={message?.id}
                       mode={mode}
                       isAudit={isAudit}
+                      gptIcon={gptIcon}
                       isAssistantConfig={isAssistantConfig}
                       chatId={chatId}
                       refetch={refetchMessages}
