@@ -141,11 +141,11 @@ const MessageItem = ({
               </Box>
             )}
 
-            {showDots && <Dots />}
+            {!isAssistantConfig && showDots && <Dots />}
 
             <CustomMarkdown message={message} />
 
-            {sqlQuery && (
+            {!isAssistantConfig && sqlQuery && (
               <button
                 className={styles.sqlToggler}
                 onClick={() => setShowSqlQueries((prev) => !prev)}
@@ -154,7 +154,7 @@ const MessageItem = ({
               </button>
             )}
 
-            {referenceFiles?.length > 0 && (
+            {!isAssistantConfig && referenceFiles?.length > 0 && (
               <button
                 className={styles.sqlToggler}
                 onClick={() => setReferenceFiles(referenceFiles)}
@@ -172,7 +172,7 @@ const MessageItem = ({
               />
             )}
 
-            {storeFileId && (
+            {!isAssistantConfig && storeFileId && (
               <Link
                 to={`/integration/2/${chatId}/store/${storeFileId}`}
                 style={{

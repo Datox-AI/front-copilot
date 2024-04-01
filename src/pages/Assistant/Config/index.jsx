@@ -15,7 +15,7 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import CloudUploadOutlinedIcon from "@mui/icons-material/CloudUploadOutlined";
 import { useEffect, useState } from "react";
 import PreviewChat from "./PreviewChat";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import useCreateAssistantAPI from "../../../hooks/api/useCreateAssistantAPI";
 import toast from "react-hot-toast";
 import useGetAssistantAPI from "../../../hooks/api/useGetAssistantAPI";
@@ -23,6 +23,7 @@ import useUpdateAssistantFileAPI from "../../../hooks/api/useUpdateAssistantFile
 import useUpdateAssistantAPI from "../../../hooks/api/useUpdateAssistantAPI";
 import { getImageUrl } from "../../../utils";
 import classNames from "classnames";
+import useGetAssistantChatMessagesAPI from "../../../hooks/api/useGetAssistantChatMessagesAPI";
 
 async function getImageFileFromUrl(url) {
   let response = await fetch(url);
@@ -36,10 +37,20 @@ async function getImageFileFromUrl(url) {
 export default function AssistantConfig() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const createAssistant = useCreateAssistantAPI();
   const updateAssistantFiles = useUpdateAssistantFileAPI({ assistantId: id });
   const updateAssistant = useUpdateAssistantAPI({ assistantId: id });
+
+  const {
+    data: chat,
+    isLoading: isLoadingMessages,
+    refetch: refetchMessages
+  } = useGetAssistantChatMessagesAPI({
+    assistantId: id,
+    chatId: searchParams.get("chatId")
+  });
 
   const isCreate = id === "create";
 
@@ -100,8 +111,10 @@ export default function AssistantConfig() {
 
     const file = await getImageFileFromUrl(geminiIcon, "image/svg");
 
-    if (isUseGPTIcon) formData.append("icon_file", file);
-    else formData.append("icon_file", icon);
+    if (typeof icon !== "string") {
+      if (isUseGPTIcon) formData.append("icon_file", file);
+      else formData.append("icon_file", icon);
+    }
 
     formData.append("assistant_name", name);
     formData.append("assistant_description", description);
@@ -116,14 +129,19 @@ export default function AssistantConfig() {
     updateAssistant.mutate(formData, {
       onSuccess: () => {
         refetch();
-        toast.success("Assistant updated successfuly!");
+        // toast.success("Assistant updated successfuly!");
       },
       onError: () => {
         toast.error("Error on updating an assistant");
       }
     });
 
-    updateAssistantFiles.mutate(fileFormData);
+    if (uploadFiles.length > 0 || deletedFiles.length > 0)
+      updateAssistantFiles.mutate(fileFormData, {
+        onError: () => {
+          toast.error("Error on updating assistant files");
+        }
+      });
   };
 
   const onCreate = async () => {
@@ -155,8 +173,8 @@ export default function AssistantConfig() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <button className={styles.back} onClick={() => navigate(-1)}>
-          <ChevronLeftRoundedIcon /> New GPT
+        <button className={styles.back} onClick={() => navigate("/")}>
+          <ChevronLeftRoundedIcon /> Back
         </button>
 
         <div className={styles.actions}>
@@ -196,8 +214,12 @@ export default function AssistantConfig() {
               </label>
 
               <Typography fontSize="20px" lineHeight="24px">
-                New <br />
-                Assistant
+                {name || (
+                  <>
+                    New <br />
+                    Assistant
+                  </>
+                )}
               </Typography>
             </Box>
 
@@ -285,6 +307,7 @@ export default function AssistantConfig() {
                   type="file"
                   id="uploadFiles"
                   onChange={onUploadFiles}
+                  multiple
                   onClick={(event) => {
                     event.target.value = null;
                   }}
@@ -306,7 +329,20 @@ export default function AssistantConfig() {
         </div>
 
         <Box width="35%">
-          <PreviewChat name={name} description={description} />
+          <PreviewChat
+            name={name}
+            assistant={data}
+            setChatId={(val) =>
+              setSearchParams((prev) => ({ ...prev, chatId: val }))
+            }
+            gptIcon={data?.icon_file_path}
+            chatId={searchParams.get("chatId")}
+            description={description}
+            assistantId={id}
+            messages={chat?.messages}
+            isLoading={isLoadingMessages}
+            refetch={refetchMessages}
+          />
         </Box>
       </div>
     </div>
