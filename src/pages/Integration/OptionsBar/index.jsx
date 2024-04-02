@@ -17,6 +17,8 @@ const FilesList = ({ relatedFiles, search, isOpenContainer }) => {
     );
   }, [search, relatedFiles]);
 
+  console.log(relatedFiles);
+
   if (!relatedFiles || relatedFiles?.length === 0)
     return (
       <Typography mt={2} fontWeight={500} whiteSpace="nowrap">
@@ -40,11 +42,13 @@ const FilesList = ({ relatedFiles, search, isOpenContainer }) => {
       {mutatedFiles?.map((file, f) => (
         <FileItem
           hideArrow={!isOpenContainer}
-          name={file.ItemName || file.itemName || file.item_name}
+          name={file.ItemName || file.itemName || file.item_name || file.name}
           type={
             file.ContentType ||
             file.contentType ||
-            file.item_name.split(".")[file.item_name.split(".")?.length - 1]
+            (file.item_name || file.name).split(".")[
+              (file.item_name || file.name).split(".")?.length - 1
+            ]
           }
           url={file.ItemUrl || file.itemUrl || file.item_url}
         />
@@ -55,7 +59,8 @@ const FilesList = ({ relatedFiles, search, isOpenContainer }) => {
 
 const RenderTypes = {
   files: FilesList,
-  sql: NestedListContainer
+  sql: NestedListContainer,
+  assistant: FilesList
 };
 
 const OptionsBar = ({
