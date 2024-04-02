@@ -203,14 +203,18 @@ export default function AssistantConfig() {
           >
             <Box display="flex" gap="20px" alignItems="center">
               <label htmlFor="uploadAvatar" className={styles.label}>
-                {icon ? (
+                {!isUseGPTIcon && icon ? (
                   <img
                     src={typeof icon === "string" ? icon : getImageUrl(icon)}
                     width="100%"
                     height="100%"
                   />
                 ) : (
-                  <CloudUploadOutlinedIcon />
+                  !isUseGPTIcon && <CloudUploadOutlinedIcon />
+                )}
+
+                {isUseGPTIcon && (
+                  <img src={geminiIcon} width="100%" height="100%" />
                 )}
 
                 <input

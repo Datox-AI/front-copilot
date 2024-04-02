@@ -307,13 +307,12 @@ const usePrompt = ({
       request
         .post(
           `api/${apiPath}/${chatId}/messages`,
-          isRagType || assistantId ? ragData : formData,
+          isRagType ? ragData : formData,
           {
             headers: {
-              "Content-Type":
-                isRagType || assistantId
-                  ? "application/json"
-                  : "multipart/form-data"
+              "Content-Type": isRagType
+                ? "application/json"
+                : "multipart/form-data"
             }
           }
         )

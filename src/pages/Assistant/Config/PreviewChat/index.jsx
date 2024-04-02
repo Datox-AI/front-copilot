@@ -83,7 +83,7 @@ export default function PreviewChat({
       </div>
 
       <div className={styles.messages}>
-        {messages?.length > 0 ? (
+        {!!chatId && chatId !== "null" ? (
           <Messages
             isLoading={isLoading}
             chatId={chatId}
