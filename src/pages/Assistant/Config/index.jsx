@@ -220,7 +220,7 @@ export default function AssistantConfig() {
                 <input
                   type="file"
                   id="uploadAvatar"
-                  accept="image/*"
+                  accept="image/png,image/jpeg,image/jpg"
                   onChange={(e) => setIcon(e.target.files[0])}
                 />
               </label>
