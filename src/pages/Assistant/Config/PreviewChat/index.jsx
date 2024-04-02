@@ -112,9 +112,13 @@ export default function PreviewChat({
           </Box>
         )}
       </div>
-
+      {assistantId === "create" && (
+        <Button variant="outlined" fullWidth style={{ height: 40 }}>
+          Create Assistant First
+        </Button>
+      )}
       <div className={styles.input}>
-        {(assistantId && !chatId) || chatId === "null" ? (
+        {assistantId !== "create" && (!chatId || chatId === "null") ? (
           <Button
             variant="outlined"
             fullWidth
@@ -129,7 +133,7 @@ export default function PreviewChat({
             )}
           </Button>
         ) : (
-          assistantId && (
+          assistantId !== "create" && (
             <Input
               text={text}
               onSend={onSend}

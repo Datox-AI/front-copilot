@@ -111,7 +111,7 @@ export default function AssistantConfig() {
 
     const file = await getImageFileFromUrl(geminiIcon, "image/svg");
 
-    if (typeof icon !== "string") {
+    if (typeof icon !== "string" && (isUseGPTIcon || icon)) {
       if (isUseGPTIcon) formData.append("icon_file", file);
       else formData.append("icon_file", icon);
     }
@@ -136,7 +136,7 @@ export default function AssistantConfig() {
       }
     });
 
-    if (uploadFiles.length > 0 || deletedFiles.length > 0)
+    if (newFiles.length > 0 || deletedFiles.length > 0)
       updateAssistantFiles.mutate(fileFormData, {
         onError: () => {
           toast.error("Error on updating assistant files");
@@ -146,11 +146,14 @@ export default function AssistantConfig() {
 
   const onCreate = async () => {
     const formData = new FormData();
+    if (uploadFiles.length === 0) return toast.error("Upload knowledge files");
 
     const file = await getImageFileFromUrl(geminiIcon, "image/svg");
 
-    if (isUseGPTIcon) formData.append("icon_file", file);
-    else formData.append("icon_file", icon);
+    if (isUseGPTIcon || icon) {
+      if (isUseGPTIcon) formData.append("icon_file", file);
+      else formData.append("icon_file", icon);
+    }
 
     formData.append("assistant_name", name);
     formData.append("assistant_description", description);
@@ -178,8 +181,13 @@ export default function AssistantConfig() {
         </button>
 
         <div className={styles.actions}>
-          <Button variant="outlined">Cancel</Button>
-          <Button variant="contained">Create</Button>
+          <Button variant="outlined" onClick={() => navigate("/")}>
+            Cancel
+          </Button>
+
+          <Button variant="contained" onClick={handleSave} disabled={isSaving}>
+            {isSaving ? <CircularProgress size={20} /> : "Create"}
+          </Button>
         </div>
       </div>
       <div className={styles.body}>
