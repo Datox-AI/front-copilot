@@ -107,6 +107,7 @@ const AssistantChat = () => {
             isOpenContainer={isExpanded2}
             hideNewChatBtn={true}
             relatedFiles={relatedFiles}
+            assistantId={assistantId}
             activeIntegration={activeIntegration}
             toggleContainer={() => {
               setIsExpanded2((prev) => {

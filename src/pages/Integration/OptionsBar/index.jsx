@@ -8,7 +8,7 @@ import { useMemo, useState } from "react";
 import ToggleButton from "../../../components/ToggleButton";
 import classNames from "classnames";
 
-const FilesList = ({ relatedFiles, search, isOpenContainer }) => {
+const FilesList = ({ relatedFiles, search, isOpenContainer, assistantId }) => {
   const mutatedFiles = useMemo(() => {
     return relatedFiles?.filter((file) =>
       search
@@ -42,15 +42,15 @@ const FilesList = ({ relatedFiles, search, isOpenContainer }) => {
       {mutatedFiles?.map((file, f) => (
         <FileItem
           hideArrow={!isOpenContainer}
-          name={file.ItemName || file.itemName || file.item_name || file.name}
+          name={file.ItemName || file.itemName || file.item_name}
+          url={file.ItemUrl || file.itemUrl || file.item_url}
+          blobId={file.blob_name}
+          assistantId={assistantId}
           type={
             file.ContentType ||
             file.contentType ||
-            (file.item_name || file.name).split(".")[
-              (file.item_name || file.name).split(".")?.length - 1
-            ]
+            file.item_name?.split(".")[file.item_name.split(".")?.length - 1]
           }
-          url={file.ItemUrl || file.itemUrl || file.item_url}
         />
       ))}
     </Box>
@@ -69,6 +69,7 @@ const OptionsBar = ({
   refetch,
   activeChat,
   relatedFiles,
+  assistantId,
   isAudit,
   snowflakeCredentials,
   selectSchema,
@@ -107,6 +108,7 @@ const OptionsBar = ({
             activeChat={activeChat}
             relatedFiles={relatedFiles}
             search={search}
+            assistantId={assistantId}
             isAudit={isAudit}
             snowflakeCredentials={snowflakeCredentials}
             selectSchema={selectSchema}

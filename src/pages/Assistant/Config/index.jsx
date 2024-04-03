@@ -7,7 +7,7 @@ import {
   Typography
 } from "@mui/material";
 import { ReactComponent as FolderIcon } from "../../../assets/icons/folder.svg";
-import geminiIcon from "../../../assets/icons/gemini.svg";
+import geminiIcon from "../../../assets/icons/gemini.png";
 import { fileTypes } from "../../../consts/fileTypes";
 import styles from "./style.module.scss";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
@@ -29,9 +29,9 @@ async function getImageFileFromUrl(url) {
   let response = await fetch(url);
   let data = await response.blob();
   let metadata = {
-    type: "image/svg"
+    type: "image/png"
   };
-  return new File([data], "gemini.svg", metadata);
+  return new File([data], "gemini.png", metadata);
 }
 
 export default function AssistantConfig() {
@@ -109,7 +109,7 @@ export default function AssistantConfig() {
     const formData = new FormData();
     const newFiles = [...uploadFiles].filter((file) => !file.id);
 
-    const file = await getImageFileFromUrl(geminiIcon, "image/svg");
+    const file = await getImageFileFromUrl(geminiIcon);
 
     if (typeof icon !== "string" && (isUseGPTIcon || icon)) {
       if (isUseGPTIcon) formData.append("icon_file", file);
@@ -148,7 +148,7 @@ export default function AssistantConfig() {
     const formData = new FormData();
     if (uploadFiles.length === 0) return toast.error("Upload knowledge files");
 
-    const file = await getImageFileFromUrl(geminiIcon, "image/svg");
+    const file = await getImageFileFromUrl(geminiIcon);
 
     if (isUseGPTIcon || icon) {
       if (isUseGPTIcon) formData.append("icon_file", file);
@@ -220,7 +220,7 @@ export default function AssistantConfig() {
                 <input
                   type="file"
                   id="uploadAvatar"
-                  accept="image/png,image/jpeg,image/jpg"
+                  accept="image/png"
                   onChange={(e) => setIcon(e.target.files[0])}
                 />
               </label>

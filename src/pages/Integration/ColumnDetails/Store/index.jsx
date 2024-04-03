@@ -10,7 +10,7 @@ import RCTable from "../../../../components/Table";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import { CircularProgress } from "@mui/material";
 
-const downloadFile = (filename, data) => {
+export const downloadFile = (filename, data) => {
   const url = window.URL.createObjectURL(new Blob([data]));
   const link = document.createElement("a");
   link.href = url;

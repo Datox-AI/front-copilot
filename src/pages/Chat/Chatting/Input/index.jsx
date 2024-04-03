@@ -160,6 +160,7 @@ const Input = ({
 
           {files?.length > 0 && (
             <UploadFiles
+              isMinimized={isAssistantConfig}
               setUploadFiles={setUploadFiles}
               files={files}
               chatId={chatId}

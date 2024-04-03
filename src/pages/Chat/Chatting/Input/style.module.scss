@@ -86,6 +86,10 @@
 
       .fileItem {
         width: calc(25% - 10px);
+
+        &.isMinimized {
+          width: calc(50% - 10px);
+        }
       }
     }
 

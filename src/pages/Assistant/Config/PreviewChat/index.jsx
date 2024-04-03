@@ -137,7 +137,12 @@ export default function PreviewChat({
             <Input
               text={text}
               onSend={onSend}
+              files={files}
               onTexting={(e) => setText(e.target.value)}
+              onFileUpload={(e) =>
+                setFiles((prev) => [...prev, ...e.target.files])
+              }
+              setUploadFiles={setFiles}
               showUploadFile={true}
               isAssistantConfig={true}
               placeholder="Message here..."
