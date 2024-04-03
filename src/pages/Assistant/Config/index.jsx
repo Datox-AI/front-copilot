@@ -186,7 +186,13 @@ export default function AssistantConfig() {
           </Button>
 
           <Button variant="contained" onClick={handleSave} disabled={isSaving}>
-            {isSaving ? <CircularProgress size={20} /> : "Create"}
+            {isSaving ? (
+              <CircularProgress size={20} />
+            ) : !!data ? (
+              "Update"
+            ) : (
+              "Create"
+            )}
           </Button>
         </div>
       </div>
