@@ -4,13 +4,15 @@ import classNames from "classnames";
 import useChatsAPI from "../../../../../hooks/api/useChatsAPI";
 import PopoverMenu from "../../../../../components/PopoverMenu";
 
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as DotsIcon } from "../../../../../assets/icons/vertical-dots.svg";
 import { ReactComponent as PencilIcon } from "../../../../../assets/icons/edit.svg";
 import { ReactComponent as PinIcon } from "../../../../../assets/icons/pin.svg";
 import { ReactComponent as PinnedIcon } from "../../../../../assets/icons/unpin.svg";
 import { ReactComponent as TrashIcon } from "../../../../../assets/icons/trash.svg";
+import { useHotkeys } from "react-hotkeys-hook";
+import { Box } from "@mui/material";
 
 const ChatItem = ({
   name,
@@ -28,6 +30,7 @@ const ChatItem = ({
   ...props
 }) => {
   const navigate = useNavigate();
+  const inputRef = useRef();
 
   const { updateChat } = useChatsAPI({});
 
@@ -57,7 +60,8 @@ const ChatItem = ({
     );
   };
 
-  const onRename = () => {
+  const onRename = (e) => {
+    e?.preventDefault();
     setIsRename(false);
 
     if (newName === name) return;
@@ -78,6 +82,15 @@ const ChatItem = ({
       }
     );
   };
+  useHotkeys(
+    "enter",
+    () => {
+      if (isRename) {
+        onRename();
+      }
+    },
+    [isRename, newName, name, inputRef?.current]
+  );
 
   return (
     <>
@@ -92,6 +105,7 @@ const ChatItem = ({
       >
         {isRename ? (
           <RenameChat
+            ref={inputRef}
             newName={newName}
             setNewName={setNewName}
             onConfirm={onRename}
@@ -139,21 +153,38 @@ const ChatItem = ({
   );
 };
 
-const RenameChat = ({ newName, setNewName, onConfirm }) => {
+const RenameChat = forwardRef(({ newName, setNewName, onConfirm }, ref) => {
   return (
-    <>
+    <Box
+      component="form"
+      onSubmit={onConfirm}
+      display="flex"
+      width="100%"
+      justifyContent="space-between"
+      alignItems="center"
+    >
       <div className={styles.meta}>
         <input
+          ref={ref}
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
           style={{ background: "#fff", border: "none", outline: "none" }}
         />
       </div>
-      <span>
-        <CheckRoundedIcon onClick={onConfirm} />
-      </span>
-    </>
+      <button
+        style={{
+          background: "none",
+          border: "none",
+          outline: "none",
+          display: "flex",
+          alignItems: "flex-end"
+        }}
+        onClick={onConfirm}
+      >
+        <CheckRoundedIcon style={{ transform: "scale(0.8)" }} />
+      </button>
+    </Box>
   );
-};
+});
 
 export default ChatItem;

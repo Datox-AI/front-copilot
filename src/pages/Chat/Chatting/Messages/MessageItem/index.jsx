@@ -6,7 +6,7 @@ import MoreCommands from "./MoreCommands";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 
-import { Avatar, Box, Button, Checkbox } from "@mui/material";
+import { Avatar, Box, Button, Checkbox, Typography } from "@mui/material";
 import { stringAvatar } from "../../../../../utils";
 import { chatModes } from "../../../../../hooks/useMessages";
 import File from "../../../../../components/File";
@@ -106,12 +106,16 @@ const MessageItem = ({
               sx={{
                 ...avatarAttributes.sx,
                 height: isAssistantConfig ? 26 : 42,
-                width: isAssistantConfig ? 26 : 42
+                width: isAssistantConfig ? 26 : 42,
+                fontSize: isAssistantConfig && "13px"
               }}
             />
           )}
         </div>
-        <div className={styles.content}>
+        <Box
+          className={styles.content}
+          gap={isAssistantConfig && "5px!important"}
+        >
           <p className={styles.message}>
             {!isAudit && (
               <MoreCommands
@@ -190,8 +194,13 @@ const MessageItem = ({
               </Link>
             )}
           </p>
-          <span className={styles.time}>{time}</span>
-        </div>
+          <Typography
+            className={styles.time}
+            fontSize={isAssistantConfig && "12px!important"}
+          >
+            {time}
+          </Typography>
+        </Box>
       </Box>
       {mode === chatModes.SELECT && !isBot && (
         <Checkbox

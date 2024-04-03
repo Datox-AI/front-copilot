@@ -17,8 +17,6 @@ const FilesList = ({ relatedFiles, search, isOpenContainer, assistantId }) => {
     );
   }, [search, relatedFiles]);
 
-  console.log(relatedFiles);
-
   if (!relatedFiles || relatedFiles?.length === 0)
     return (
       <Typography mt={2} fontWeight={500} whiteSpace="nowrap">
