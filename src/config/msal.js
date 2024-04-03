@@ -1,4 +1,4 @@
-export const tenantId = "95c228f4-944c-49ba-abcd-a00985e5497c";
+export const tenantId = "common";
 export const redirectUri = process.env.REACT_APP_MSAL_REDIRECT_URI;
 export const clientId = process.env.REACT_APP_MSAL_CLIENT_ID;
 export const authority = `https://login.microsoftonline.com/${tenantId}`;
