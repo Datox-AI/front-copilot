@@ -34,7 +34,8 @@
     background-color: #fff;
     border-radius: 10px;
     height: calc(100vh - 94px);
-    overflow: hidden;
+    overflow: auto;
+    position: relative;
 
     .form {
       display: flex;

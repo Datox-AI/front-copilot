@@ -340,7 +340,7 @@ export default function AssistantConfig() {
           </Box>
         </div>
 
-        <Box width="35%">
+        <Box width="35%" position="sticky" top={0}>
           <PreviewChat
             name={name}
             assistant={data}
