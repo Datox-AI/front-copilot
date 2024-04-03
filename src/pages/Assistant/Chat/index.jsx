@@ -14,7 +14,6 @@ import ExpandableContainer from "../../../components/ExpandableContainer";
 import useGetAssistantAPI from "../../../hooks/api/useGetAssistantAPI";
 import useGetAssistantChatsAPI from "../../../hooks/api/useGetAssistantChatsAPI";
 import useGetAssistantChatMessagesAPI from "../../../hooks/api/useGetAssistantChatMessagesAPI";
-import OptionsBar from "../../Integration/OptionsBar";
 
 const AssistantChat = () => {
   const { assistantId, chatId } = useParams();
@@ -35,7 +34,6 @@ const AssistantChat = () => {
   const [activeChat, setActiveChat] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState([]);
   const [isExpanded, setIsExpanded] = useState(true);
-  const [isExpanded2, setIsExpanded2] = useState(true);
 
   const handleSelectChat = (chat) => {
     setActiveChat(chat);
@@ -57,8 +55,9 @@ const AssistantChat = () => {
         initWidth={284}
         maxWidth={600}
         isOpen={isOpen}
-        bgcolor="#fff"
+        bgcolor="transparent"
         zIndex={100}
+        hideToggler={!isExpanded}
         style={{
           maxWidth: !isExpanded && "50px",
           minWidth: !isExpanded && "50px",
@@ -86,44 +85,9 @@ const AssistantChat = () => {
         />
       </ExpandableContainer>
 
-      {!!chatId && (
-        <ExpandableContainer
-          width={width2}
-          setWidth={setWidth2}
-          extraOffset={width}
-          initWidth={284}
-          bgcolor="transparent"
-          maxWidth={600}
-          zIndex={99}
-          isOpen={isOpen}
-          style={{
-            maxWidth: !isExpanded2 && "50px",
-            minWidth: !isExpanded2 && "50px",
-            overflow: !isExpanded2 && "hidden"
-          }}
-        >
-          <OptionsBar
-            title={null}
-            isOpenContainer={isExpanded2}
-            hideNewChatBtn={true}
-            relatedFiles={relatedFiles}
-            assistantId={assistantId}
-            activeIntegration={activeIntegration}
-            toggleContainer={() => {
-              setIsExpanded2((prev) => {
-                if (prev) setWidth2(50);
-                else setWidth2(284);
-
-                return !prev;
-              });
-            }}
-          />
-        </ExpandableContainer>
-      )}
-
       <div
         style={{
-          width: `calc(100% - ${width + (!!chatId ? width2 : 0)}px)`
+          width: `calc(100% - ${width}px)`
         }}
       >
         <Outlet

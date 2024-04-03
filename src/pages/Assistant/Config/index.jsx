@@ -24,6 +24,8 @@ import useUpdateAssistantAPI from "../../../hooks/api/useUpdateAssistantAPI";
 import { getImageUrl } from "../../../utils";
 import classNames from "classnames";
 import useGetAssistantChatMessagesAPI from "../../../hooks/api/useGetAssistantChatMessagesAPI";
+import useChatsAPI from "../../../hooks/api/useChatsAPI";
+import useDeleteAssistantAPI from "../../../hooks/api/useDeleteAssistantAPI";
 
 async function getImageFileFromUrl(url) {
   let response = await fetch(url);
@@ -36,12 +38,18 @@ async function getImageFileFromUrl(url) {
 
 export default function AssistantConfig() {
   const { id } = useParams();
+
   const navigate = useNavigate();
+
   const [searchParams, setSearchParams] = useSearchParams();
 
   const createAssistant = useCreateAssistantAPI();
   const updateAssistantFiles = useUpdateAssistantFileAPI({ assistantId: id });
   const updateAssistant = useUpdateAssistantAPI({ assistantId: id });
+  const deleteAssistant = useDeleteAssistantAPI({ assistantId: id });
+
+  const isCreate = id === "create";
+  const chatId = searchParams.get("chatId");
 
   const {
     data: chat,
@@ -49,11 +57,10 @@ export default function AssistantConfig() {
     refetch: refetchMessages
   } = useGetAssistantChatMessagesAPI({
     assistantId: id,
-    chatId: searchParams.get("chatId")
+    chatId: chatId
   });
 
-  const isCreate = id === "create";
-
+  const { deleteChat } = useChatsAPI({});
   const { data, refetch } = useGetAssistantAPI({
     assistantId: !isCreate && id,
     queryParams: {
@@ -128,8 +135,9 @@ export default function AssistantConfig() {
 
     updateAssistant.mutate(formData, {
       onSuccess: () => {
+        navigate(`/assistant/chat/${id}`);
         refetch();
-        // toast.success("Assistant updated successfuly!");
+        toast.success("Saved");
       },
       onError: () => {
         toast.error("Error on updating an assistant");
@@ -138,15 +146,29 @@ export default function AssistantConfig() {
 
     if (newFiles.length > 0 || deletedFiles.length > 0)
       updateAssistantFiles.mutate(fileFormData, {
+        onSuccess: () => {
+          toast.success("Knowledge files are updated successfully");
+        },
         onError: () => {
           toast.error("Error on updating assistant files");
         }
       });
   };
 
+  const onCancel = () => {
+    if (id && id !== "create")
+      deleteAssistant.mutate(null, {
+        onSuccess: () => {
+          navigate("/");
+        }
+      });
+    else navigate("/");
+  };
+
   const onCreate = async () => {
     const formData = new FormData();
-    if (uploadFiles.length === 0) return toast.error("Upload knowledge files");
+
+    if (!instructions) return toast.error("Enter instructions for assistant");
 
     const file = await getImageFileFromUrl(geminiIcon);
 
@@ -163,8 +185,8 @@ export default function AssistantConfig() {
 
     createAssistant.mutate(formData, {
       onSuccess: (res) => {
-        navigate(`/assistant/config/${res.assistant_id}`);
-        toast.success("New Assistant created successfuly!");
+        navigate(`/assistant/chat/${res.assistant_id}`);
+        toast.success("Saved");
       },
       onError: (err) => {
         console.log(err);
@@ -176,13 +198,24 @@ export default function AssistantConfig() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <button className={styles.back} onClick={() => navigate("/")}>
+        <button
+          className={styles.back}
+          onClick={() => navigate(id ? `/assistant/chat/${id}` : "/")}
+        >
           <ChevronLeftRoundedIcon /> Back
         </button>
 
         <div className={styles.actions}>
-          <Button variant="outlined" onClick={() => navigate("/")}>
-            Cancel
+          <Button
+            variant="outlined"
+            onClick={onCancel}
+            disabled={deleteAssistant.isLoading}
+          >
+            {deleteAssistant.isLoading ? (
+              <CircularProgress size={15} />
+            ) : (
+              "Cancel"
+            )}
           </Button>
 
           <Button variant="contained" onClick={handleSave} disabled={isSaving}>
@@ -354,7 +387,7 @@ export default function AssistantConfig() {
               setSearchParams((prev) => ({ ...prev, chatId: val }))
             }
             gptIcon={data?.icon_file_path}
-            chatId={searchParams.get("chatId")}
+            chatId={chatId}
             description={description}
             assistantId={id}
             messages={chat?.messages}

@@ -9,7 +9,13 @@ import ExpandMenu from "../../../components/ExandMenu";
 import { ReactComponent as DotsIcon } from "../../../assets/icons/vertical-dots.svg";
 import { ReactComponent as PencilIcon } from "../../../assets/icons/edit.svg";
 import { ReactComponent as TrashIcon } from "../../../assets/icons/trash.svg";
-import { Box, Button, CircularProgress, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Divider,
+  Typography
+} from "@mui/material";
 import { Add, Search } from "@mui/icons-material";
 import { useCallback, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -59,9 +65,10 @@ const MessagesList = ({
 
   if (chats?.length === 0)
     return (
-      <Typography mt={2} fontWeight={500}>
-        No Messages
-      </Typography>
+      <></>
+      // <Typography mt={2} fontWeight={500}>
+      //   No Messages
+      // </Typography>
     );
 
   return (
@@ -305,7 +312,13 @@ const FileBar = ({
       <section className={styles.searchSection}>
         {assistant && (
           <>
-            <button className={styles.assistant}>
+            <button
+              className={styles.assistant}
+              style={{
+                transform: !isOpenContainer && "scale(0.8)",
+                padding: "5px"
+              }}
+            >
               <Box display="flex" gap="8px" alignItems="center">
                 {assistant?.icon_file_path ? (
                   <img src={assistant?.icon_file_path} />
@@ -313,47 +326,53 @@ const FileBar = ({
                   <GeminiIcon />
                 )}
 
-                <span>{assistant.name}</span>
+                {isOpenContainer && <span>{assistant.name}</span>}
               </Box>
 
-              <PopoverMenu
-                position="bottom"
-                mainIcon={<DotsIcon style={{ width: 20, height: 15 }} />}
-                data={[
-                  {
-                    title: "Edit",
-                    icon: PencilIcon,
-                    onClick: () =>
-                      navigate(`/assistant/config/${assistant.assistant_id}`)
-                  },
+              {isOpenContainer && (
+                <PopoverMenu
+                  position="bottom"
+                  mainIcon={<DotsIcon style={{ width: 20, height: 15 }} />}
+                  data={[
+                    {
+                      title: "Edit",
+                      icon: PencilIcon,
+                      onClick: () =>
+                        navigate(`/assistant-config/${assistant.assistant_id}`)
+                    },
 
-                  {
-                    title: "Delete",
-                    icon: TrashIcon,
-                    onClick: () => handleDeleteAssistant()
-                  }
-                ]}
-              />
+                    {
+                      title: "Delete",
+                      icon: TrashIcon,
+                      onClick: () => handleDeleteAssistant()
+                    }
+                  ]}
+                />
+              )}
             </button>
 
-            <Box
-              display="flex"
-              bgcolor="#E2E2E2"
-              height="1px"
-              width="100%"
-              marginBottom="14px"
-            ></Box>
+            {chats?.length > 0 && (
+              <Box
+                display="flex"
+                bgcolor="#E2E2E2"
+                height="1px"
+                width="100%"
+                marginBottom="14px"
+              ></Box>
+            )}
           </>
         )}
 
-        <label>
-          <Search />
-          <input
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </label>
+        {chats?.length > 0 && (
+          <label>
+            <Search />
+            <input
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </label>
+        )}
       </section>
       <section
         className={classNames(styles.contentSection, {

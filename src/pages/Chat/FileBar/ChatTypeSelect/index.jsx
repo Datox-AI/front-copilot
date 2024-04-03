@@ -65,7 +65,7 @@ const ChatTypeSelect = ({
           })),
           {
             id: 123,
-            link: "/assistant/config/create",
+            link: "/assistant-config/create",
             label: (
               <Button
                 variant="contained"
@@ -75,7 +75,7 @@ const ChatTypeSelect = ({
                 Create Assitant
               </Button>
             ),
-            onClick: () => navigate("/assistant/config/create")
+            onClick: () => navigate("/assistant-config/create")
           }
         ]
       }

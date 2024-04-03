@@ -11,7 +11,8 @@ export default function ExpandableContainer({
   extraOffset = 0,
   style,
   bgcolor,
-  zIndex
+  zIndex,
+  hideToggler
 }) {
   const [isDragging, setIsDragging] = useState(false);
 
@@ -70,10 +71,12 @@ export default function ExpandableContainer({
         {children}
       </Box>
 
-      <button
-        className={"splitter " + (isDragging && "isDragging")}
-        onMouseDown={handleMouseDown}
-      ></button>
+      {!hideToggler && (
+        <button
+          className={"splitter " + (isDragging && "isDragging")}
+          onMouseDown={handleMouseDown}
+        ></button>
+      )}
     </Box>
   );
 }

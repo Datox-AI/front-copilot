@@ -12,7 +12,7 @@ import useChatting from "../../../hooks/useChatting";
 
 import { useSelector } from "react-redux";
 import { createRef, useEffect, useMemo, useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ReactComponent as CommentIcon } from "../../../assets/icons/comment-question.svg";
 import useChatsAPI from "../../../hooks/api/useChatsAPI";
 import { Button, CircularProgress } from "@mui/material";
@@ -24,9 +24,12 @@ const EmptyMessages = ({
   selectedSchema,
   activeIntegration,
   refetch,
-  showButton
+  chatId,
+  showButton,
+  assistantId
 }) => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const { createChat } = useChatsAPI({});
   const { snowflakeToken } = useSelector((store) => store.auth);
 
@@ -56,24 +59,32 @@ const EmptyMessages = ({
         return toast.error("Please select schema to create chat");
     }
 
+    if (activeIntegration?.dataType === "Assistant")
+      payload.assistant_id = assistantId;
+
     createChat.mutate(payload, {
       onSuccess: (res) => {
         refetch();
 
-        navigate(res.id);
+        if (chatId) navigate(`${pathname}/../${res.id}`);
+        else navigate(`${pathname}/${res.id}`);
       }
     });
   };
 
   const title = useMemo(() => {
     if (activeIntegration?.dataType === "Analytics") return "Ask a Question";
+    if (activeIntegration?.dataType === "Assistant") return "Ask a Question";
     if (activeIntegration?.dataType === "FileSearch") return "Search Files";
 
     return "Ask Questions";
   }, [activeIntegration]);
 
   const subtitle = useMemo(() => {
-    if (activeIntegration?.dataType === "Analytics")
+    if (
+      activeIntegration?.dataType === "Analytics" ||
+      activeIntegration?.dataType === "Assistant"
+    )
       return "Effective questioning involves more than just forming inquiries; itrequires a thoughtful approach.";
     if (activeIntegration?.dataType === "FileSearch")
       return "Ask me where your files are at and extract document contents and summaries.";
@@ -264,6 +275,8 @@ const Chatting = ({
                   activeIntegration={activeIntegration}
                   snowflakeCredentials={snowflakeCredentials}
                   selectedDatabase={selectedDatabase}
+                  assistantId={assistantId}
+                  chatId={chatId}
                   selectedSchema={selectedSchema}
                   showButton={!chatId}
                 />

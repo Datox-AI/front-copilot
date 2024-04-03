@@ -295,19 +295,25 @@ export const adminRouter = createBrowserRouter([
       },
       {
         path: "assistant",
+        element: <AssistantChat />,
         children: [
           {
             path: "chat/:assistantId",
-            element: <AssistantChat />,
+            element: <ChattingContainer />,
             children: [
               {
                 path: ":chatId",
-                element: <ChattingContainer />
+                element: <div style={{ display: "none" }} />
               }
             ]
-          },
+          }
+        ]
+      },
+      {
+        path: "assistant-config",
+        children: [
           {
-            path: "config/:id",
+            path: ":id",
             element: <AssistantConfig />
           }
         ]
