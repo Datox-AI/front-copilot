@@ -5,6 +5,8 @@ import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 import SnowflakeDropdown from "../../pages/Chat/FileBar/SnowflakeDropdown";
 
+import WifiRoundedIcon from "@mui/icons-material/WifiRounded";
+
 import { ReactComponent as MoreVertI } from "../../assets/icons/vertical-dots.svg";
 import { useMemo } from "react";
 import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
@@ -176,7 +178,8 @@ const NestedListContainer = ({
   selectDatabase,
   selectedSchema,
   selectedDatabase,
-  snowflakeCredentials
+  snowflakeCredentials,
+  isOpenContainer
 }) => {
   const { isConnected, snowflakeData, onSelectItem, databases, schemas } =
     useSnowflakeAPI({
@@ -193,8 +196,16 @@ const NestedListContainer = ({
   return (
     <Box display="flex" width="100%" flexDirection="column" my={2}>
       {!isConnected ? (
-        <Button variant="contained" onClick={onAuth}>
-          Connect
+        <Button
+          variant="contained"
+          onClick={onAuth}
+          style={{
+            width: !isOpenContainer && "30px!important",
+            minWidth: !isOpenContainer && "30px",
+            padding: !isOpenContainer && "0"
+          }}
+        >
+          {isOpenContainer ? "Connect" : <WifiRoundedIcon />}
         </Button>
       ) : (
         <>
