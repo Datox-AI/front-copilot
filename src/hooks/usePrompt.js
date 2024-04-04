@@ -281,7 +281,7 @@ const usePrompt = ({
 
     if (isRagType) apiPath = "rag_agent";
     else if (!!assistantId) apiPath = `assistants/${assistantId}/chats`;
-    else apiPath = "rag_agent";
+    else apiPath = "chats";
 
     const _cachedMsgs = [...getCachedMessages()];
 
