@@ -2,7 +2,7 @@ import styles from "../style.module.scss";
 import LogoutIcon from "@mui/icons-material/Logout";
 import MenuItem from "./MenuItem";
 
-import logo from "../../../assets/icons/white_logo.png";
+import { ReactComponent as SigmaIcon } from "../../../assets/icons/sigma.svg";
 import { elements, userElements } from "./elements";
 import {
   Box,
@@ -51,14 +51,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
     <div className={styles.sidebar}>
       <header className={styles.header}>
-        {/* <Logo /> */}
-        <img
-          src={logo}
-          width={70}
-          style={{
-            marginLeft: "-10px"
-          }}
-        />
+        <Box width="150px" marginLeft="15px">
+          <SigmaIcon />
+        </Box>
       </header>
 
       <main className={styles.main}>
