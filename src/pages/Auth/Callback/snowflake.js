@@ -18,7 +18,7 @@ const SnowflakeCallback = () => {
 
     const fetchToken = async () => {
       snowflakeAPI
-        .get("callback" + location.search)
+        .get("api/snowflake_integration/callback" + location.search)
         .then((res) => {
           dispatch(setSnowflakeToken(res.access_token));
           dispatch(setSnowflakeRefreshToken(res.refresh_token));

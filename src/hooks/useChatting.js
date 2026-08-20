@@ -42,9 +42,9 @@ const useChatting = ({
   }, [isHighlightedMessage]);
 
   const pinnedMessages = useMemo(() => {
-    if (!data || !data.lists) return [];
+    if (!data) return [];
 
-    return data.lists.filter((message) => message.pinned);
+    return data.filter((message) => message.pinned);
   }, [data]);
 
   const clearAllSelectedMessages = () => {
@@ -86,11 +86,11 @@ const useChatting = ({
   }, [selectedMessages]);
 
   useEffect(() => {
-    if (isChat || !data || !data.lists) return;
+    if (isChat || !data || !data) return;
 
     const _files = [];
 
-    data.lists
+    data
       ?.filter((message) => message.searchFiles?.length > 0)
       ?.forEach((message) =>
         message.searchFiles?.map((file) => _files.push(file))
@@ -118,7 +118,7 @@ const useChatting = ({
     if (!selectedMessages || selectedMessages.length === 0) return;
 
     let copyMarkdown = "";
-    data?.lists?.forEach((message) => {
+    data?.forEach((message) => {
       if (selectedMessages.includes(message.id)) {
         copyMarkdown += `– ${
           message.role === "Assistant"

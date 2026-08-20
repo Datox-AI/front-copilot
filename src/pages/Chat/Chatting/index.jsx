@@ -49,7 +49,10 @@ const Chatting = ({
   refetch,
   setRelatedFiles,
   isAudit,
-  columnName
+  columnName,
+  snowflakeCredentials,
+  selectedDatabase,
+  selectedSchema
 }) => {
   const listRef = createRef();
 
@@ -121,6 +124,9 @@ const Chatting = ({
             handleSelectIntegration={handleSelectIntegration}
             onCloseIntegration={onCloseIntegration}
             refetch={refetch}
+            snowflakeCredentials={snowflakeCredentials}
+            selectedDatabase={selectedDatabase}
+            selectedSchema={selectedSchema}
           />
         )}
 
@@ -145,7 +151,7 @@ const Chatting = ({
         )}
         <div className={styles.chatting}>
           <div className={styles.messages}>
-            {data?.lists?.length > 0 || isLoading ? (
+            {data?.length > 0 || isLoading ? (
               <Messages
                 ref={listRef}
                 data={data}

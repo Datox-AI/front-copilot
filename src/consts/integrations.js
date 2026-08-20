@@ -11,15 +11,16 @@ export const _integrations = [
     to: "/chat",
     type: "messages",
     iconType: "chat",
-    searchBy: "name"
+    searchBy: "name",
+    dataType: "Analytics"
   },
   {
     id: 2,
     name: "Snowflake",
-    // to: "/integration/2",
     type: "sql",
     iconType: "snowflake",
-    configUrl: "/configs/snowflake"
+    configUrl: "/configs/snowflake",
+    dataType: "DataAnalytics"
   },
   {
     id: 3,
@@ -27,22 +28,9 @@ export const _integrations = [
     to: "/integration/3",
     type: "files",
     iconType: "sharepoint",
-    searchBy: "itemName"
+    searchBy: "itemName",
+    dataType: "FileSearch"
   }
-  //   {
-  //     id: 4,
-  //     name: "Dropbox",
-  //     to: "/integration/4",
-  //     type: "files",
-  //     iconType: "dropbox"
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Google Drive",
-  //     to: "/integration/5",
-  //     type: "files",
-  //     iconType: "gdrive"
-  //   }
 ];
 
 export const integrationIcons = {

@@ -26,8 +26,10 @@ const MessagesList = ({
     const _chats = chats?.filter((chat) =>
       search ? chat.name.toLowerCase().includes(search.toLowerCase()) : chat
     );
+    // TODO
+    // return _chats?.filter((chat) => chat.messagesCount !== 0);
 
-    return _chats?.filter((chat) => chat.messagesCount !== 0);
+    return _chats;
   }, [chats, search, isAudit]);
 
   const pinnedChats = useMemo(() => {
@@ -81,34 +83,36 @@ const MessagesList = ({
         ))}
       </Box>
 
-      {groupedChats.map((group) => (
-        <ExpandMenu title={group.date}>
-          <Box
-            width="100%"
-            display="flex"
-            flexDirection="column"
-            gap="10px"
-            marginTop="5px"
-          >
-            {group.items?.map((chat) => (
-              <ChatItem
-                key={chat.id}
-                isAudit={isAudit}
-                name={chat.name}
-                chatId={chat.id}
-                maxWidth={true}
-                isPinned={chat.pinned}
-                active={activeChat?.id === chat.id}
-                refetchChatList={refetch}
-                onDelete={onDelete}
-                style={{
-                  height: 37
-                }}
-              />
-            ))}
-          </Box>
-        </ExpandMenu>
-      ))}
+      <Box flex={1} style={{ overflowY: "scroll" }}>
+        {groupedChats.map((group) => (
+          <ExpandMenu title={group.date}>
+            <Box
+              width="100%"
+              display="flex"
+              flexDirection="column"
+              gap="10px"
+              marginTop="5px"
+            >
+              {group.items?.map((chat) => (
+                <ChatItem
+                  key={chat.id}
+                  isAudit={isAudit}
+                  name={chat.name}
+                  chatId={chat.id}
+                  maxWidth={true}
+                  isPinned={chat.pinned}
+                  active={activeChat?.id === chat.id}
+                  refetchChatList={refetch}
+                  onDelete={onDelete}
+                  style={{
+                    height: 37
+                  }}
+                />
+              ))}
+            </Box>
+          </ExpandMenu>
+        ))}
+      </Box>
     </Box>
   );
 };
@@ -162,7 +166,12 @@ const FileBar = ({
   relatedFiles,
   hideNewChatBtn,
   title,
-  isAudit
+  isAudit,
+  snowflakeCredentials,
+  selectSchema,
+  selectDatabase,
+  selectedSchema,
+  selectedDatabase
 }) => {
   const navigate = useNavigate();
   const { createChat, deleteChat } = useChatsAPI({});
@@ -176,12 +185,15 @@ const FileBar = ({
   const Renderer = RenderTypes[activeIntegration?.type || "messages"];
 
   const onCreate = () => {
-    createChat.mutate("Analytics", {
-      onSuccess: (res) => {
-        navigate(res.id);
-        refetch();
+    createChat.mutate(
+      { type: "Analytics" },
+      {
+        onSuccess: (res) => {
+          navigate(res.id);
+          refetch();
+        }
       }
-    });
+    );
   };
 
   const handleDelete = useCallback(() => {
@@ -242,6 +254,11 @@ const FileBar = ({
             relatedFiles={relatedFiles}
             search={search}
             isAudit={isAudit}
+            snowflakeCredentials={snowflakeCredentials}
+            selectSchema={selectSchema}
+            selectedSchema={selectedSchema}
+            selectDatabase={selectDatabase}
+            selectedDatabase={selectedDatabase}
           />
         </div>
       </section>

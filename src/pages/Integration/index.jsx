@@ -1,38 +1,111 @@
 import FileBar from "../Chat/FileBar";
+import websocket from "../../services/websocket";
 import useChatsAPI from "../../hooks/api/useChatsAPI";
 
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import {
-  Navigate,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useParams
-} from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Navigate, Outlet, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleIntegration } from "../../redux/integrations/integrationsSlice";
 import { _integrations } from "../../consts/integrations";
+import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
 
 const Integration = () => {
-  const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { integrationId, chatId } = useParams();
   const { openedIntegrations } = useSelector((store) => store.integrations);
+  const { token, snowflakeToken } = useSelector((store) => store.auth);
 
   const [activeIntegration, setActiveIntegration] = useState(
     openedIntegrations[0]
   );
 
-  const { data, refetch } = useChatsAPI({
-    isGetUsers: true
-  });
+  const { data, refetch, singleChat, updateSnowflakeData, refetchSingleChat } =
+    useChatsAPI({
+      isGetUsers: true,
+      chatId
+    });
+
+  const { credentials } = useSnowflakeAPI({ enableUserCredentials: true });
 
   const [activeChat, setActiveChat] = useState(null);
   const [relatedFiles, setRelatedFiles] = useState([]);
+  const [selectedSchema, setSelectedSchema] = useState("");
+  const [selectedDatabase, setSelectedDatabase] = useState("");
+
+  const selectDatabase = (item) => {
+    if (singleChat)
+      updateSnowflakeData.mutate(
+        {
+          id: chatId,
+          body: {
+            ...singleChat?.snowflake_data,
+            chat_id: chatId,
+            database_name: item
+          }
+        },
+        {
+          onSuccess: () => refetchSingleChat(),
+          onError: () => toast.error("Error on changing database")
+        }
+      );
+    else setSelectedDatabase(item);
+  };
+  const selectSchema = (item) => {
+    if (singleChat)
+      updateSnowflakeData.mutate(
+        {
+          id: chatId,
+          body: {
+            ...singleChat?.snowflake_data,
+            snowflake_schema: item,
+            chat_id: chatId
+          }
+        },
+        {
+          onSuccess: () => refetchSingleChat(),
+          onError: () => toast.error("Error on changing schema")
+        }
+      );
+    else setSelectedSchema(item);
+  };
+
+  useEffect(() => {
+    if (!chatId) return;
+
+    // Connect to WebSocket when component mounts
+    websocket.connect(
+      `wss://newcopilotwebapi.azurewebsites.net/api/analytics_agent/ws/${chatId}?token=${token}`
+    );
+
+    // Add a message handler to update component state
+    const handleIncomingMessage = (message) => {
+      if (message?.message === "Engine is not connected") {
+        websocket.sendMessage({
+          oauth_token: snowflakeToken?.access
+        });
+      }
+    };
+
+    websocket.addMessageHandler(handleIncomingMessage);
+
+    return () => {
+      // Remove the message handler when component unmounts
+      websocket.removeMessageHandler(handleIncomingMessage);
+      // Close WebSocket connection when component unmounts
+      websocket.closeConnection();
+    };
+  }, [chatId, token, snowflakeToken]);
+
+  useEffect(() => {
+    if (!singleChat) return;
+
+    setSelectedDatabase(singleChat.snowflake_data?.database_name);
+    setSelectedSchema(singleChat.snowflake_data?.snowflake_schema);
+  }, [singleChat]);
 
   useEffect(() => {
     if (!integrationId) return;
@@ -92,47 +165,54 @@ const Integration = () => {
 
   const handleSelectChat = (integration) => setActiveChat(integration);
 
+  const filteredChats = useMemo(
+    () => data?.filter((chat) => chat?.type === activeIntegration?.dataType),
+    [activeIntegration, data]
+  );
+
   useEffect(() => {
-    if (!chatId && !data) return;
+    if (!chatId && !filteredChats) return;
 
-    const mutatedData = data?.lists?.filter(
-      (chat) =>
-        chat?.type ===
-        (activeIntegration?.type === "sql" ? "Analytics" : "FileSearch")
-    );
+    const foundChat = filteredChats?.find((chat) => chat.id === chatId);
 
-    const foundChat = mutatedData?.find((chat) => chat.id === chatId);
-
-    if (integrationId && mutatedData?.length > 0 && (!chatId || !foundChat)) {
-      navigate(`/integration/${integrationId}/${mutatedData[0]?.id || ""}`);
+    if (integrationId && filteredChats?.length > 0 && (!chatId || !foundChat)) {
+      navigate(`/integration/${integrationId}/${filteredChats[0]?.id || ""}`);
     }
 
     handleSelectChat(foundChat);
-  }, [chatId, data, integrationId, activeIntegration]);
+  }, [chatId, filteredChats, integrationId, activeIntegration]);
 
   if (!integrationId) return <Navigate to="../" />;
 
   return (
     <Box width="100%" display="flex">
       <FileBar
-        activeIntegration={activeIntegration}
-        activeChat={activeChat}
-        relatedFiles={relatedFiles}
+        title="Chat"
         refetch={refetch}
         hideNewChatBtn={true}
-        title="Chat"
+        activeChat={activeChat}
+        relatedFiles={relatedFiles}
+        selectSchema={selectSchema}
+        selectDatabase={selectDatabase}
+        selectedSchema={selectedSchema}
+        snowflakeCredentials={credentials}
+        selectedDatabase={selectedDatabase}
+        activeIntegration={activeIntegration}
       />
       <Outlet
         context={{
           integrations: openedIntegrations,
-          chats: data?.lists,
+          chats: filteredChats,
           activeChat,
           activeIntegration,
           onCloseIntegration,
           handleSelectChat,
           chatId,
           refetch,
-          setRelatedFiles
+          setRelatedFiles,
+          snowflakeCredentials: credentials,
+          selectedDatabase,
+          selectedSchema
         }}
       />
     </Box>

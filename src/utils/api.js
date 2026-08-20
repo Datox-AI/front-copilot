@@ -4,7 +4,7 @@ import { setToken, setUser } from "../redux/auth/authSlice";
 import { BASE_API_URL } from "../config/request";
 
 export const request = axios.create({
-  baseURL: BASE_API_URL
+  baseURL: "https://newcopilotwebapi.azurewebsites.net" || BASE_API_URL
 });
 
 const errorHandler = (error) => {
@@ -24,7 +24,7 @@ request.interceptors?.request.use(
     const token = store.getState()?.auth?.token;
 
     if (token) {
-      config.headers["x-access-token"] = token;
+      config.headers["Authorization"] = `Bearer ${token}`;
     }
 
     if (config.url === "upload")

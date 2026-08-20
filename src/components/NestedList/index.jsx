@@ -3,22 +3,15 @@ import classNames from "classnames";
 import PopoverMenu from "../PopoverMenu";
 import useSnowflakeAPI from "../../hooks/api/useSnowflakeAPI";
 import toast from "react-hot-toast";
+import SnowflakeDropdown from "../../pages/Chat/FileBar/SnowflakeDropdown";
 
 import { ReactComponent as MoreVertI } from "../../assets/icons/vertical-dots.svg";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ReactComponent as NestListArrowI } from "../../assets/icons/nested-list-arrow.svg";
 import { ReactComponent as ColumnsI } from "../../assets/icons/columns.svg";
 import { ReactComponent as DataPreviewI } from "../../assets/icons/data-preview.svg";
 import { ReactComponent as ChevronDownI } from "../../assets/icons/chevron-down.svg";
 import { Box, Button, CircularProgress } from "@mui/material";
-import {
-  SNOWFLAKE_REDIRECT_URL,
-  SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
-  SNOWFLAKE_TEST_CLIENT_ID,
-  SNOWFLAKE_TEST_CLIENT_SECRET,
-  SNOWFLAKE_TEST_TOKEN_ENDPOINT,
-  SNOWFLAKE_TEST_WAREHOUSE
-} from "../../consts/snowflake";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { onToggleItem } from "../../redux/integrations/integrationsSlice";
@@ -168,29 +161,21 @@ const NestedList = ({ data, onSelectItem, parent }) => {
   );
 };
 
-const NestedListContainer = () => {
-  const { isConnected, initAuth, snowflakeData, onSelectItem } =
-    useSnowflakeAPI();
+const NestedListContainer = ({
+  selectSchema,
+  selectDatabase,
+  selectedSchema,
+  selectedDatabase,
+  snowflakeCredentials
+}) => {
+  const { isConnected, snowflakeData, onSelectItem, databases, schemas } =
+    useSnowflakeAPI({
+      enableDatabases: true,
+      database: selectedDatabase
+    });
 
-  const onAuth = () => {
-    initAuth.mutate(
-      {
-        account_identifier: SNOWFLAKE_TEST_ACCOUNT_IDENTIFIER,
-        client_id: SNOWFLAKE_TEST_CLIENT_ID,
-        client_secret: SNOWFLAKE_TEST_CLIENT_SECRET,
-        token_endpoint: SNOWFLAKE_TEST_TOKEN_ENDPOINT,
-        redirect_uri: SNOWFLAKE_REDIRECT_URL,
-        manual_warehouse: SNOWFLAKE_TEST_WAREHOUSE
-      },
-      {
-        onSuccess: (res) => {
-          window.location.replace(res.authorization_url);
-        },
-        onError: (err) => {
-          toast.err(err.data.detail);
-        }
-      }
-    );
+  const onAuth = async () => {
+    window.location.replace(snowflakeCredentials.authorization_url);
   };
 
   return (
@@ -200,7 +185,25 @@ const NestedListContainer = () => {
           Connect
         </Button>
       ) : (
-        <NestedList data={snowflakeData} onSelectItem={onSelectItem} />
+        <>
+          <Box width="100%" mb={1}>
+            <SnowflakeDropdown
+              label={
+                selectedDatabase || selectedSchema
+                  ? [selectedDatabase, selectedSchema].join(".")
+                  : "No database selected"
+              }
+              databases={databases?.databases}
+              schemas={schemas?.schemas}
+              selectedDatabase={selectedDatabase}
+              selectedSchema={selectedSchema}
+              onSelectDatabase={selectDatabase}
+              onSelectSchema={selectSchema}
+            />
+          </Box>
+
+          <NestedList data={snowflakeData} onSelectItem={onSelectItem} />
+        </>
       )}
     </Box>
   );
